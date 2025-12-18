@@ -1,14 +1,22 @@
 import jwt from "jsonwebtoken";
 
-export default function auth(req, res, next) {
-  try {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) return res.status(401).json({ message: "No token" });
+const auth = (req, res, next) => {
+  const authHeader = req.headers.authorization;
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  if (!authHeader) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+
     req.user = decoded;
     next();
-  } catch (err) {
-    res.status(401).json({ message: "Invalid token" });
-  }
-}
+  });
+};
+
+export default auth; // 🔴 BU SATIR ŞART

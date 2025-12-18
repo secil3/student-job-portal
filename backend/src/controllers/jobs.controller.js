@@ -2,11 +2,14 @@ import { db } from "../config/db.js";
 
 export const createJob = async (req, res) => {
   try {
-    const { title, description, location, salary, employer_id } = req.body;
+    const { title, description, location, salary } = req.body;
 
-    if (!title || !description || !employer_id) {
-      return res.status(400).json({ message: "Required fields missing" });
+    if (!title || !description) {
+      return res.status(400).json({ message: "Title and description required" });
     }
+
+    // 🔐 JWT'den employer id
+    const employer_id = req.user.id;
 
     await db.promise().query(
       `INSERT INTO jobs (title, description, location, salary, employer_id)
@@ -15,11 +18,12 @@ export const createJob = async (req, res) => {
     );
 
     res.status(201).json({ message: "Job created successfully ✅" });
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error("JOB CREATE ERROR:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 export const getAllJobs = async (req, res) => {
   try {

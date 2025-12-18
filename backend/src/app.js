@@ -5,6 +5,9 @@ import dotenv from "dotenv";
 import jobRoutes from "./routes/jobs.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import testRoutes from "./routes/test.routes.js";
+import resumeRoutes from "./routes/resume.routes.js";
+import applicationRoutes from "./routes/application.routes.js";
+import path from "path";
 
 dotenv.config();
 
@@ -20,6 +23,9 @@ app.get("/", (req, res) => {
 app.use("/api", testRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/jobs", jobRoutes);
+app.use("/api/resume", resumeRoutes);
+app.use("/api/applications", applicationRoutes);
+app.use("/uploads", express.static("uploads"));
 
 const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => {
