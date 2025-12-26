@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getAllJobs } from "../../api/job.api";
 import { getStudentApplications } from "../../api/application.api";
 import JobCard from "../../components/JobCard";
+import { Link } from "react-router-dom";
 
 const StudentDashboard = () => {
   const [jobs, setJobs] = useState([]);
@@ -94,6 +95,9 @@ const StudentDashboard = () => {
 
       {/* 🟢 AVAILABLE JOBS */}
       <h2>Available Jobs</h2>
+      <Link to="/student/jobs">
+          <button>Browse Jobs</button>
+      </Link>
 
       {jobs.length === 0 && <p>No jobs available.</p>}
 

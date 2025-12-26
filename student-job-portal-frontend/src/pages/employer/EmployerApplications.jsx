@@ -1,34 +1,36 @@
 import { useEffect, useState } from "react";
-import {
-  getEmployerApplications,
-  updateApplicationStatus,
-} from "../../api/application.api";
+import api from "../../services/api";
+import { updateApplicationStatus } from "../../api/application.api";
 
 const EmployerApplications = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchApplications = async () => {
-    try {
-      const res = await getEmployerApplications();
-      setApplications(res.data);
-    } catch (err) {
-      setError("Failed to load applications");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     fetchApplications();
   }, []);
+
+  const fetchApplications = async () => {
+    try {
+      const res = await api.get("/applications/employer");
+      console.log("APPLICATIONS RESPONSE:", res.data);
+      setApplications(res.data);
+    } catch (err) {
+      console.error(
+        "FETCH APPLICATIONS ERROR:",
+        err.response?.data || err.message
+      );
+      setError("Failed to load applications");
+    } finally {
+      setLoading(false); // 🔴 KRİTİK
+    }
+  };
 
   const handleStatusChange = async (applicationId, status) => {
     try {
       await updateApplicationStatus(applicationId, status);
 
-      // state güncelle (DOĞRU ID İLE)
       setApplications((prev) =>
         prev.map((app) =>
           app.application_id === applicationId
@@ -56,20 +58,31 @@ const EmployerApplications = () => {
           style={{
             border: "1px solid #ccc",
             padding: "15px",
-            marginBottom: "10px",
+            marginBottom: "15px",
             borderRadius: "6px",
           }}
         >
-          <p>
-            <strong>Student Email:</strong> {app.student_email}
-          </p>
+          <h4>{app.job_title}</h4>
+
+          <p><b>Student Email:</b> {app.email}</p>
+          <p><b>University:</b> {app.university}</p>
+          <p><b>Major:</b> {app.major}</p>
+          <p><b>GPA:</b> {app.GPA}</p>
+          <p><b>Status:</b> {app.status}</p>
 
           <p>
-            <strong>Job:</strong> {app.job_title}
-          </p>
-
-          <p>
-            <strong>Status:</strong> {app.status}
+            <b>Resume:</b>{" "}
+            {app.resume_path ? (
+              <a
+                href={`http://localhost:5050/${app.resume_path}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View Resume
+              </a>
+            ) : (
+              "No resume uploaded"
+            )}
           </p>
 
           <div style={{ marginTop: "10px" }}>

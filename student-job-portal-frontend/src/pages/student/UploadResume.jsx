@@ -1,36 +1,45 @@
 import { useState } from "react";
 import api from "../../services/api";
 
-export default function UploadResume() {
+export default function UploadResume({ onUploadSuccess }) {
   const [file, setFile] = useState(null);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleUpload = async () => {
+    if (!file) {
+      alert("Please select a resume file ❗");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("resume", file);
 
-    await api.post("/resume", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    try {
+      await api.post("/resumes/upload", formData);
+      alert("Resume uploaded successfully ✅");
 
-    alert("Resume uploaded successfully 📄");
+      if (onUploadSuccess) {
+        onUploadSuccess();
+      }
+    } catch (err) {
+      console.error("UPLOAD ERROR:", err.response?.data || err.message);
+      alert(
+        err.response?.data?.message ||
+        "Resume upload failed ❌ (see console)"
+      );
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Upload Resume</h2>
-
+    <div>
       <input
         type="file"
-        accept=".pdf"
+        accept=".pdf,.doc,.docx"
         onChange={(e) => setFile(e.target.files[0])}
-        required
       />
 
-      <button type="submit">Upload</button>
-    </form>
+      <button type="button" onClick={handleUpload}>
+        Upload Resume
+      </button>
+    </div>
   );
 }

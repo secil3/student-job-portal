@@ -1,62 +1,67 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 
-const Navbar = () => {
-  const { isAuthenticated, role, logout } = useAuth();
+export default function Navbar() {
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const handleLogout = () => {
-    logout();
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     navigate("/login");
   };
 
   return (
-    <nav
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: "10px 20px",
-        borderBottom: "1px solid #ddd",
-      }}
-    >
-      {/* Logo / Home */}
-      <div>
-        <Link to="/" style={{ fontWeight: "bold", textDecoration: "none" }}>
-          Student Job Portal
-        </Link>
-      </div>
+    <nav style={{ padding: 10, borderBottom: "1px solid #ccc" }}>
+      <Link to="/">Home</Link>
 
-      {/* Menu */}
-      <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
-        {!isAuthenticated && (
-          <>
-            <Link to="/login">Login</Link>
-            <Link to="/register">Register</Link>
-          </>
-        )}
+      {!user && (
+        <>
+          {" | "}
+          <Link to="/login">Login</Link>
+          {" | "}
+          <Link to="/register">Register</Link>
+        </>
+      )}
 
-        {isAuthenticated && role === "student" && (
-          <>
-            <Link to="/student">Dashboard</Link>
-            <Link to="/jobs">Jobs</Link>
-          </>
-        )}
+      {user?.role === "student" && (
+        <>
+          {" | "}
+          <Link to="/student">Dashboard</Link>
+          {" | "}
+          <Link to="/student/jobs">Jobs</Link>
+          {" | "}
+          <Link to="/student/profile">Profile</Link>
+        </>
+      )}
 
-        {isAuthenticated && role === "employer" && (
-          <>
-            <Link to="/employer">Dashboard</Link>
-            <Link to="/employer/job-post">Post a Job</Link>
-            <Link to="/employer/applications">Applications</Link>
-          </>
-        )}
+      {user?.role === "employer" && (
+        <>
+          {" | "}
+          <Link to="/employer">Dashboard</Link>
+          {" | "}
+          <Link to="/employer/job-post">Post Job</Link>
+          {" | "}
+          <Link to="/employer/applications">Applications</Link>
+        </>
+      )}
 
-        {isAuthenticated && (
+      {user?.role === "admin" && (
+        <>
+          {" | "}
+          <Link to="/admin">Admin Dashboard</Link>
+          {" | "}
+          <Link to="/admin/employers">Verify Employers</Link>
+          {" | "}
+          <Link to="/admin/jobs">Jobs</Link>
+        </>
+      )}
+
+      {user && (
+        <>
+          {" | "}
           <button onClick={handleLogout}>Logout</button>
-        )}
-      </div>
+        </>
+      )}
     </nav>
   );
-};
-
-export default Navbar;
+}

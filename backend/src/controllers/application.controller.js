@@ -22,9 +22,7 @@ export const applyToJob = async (req, res) => {
     }
 
     // ✅ INSERT
-    await db
-      .promise()
-      .query(
+    await db.query(
         "INSERT INTO applications (job_id, student_id) VALUES (?, ?)",
         [jobId, studentId]
       );
@@ -51,7 +49,7 @@ export const getStudentApplications = async (req, res) => {
   try {
     const studentId = req.user.id;
 
-    const [rows] = await db.promise().query(
+    const [rows] = await db.query(
       `
       SELECT
         a.id AS application_id,
@@ -78,32 +76,26 @@ export const getStudentApplications = async (req, res) => {
 ========================= */
 export const getEmployerApplications = async (req, res) => {
   try {
-    const employerId = req.user.id;
-
-    const [rows] = await db.promise().query(
-      `
+    const [rows] = await db.query(`
       SELECT 
         a.id AS application_id,
         a.status,
-        a.applied_at,
-
-        j.id AS job_id,
-        j.title AS job_title,
-
-        u.email AS student_email
+        u.email,
+        u.university,
+        u.major,
+        u.GPA,
+        u.resume_path,
+        j.title AS job_title
       FROM applications a
-      JOIN jobs j ON j.id = a.job_id
-      JOIN users u ON u.id = a.student_id
+      JOIN users u ON a.student_id = u.id
+      JOIN jobs j ON a.job_id = j.id
       WHERE j.employer_id = ?
-      ORDER BY a.applied_at DESC
-      `,
-      [employerId]
-    );
+    `, [req.user.id]);
 
-    return res.json(rows);
+    res.json(rows);
   } catch (err) {
-    console.error("GET EMPLOYER APPLICATIONS ERROR:", err);
-    return res.status(500).json({ message: "Server error" });
+    console.error("getEmployerApplications error:", err);
+    res.status(500).json({ message: "Failed to fetch applications" });
   }
 };
 
@@ -127,7 +119,7 @@ export const updateApplicationStatus = async (req, res) => {
     }
 
     // application var mı?
-    const [rows] = await db.promise().query(
+    const [rows] = await db.query(
       "SELECT id FROM applications WHERE id = ?",
       [id]
     );
@@ -137,7 +129,7 @@ export const updateApplicationStatus = async (req, res) => {
     }
 
     // status update
-    await db.promise().query(
+    await db.query(
       "UPDATE applications SET status = ? WHERE id = ?",
       [status, id]
     );
