@@ -1,26 +1,187 @@
-.resumes-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 24px;
+.resumes-container{
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 18px;
+}
+
+.resumes-header p{
+  margin-top: 6px;
+  color: #6b7280;
+}
+
+.resumes-error{
+  color: #dc2626;
+  margin-top: 10px;
+}
+
+.resumes-empty{
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px dashed #d1d5db;
+  border-radius: 12px;
+}
+
+.muted{ color:#6b7280; font-size: 13px; }
+
+.resume-card{
+  margin-top: 14px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.resume-row{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.resume-actions{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* file name button (PDF open) */
+.resume-link-btn{
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  font-weight: 800;
+  color: #111827;
+}
+
+.resume-link-btn:hover{
+  text-decoration: underline;
+}
+
+/* file name anchor (download) */
+.resume-link{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  font: inherit;
+  font-weight: 800;
+  color: #111827;
+}
+
+.resume-link:hover{
+  text-decoration: underline;
+}
+
+.resume-hint{
+  margin-top: 8px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.resume-rename{
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.rename-input{
+  flex: 1;
+  padding: 11px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  outline: none;
+}
+
+.rename-input:focus{
+  border-color: rgba(99, 102, 241, 0.55);
+}
+
+/* Buttons - soft */
+.btn{
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .12s ease, border-color .12s ease, opacity .12s ease, transform .12s ease;
+  white-space: nowrap;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn:active{ transform: translateY(1px); }
+
+.btn:disabled{
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Rename */
+.btn-primary-soft{
+  background: rgba(99, 102, 241, 0.10);
+  border-color: rgba(99, 102, 241, 0.30);
+  color: #3f46c6;
+}
+
+.btn-primary-soft:hover{
+  background: rgba(99, 102, 241, 0.16);
+  border-color: rgba(99, 102, 241, 0.45);
+}
+
+/* Open / Download */
+.btn-secondary-soft{
+  background: rgba(17, 24, 39, 0.06);
+  border-color: rgba(17, 24, 39, 0.14);
+  color: #111827;
+}
+
+.btn-secondary-soft:hover{
+  background: rgba(17, 24, 39, 0.10);
+  border-color: rgba(17, 24, 39, 0.20);
+}
+
+/* Delete */
+.btn-danger-outline{
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.28);
+  color: #b91c1c;
+}
+
+.btn-danger-outline:hover{
+  background: rgba(239, 68, 68, 0.14);
+  border-color: rgba(239, 68, 68, 0.42);
+}
+
+/* make <a> look like button */
+.btn-link{
+  text-decoration: none;
+}
+
+/* Responsive */
+@media (max-width: 720px){
+  .resume-row{
+    flex-direction: column;
+    align-items: flex-start;
   }
-  
-  .resume-card {
-    background: var(--white);
-    border: 1px solid var(--gray-border);
-    border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 12px;
+
+  .resume-actions{
+    width: 100%;
   }
-  
-  .resume-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 8px;
+
+  .btn{
+    width: 100%;
   }
-  
-  .rename-input {
-    margin-top: 6px;
-    padding: 6px;
-    font-size: 13px;
+
+  .resume-rename{
+    flex-direction: column;
   }
-  
+}

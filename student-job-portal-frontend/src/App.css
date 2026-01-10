@@ -18,3 +18,26 @@ a {
   text-decoration: none;
   color: inherit;
 }
+/* Sayfanın tamamı */
+html, body, #root {
+  height: 100%;
+}
+
+/* Ana layout */
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-content {
+  flex: 1;
+  background: linear-gradient(
+    to bottom,
+    #f8fafc 0%,
+    #f8fafc 60%,
+    #0b1324 100%
+  );
+}
+
+

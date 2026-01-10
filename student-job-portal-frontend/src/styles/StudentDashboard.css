@@ -1,16 +1,27 @@
+/* ===== PAGE BACKGROUND ===== */
+.student-page {
+  min-height: 100%;
+  background: #f8fafc;   /* ⬅️ alttaki renk tamamen kalktı */
+  padding-bottom: 0;
+}
+
+/* ===== CONTAINER ===== */
 .student-container {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 32px 20px;
 }
 
+/* ===== PAGE TITLE ===== */
 .page-title {
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 20px;
+  color: #0f172a;
+  letter-spacing: -0.3px;
 }
 
-/* Applications */
+/* ===== APPLICATIONS ===== */
 .applications-list {
   display: grid;
   gap: 16px;
@@ -19,10 +30,17 @@
 }
 
 .application-card {
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 16px;
   padding: 18px;
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.application-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.10);
 }
 
 .application-row {
@@ -31,16 +49,17 @@
 
 .application-date {
   font-size: 13px;
-  color: var(--text-muted);
+  color: rgba(71, 85, 105, 0.95);
   margin-top: 6px;
 }
 
-/* Status badge */
+/* ===== STATUS BADGE ===== */
 .status-badge {
   padding: 4px 10px;
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .status-pending {
@@ -58,15 +77,16 @@
   color: #991b1b;
 }
 
-/* Jobs header */
+/* ===== JOBS HEADER ===== */
 .jobs-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   margin-bottom: 20px;
 }
 
-/* FORCE FIX: My Applications spacing */
+/* ===== SECTION TITLE FIX ===== */
 .student-container h2.section {
   margin: 0 !important;
   padding: 0 !important;
@@ -74,7 +94,26 @@
   font-weight: 600 !important;
 }
 
-/* başlığın altına küçük boşluk istiyorsan */
 .student-container h2.section + * {
   margin-top: 12px;
 }
+
+/* ===== DIVIDER ===== */
+.section-divider {
+  border: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(148, 163, 184, 0.7),
+    transparent
+  );
+  margin: 14px 0 18px;
+}
+
+/* ===== JOB CARDS GRID ===== */
+.jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+} 

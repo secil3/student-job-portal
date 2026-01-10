@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../services/api";
 import "../styles/Auth.css";
 
@@ -15,12 +15,7 @@ export default function Register() {
     setError("");
 
     try {
-      await api.post("/auth/register", {
-        email,
-        password,
-        role,
-      });
-
+      await api.post("/auth/register", { email, password, role });
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.message || "Register failed");
@@ -51,23 +46,31 @@ export default function Register() {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <div className="role-group">
-            <label className="role-option">
+          <div className="role-group role-group--custom" role="radiogroup" aria-label="Select role">
+            <label className="role-pill">
               <input
+                className="role-radio"
                 type="radio"
+                name="role"
+                value="student"
                 checked={role === "student"}
-                onChange={() => setRole("student")}
+                onChange={(e) => setRole(e.target.value)}
               />
-              Student
+              <span className="role-dot" aria-hidden="true" />
+              <span>Student</span>
             </label>
 
-            <label className="role-option">
+            <label className="role-pill">
               <input
+                className="role-radio"
                 type="radio"
+                name="role"
+                value="employer"
                 checked={role === "employer"}
-                onChange={() => setRole("employer")}
+                onChange={(e) => setRole(e.target.value)}
               />
-              Employer
+              <span className="role-dot" aria-hidden="true" />
+              <span>Employer</span>
             </label>
           </div>
 
@@ -77,6 +80,13 @@ export default function Register() {
         </form>
 
         {error && <p className="auth-error">{error}</p>}
+
+        <p style={{ textAlign: "center", marginTop: "14px", fontSize: "14px" }}>
+          Already have an account?{" "}
+          <Link to="/login" className="forgot-link">
+            Login
+          </Link>
+        </p>
       </div>
     </div>
   );

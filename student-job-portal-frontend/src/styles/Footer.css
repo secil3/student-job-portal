@@ -1,9 +1,9 @@
 .footer {
-    background-color: #0f172a;
-    color: #c7d2fe;
-    margin-top: 80px;
-  }
-  
+  background-color: #0f172a;
+  color: #c7d2fe;
+  margin-top: 370px;   /* ✅ boşluğu kaldırır */
+}
+
   .footer-container {
     max-width: 1100px;
     margin: 0 auto;
@@ -50,4 +50,5 @@
     font-size: 13px;
     color: #a5b4fc;
   }
+
   

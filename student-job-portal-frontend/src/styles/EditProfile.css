@@ -16,4 +16,46 @@
     padding: 8px;
     margin-bottom: 12px;
   }
+
   
+  /* Upload Resume = secondary action */
+.upload-btn {
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 8px;
+  background-color: rgba(79, 70, 229, 0.85);
+}
+
+/* Hover daha soft */
+.upload-btn:hover {
+  background-color: rgba(79, 70, 229, 1);
+}
+
+/* Save Profile ana buton kalsın */
+.save-btn {
+  margin-top: 18px;
+}
+.resume-summary{
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.resume-summary h3{
+  margin: 0;
+}
+
+.resume-ok{ color:#16a34a; margin: 6px 0 0; }
+.resume-warn{ color:#d97706; margin: 6px 0 0; }
+
+.btn.btn-secondary{
+  background: #eef2ff;
+  color: #1f2937;
+}
+

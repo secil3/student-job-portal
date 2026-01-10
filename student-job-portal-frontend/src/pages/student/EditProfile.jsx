@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import api from "../../services/api";
-import UploadResume from "./UploadResume";
 import "../../styles/EditProfile.css";
 
 export default function EditProfile() {
@@ -10,29 +10,41 @@ export default function EditProfile() {
     GPA: "",
   });
 
-  const [resumeUploaded, setResumeUploaded] = useState(false);
+  const [hasResume, setHasResume] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
-    api.get("/student/profile").then((res) => setForm(res.data));
+    const load = async () => {
+      try {
+        const profileRes = await api.get("/student/profile");
+        setForm(profileRes.data);
+
+        // Resume var mı? (senin backend: GET /resumes)
+        const resumesRes = await api.get("/resumes");
+        setHasResume((resumesRes.data || []).length > 0);
+      } catch (e) {
+        // profil yine de açılabilsin, sadece hata göster
+        setError(e.response?.data?.message || "Failed to load profile ❌");
+      }
+    };
+
+    load();
   }, []);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async () => {
-    if (!resumeUploaded) {
-      setError("You must upload a resume first.");
-      return;
-    }
+    setSuccess("");
+    setError("");
 
+    // ✅ resume zorunlu değil (Apply sırasında zorunlu yapmak daha doğru)
     try {
       await api.put("/student/profile", form);
       setSuccess("Profile updated successfully ✅");
-      setError("");
-    } catch {
-      setError("Failed to save profile ❌");
+    } catch (e) {
+      setError(e.response?.data?.message || "Failed to save profile ❌");
     }
   };
 
@@ -45,7 +57,7 @@ export default function EditProfile() {
           className="profile-input"
           name="university"
           placeholder="University"
-          value={form.university}
+          value={form.university || ""}
           onChange={handleChange}
         />
 
@@ -53,7 +65,7 @@ export default function EditProfile() {
           className="profile-input"
           name="major"
           placeholder="Major"
-          value={form.major}
+          value={form.major || ""}
           onChange={handleChange}
         />
 
@@ -61,12 +73,23 @@ export default function EditProfile() {
           className="profile-input"
           name="GPA"
           placeholder="GPA"
-          value={form.GPA}
+          value={form.GPA || ""}
           onChange={handleChange}
         />
 
-        <h3>Resume</h3>
-        <UploadResume onUploadSuccess={() => setResumeUploaded(true)} />
+        {/* Resume summary card */}
+        <div className="resume-summary">
+          <div>
+            <h3>Resume</h3>
+            <p className={hasResume ? "resume-ok" : "resume-warn"}>
+              {hasResume ? "✅ Resume uploaded" : "⚠️ No resume uploaded yet"}
+            </p>
+          </div>
+
+          <Link to="/student/resumes" className="btn btn-secondary">
+            Manage My Resumes
+          </Link>
+        </div>
 
         {error && <p className="auth-error">{error}</p>}
         {success && <p className="auth-success">{success}</p>}

@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../services/api";
 import "../styles/Auth.css";
+
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -58,12 +59,27 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
 
+          {/* Forgot password link */}
+          <div className="login-extra">
+            <Link to="/forgot-password" className="forgot-link">
+              Forgot password?
+            </Link>
+          </div>
+
           <button className="auth-button" type="submit">
             Login
           </button>
         </form>
 
         {error && <p className="auth-error">{error}</p>}
+
+        {/* Register link */}
+        <p style={{ textAlign: "center", marginTop: "14px", fontSize: "14px" }}>
+          Don&apos;t have an account?{" "}
+          <Link to="/register" className="forgot-link">
+            Register
+          </Link>
+        </p>
       </div>
     </div>
   );

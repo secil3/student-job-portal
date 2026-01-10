@@ -2,7 +2,7 @@ import { useState } from "react";
 import api from "../../services/api";
 import "../../styles/UploadResume.css";
 
-export default function UploadResume({ onUploadSuccess }) {
+export default function UploadResume({ onUploadSuccess, className = "" }) {
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -23,14 +23,11 @@ export default function UploadResume({ onUploadSuccess }) {
       await api.post("/resumes/upload", formData);
       setMessage("Resume uploaded successfully ✅");
 
-      if (onUploadSuccess) {
+      if (typeof onUploadSuccess === "function") {
         onUploadSuccess();
       }
     } catch (err) {
-      setError(
-        err.response?.data?.message ||
-        "Resume upload failed ❌"
-      );
+      setError(err.response?.data?.message || "Resume upload failed ❌");
     }
   };
 
@@ -45,13 +42,14 @@ export default function UploadResume({ onUploadSuccess }) {
         onChange={(e) => setFile(e.target.files[0])}
       />
 
-      <button
-        type="button"
-        className="btn btn-primary"
-        onClick={handleUpload}
-      >
-        Upload Resume
-      </button>
+<button
+  type="button"
+  className={`btn btn-primary upload-btn ${className}`.trim()}
+  onClick={handleUpload}
+>
+  Upload Resume
+</button>
+
 
       {message && <div className="upload-success">{message}</div>}
       {error && <div className="upload-error">{error}</div>}

@@ -25,22 +25,48 @@ export default function Navbar() {
           <NavLink to="/" className="nav-link">
             Home
           </NavLink>
-        )}
-
-        {user?.role === "student" && (
+        )}{user?.role === "student" && (
           <>
-            <NavLink to="/student" className="nav-link">
+            <NavLink
+              to="/student"
+              end
+              className={({ isActive }) =>
+                isActive ? "nav-link active" : "nav-link"
+              }
+            >
               Dashboard
             </NavLink>
-            <NavLink to="/student/jobs" className="nav-link">
+        
+            <NavLink
+              to="/student/jobs"
+              className={({ isActive }) =>
+                isActive ? "nav-link active" : "nav-link"
+              }
+            >
               Jobs
             </NavLink>
-            <NavLink to="/student/profile" className="nav-link">
+        
+            <NavLink
+              to="/student/profile"
+              className={({ isActive }) =>
+                isActive ? "nav-link active" : "nav-link"
+              }
+            >
               Profile
+            </NavLink>
+        
+            <NavLink
+              to="/student/resumes"
+              className={({ isActive }) =>
+                isActive ? "nav-link active" : "nav-link"
+              }
+            >
+              My Resumes
             </NavLink>
           </>
         )}
-
+        
+        
         {user?.role === "employer" && (
           <>
             <NavLink to="/employer" className="nav-link">

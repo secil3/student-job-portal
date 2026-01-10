@@ -45,79 +45,97 @@ const StudentDashboard = () => {
     fetchApplications();
   }, []);
 
-  if (loadingJobs || loadingApps) return <p>Loading...</p>;
-  if (error) return <p className="error-text">{error}</p>;
+  if (loadingJobs || loadingApps) {
+    return (
+      <div className="student-page">
+        <div className="student-container">
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="student-page">
+        <div className="student-container">
+          <p className="error-text">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="student-container">
+    <div className="student-page">
+      <div className="student-container">
+        {/* ===== DASHBOARD SUMMARY ===== */}
+        <div className="dashboard-cards">
+          <div className="dashboard-card">
+            <h4>Total Applications</h4>
+            <p>{applications.length}</p>
+          </div>
 
-      {/* ===== DASHBOARD SUMMARY ===== */}
-      <div className="dashboard-cards">
-        <div className="dashboard-card">
-          <h4>Total Applications</h4>
-          <p>{applications.length}</p>
+          <div className="dashboard-card">
+            <h4>Available Jobs</h4>
+            <p>{jobs.length}</p>
+          </div>
+
+          <div className="dashboard-card">
+            <h4>Status</h4>
+            <p>Active</p>
+          </div>
         </div>
 
-        <div className="dashboard-card">
-          <h4>Available Jobs</h4>
-          <p>{jobs.length}</p>
+        <h1 className="page-title">Student Dashboard</h1>
+
+        {/* 🔵 MY APPLICATIONS */}
+        <h2 className="section">My Applications</h2>
+        <hr className="section-divider" />
+
+        {applications.length === 0 ? (
+          <p>You haven’t applied to any jobs yet.</p>
+        ) : (
+          <div className="applications-list">
+            {applications.map((app) => (
+              <div key={app.application_id} className="application-card">
+                <div className="application-row">
+                  <b>Job:</b> {app.job_title}
+                </div>
+
+                <div className="application-row">
+                  <b>Status:</b>{" "}
+                  <span className={`status-badge status-${app.status}`}>
+                    {app.status.toUpperCase()}
+                  </span>
+                </div>
+
+                <div className="application-date">
+                  Applied at: {new Date(app.applied_at).toLocaleString()}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* 🟢 AVAILABLE JOBS */}
+        <div className="jobs-header">
+          <h2 className="section-title">Available Jobs</h2>
+
+          <Link to="/student/jobs">
+            <button className="primary-btn">Browse Jobs</button>
+          </Link>
         </div>
 
-        <div className="dashboard-card">
-          <h4>Status</h4>
-          <p>Active</p>
-        </div>
+        {jobs.length === 0 ? (
+          <p>No jobs available.</p>
+        ) : (
+          <div className="jobs-grid">
+            {jobs.map((job) => (
+              <JobCard key={job.id} job={job} onApplied={fetchApplications} />
+            ))}
+          </div>
+        )}
       </div>
-
-      <h1 className="page-title">Student Dashboard</h1>
-
-      {/* 🔵 MY APPLICATIONS */}
-      <h2 className="section">My Applications</h2>
-
-      {applications.length === 0 ? (
-        <p>You haven’t applied to any jobs yet.</p>
-      ) : (
-        <div className="applications-list">
-          {applications.map((app) => (
-            <div key={app.application_id} className="application-card">
-              <div className="application-row">
-                <b>Job:</b> {app.job_title}
-              </div>
-
-              <div className="application-row">
-                <b>Status:</b>{" "}
-                <span className={`status-badge status-${app.status}`}>
-                  {app.status.toUpperCase()}
-                </span>
-              </div>
-
-              <div className="application-date">
-                Applied at:{" "}
-                {new Date(app.applied_at).toLocaleString()}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* 🟢 AVAILABLE JOBS */}
-      <div className="jobs-header">
-        <h2 className="section-title">Available Jobs</h2>
-
-        <Link to="/student/jobs">
-          <button className="primary-btn">Browse Jobs</button>
-        </Link>
-      </div>
-
-      {jobs.length === 0 && <p>No jobs available.</p>}
-
-      {jobs.map((job) => (
-        <JobCard
-          key={job.id}
-          job={job}
-          onApplied={fetchApplications}
-        />
-      ))}
     </div>
   );
 };
