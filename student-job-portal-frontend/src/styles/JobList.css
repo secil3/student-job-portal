@@ -1,6 +1,5 @@
 .student-jobs-page {
   max-width: 1080px;
-  min-height: 100%;
   margin: 0 auto;
   padding: clamp(28px, 5vw, 52px) clamp(16px, 3vw, 28px);
   color: #2c0735;

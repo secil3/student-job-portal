@@ -1,6 +1,5 @@
 .home {
-  min-height: 100%;
-  background: #ffffff;
+  background: transparent;
   color: #2c0735;
   font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
@@ -385,7 +384,6 @@
 }
 
 @media (max-width: 700px) {
-
   .role-grid {
     grid-template-columns: 1fr;
   }

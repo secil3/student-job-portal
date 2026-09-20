@@ -53,11 +53,11 @@ export default function Navbar() {
       </div>
 
       <div className="nav-center" aria-label="Primary navigation">
-        {!user && (
-          <NavLink to="/" className={navLinkClass}>
-            Home
-          </NavLink>
-        )}{user?.role === "student" && (
+        <NavLink to="/" end className={navLinkClass}>
+          Home
+        </NavLink>
+
+        {user?.role === "student" && (
           <>
             <NavLink to="/student" end className={navLinkClass}>
               Dashboard

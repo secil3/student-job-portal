@@ -1,6 +1,5 @@
 .student-applications-page {
-  min-height: 100%;
-  background: #ffffff;
+  background: transparent;
   color: #2c0735;
   font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
