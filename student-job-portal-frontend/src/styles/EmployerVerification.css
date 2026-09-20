@@ -1,71 +1,49 @@
 .verify-container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 24px;
-  }
-  
-  .verify-title {
-    font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 20px;
-  }
-  
-  .verify-list {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-  
-  .verify-card {
-    background-color: var(--white);
-    border: 1px solid var(--gray-border);
-    border-radius: 12px;
-    padding: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .verify-info {
-    font-size: 14px;
-  }
-  
-  .verify-actions {
-    display: flex;
-    gap: 10px;
-  }
-  
-  .approve-btn {
-    padding: 8px 14px;
-    border-radius: 8px;
-    border: none;
-    background-color: #22c55e;
-    color: white;
-    font-size: 13px;
-    cursor: pointer;
-  }
-  
-  .reject-btn {
-    padding: 8px 14px;
-    border-radius: 8px;
-    border: none;
-    background-color: #ef4444;
-    color: white;
-    font-size: 13px;
-    cursor: pointer;
-  }
-  
-  .approve-btn:hover {
-    background-color: #16a34a;
-  }
-  
-  .reject-btn:hover {
-    background-color: #dc2626;
-  }
-  
-  .loading-text,
-  .empty-text {
-    font-size: 14px;
-    color: #6b7280;
-  }
-  
+  width: min(100% - 32px, 1000px);
+  margin: 0 auto;
+  padding: clamp(30px, 5vw, 52px) 0;
+  color: #2c0735;
+  font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.verify-header { max-width: 680px; margin-bottom: 22px; }
+.verify-header > span { color: #613dc1; font-size: 10px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; }
+.verify-title { margin: 5px 0 7px; font-size: clamp(28px, 4vw, 38px); letter-spacing: -0.04em; }
+.verify-header p { margin: 0; color: rgba(44, 7, 53, 0.62); font-size: 14px; }
+.verify-list { display: grid; gap: 10px; }
+.verify-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 15px 16px;
+  border: 1px solid rgba(44, 7, 53, 0.1);
+  border-radius: 13px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(44, 7, 53, 0.035);
+}
+.verify-info { display: flex; flex-direction: column; min-width: 0; gap: 3px; }
+.verify-info span { color: rgba(44, 7, 53, 0.48); font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+.verify-info strong { overflow-wrap: anywhere; font-size: 13px; }
+.verify-actions { display: flex; flex: 0 0 auto; gap: 8px; }
+.approve-btn, .reject-btn {
+  min-height: 36px;
+  padding: 7px 13px;
+  border-radius: 9px;
+  color: #ffffff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.approve-btn { border: 1px solid #613dc1; background: #613dc1; }
+.reject-btn { border: 1px solid #b91c1c; background: #b91c1c; }
+.approve-btn:hover { background: #2c0735; border-color: #2c0735; }
+.reject-btn:hover { background: #991b1b; border-color: #991b1b; }
+.approve-btn:focus-visible, .reject-btn:focus-visible { outline: 3px solid rgba(133, 138, 227, 0.42); outline-offset: 2px; }
+.loading-text, .empty-text { padding: 18px; border: 1px dashed rgba(97, 61, 193, 0.24); border-radius: 13px; color: rgba(44, 7, 53, 0.62); font-size: 13px; }
+@media (max-width: 560px) {
+  .verify-card { align-items: stretch; flex-direction: column; }
+  .verify-actions { width: 100%; }
+  .approve-btn, .reject-btn { flex: 1; }
+}
+@media (max-width: 420px) { .verify-container { width: min(100% - 24px, 1000px); } }

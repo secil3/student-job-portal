@@ -8,45 +8,63 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("student");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
+    setSubmitting(true);
 
     try {
       await api.post("/auth/register", { email, password, role });
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.message || "Register failed");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2 className="auth-title">Create Account</h2>
+        <div className="auth-heading">
+          <span>Join StudentJob</span>
+          <h1 className="auth-title">Create your account</h1>
+          <p>Choose your role and get started with the platform.</p>
+        </div>
 
         <form className="auth-form" onSubmit={handleRegister}>
-          <input
-            className="auth-input"
-            type="email"
-            placeholder="Email"
-            value={email}
-            required
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <label className="auth-field">
+            <span>Email</span>
+            <input
+              className="auth-input"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              required
+              autoComplete="email"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </label>
 
-          <input
-            className="auth-input"
-            type="password"
-            placeholder="Password"
-            value={password}
-            required
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <label className="auth-field">
+            <span>Password</span>
+            <input
+              className="auth-input"
+              type="password"
+              placeholder="Create a password"
+              value={password}
+              required
+              autoComplete="new-password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
 
-          <div className="role-group role-group--custom" role="radiogroup" aria-label="Select role">
+          <fieldset className="role-fieldset">
+            <legend>Register as</legend>
+            <div className="role-group role-group--custom" role="radiogroup" aria-label="Select role">
             <label className="role-pill">
               <input
                 className="role-radio"
@@ -72,16 +90,17 @@ export default function Register() {
               <span className="role-dot" aria-hidden="true" />
               <span>Employer</span>
             </label>
-          </div>
+            </div>
+          </fieldset>
 
-          <button className="auth-button" type="submit">
-            Register
+          <button className="auth-button" type="submit" disabled={submitting}>
+            {submitting ? "Creating account..." : "Register"}
           </button>
         </form>
 
         {error && <p className="auth-error">{error}</p>}
 
-        <p style={{ textAlign: "center", marginTop: "14px", fontSize: "14px" }}>
+        <p className="auth-switch">
           Already have an account?{" "}
           <Link to="/login" className="forgot-link">
             Login

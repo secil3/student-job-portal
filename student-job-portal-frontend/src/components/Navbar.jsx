@@ -103,6 +103,9 @@ export default function Navbar() {
             <NavLink to="/admin/jobs" className={navLinkClass}>
               Jobs
             </NavLink>
+            <NavLink to="/admin/employers" className={navLinkClass}>
+              Verify Employers
+            </NavLink>
           </>
         )}
       </div>

@@ -23,7 +23,11 @@ export default function AdminUsers() {
 
   return (
     <div className="adminusers-container">
-      <h2 className="adminusers-title">All Users</h2>
+      <header className="adminusers-header">
+        <span>User directory</span>
+        <h1 className="adminusers-title">All Users</h1>
+        <p>Review registered accounts, roles and approval status.</p>
+      </header>
 
       {loading && <p className="loading-text">Loading...</p>}
 
@@ -44,14 +48,14 @@ export default function AdminUsers() {
           <tbody>
             {users.map((u) => (
               <tr key={u.id}>
-                <td>{u.email}</td>
-                <td>
+                <td data-label="Email">{u.email}</td>
+                <td data-label="Role">
                   <span className={`role-badge role-${u.role}`}>
                     {u.role}
                   </span>
                 </td>
-                <td>
-                  <span className={`status-${u.status}`}>
+                <td data-label="Status">
+                  <span className={`user-status-badge status-${u.status}`}>
                     {u.status}
                   </span>
                 </td>

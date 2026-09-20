@@ -42,7 +42,11 @@ export default function AdminJobs() {
 
   return (
     <div className="adminjobs-container">
-      <h2 className="adminjobs-title">All Job Postings</h2>
+      <header className="adminjobs-header">
+        <span>Content oversight</span>
+        <h1 className="adminjobs-title">Manage Jobs</h1>
+        <p>Review active job postings and remove inappropriate listings.</p>
+      </header>
 
       {loading && <p>Loading...</p>}
 
@@ -54,8 +58,11 @@ export default function AdminJobs() {
         <div className="adminjobs-list">
           {jobs.map((job) => (
             <div key={job.id} className="adminjob-card">
-              <div className="adminjob-title">{job.title}</div>
-              <div className="adminjob-location">{job.location}</div>
+              <div className="adminjob-content">
+                <span>Job posting</span>
+                <h2 className="adminjob-title">{job.title}</h2>
+                <p className="adminjob-location">{job.location || "Location not provided"}</p>
+              </div>
 
               <button
                 className="btn btn-danger"

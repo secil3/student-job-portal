@@ -1,56 +1,48 @@
 .adminjobs-container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 24px;
-  }
-  
-  .adminjobs-title {
-    font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 20px;
-  }
-  
-  .adminjobs-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 16px;
-  }
-  
-  .adminjob-card {
-    background-color: var(--white);
-    border: 1px solid var(--gray-border);
-    border-radius: 12px;
-    padding: 16px;
-  }
-  
-  .adminjob-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-  
-  .adminjob-location {
-    font-size: 14px;
-    color: #6b7280;
-    margin-bottom: 14px;
-  }
-  
-  .delete-btn {
-    padding: 8px 14px;
-    border-radius: 8px;
-    border: 1px solid #ef4444;
-    background: transparent;
-    color: #ef4444;
-    font-size: 13px;
-    cursor: pointer;
-  }
-  
-  .delete-btn:hover {
-    background-color: #fee2e2;
-  }
-  
-  .empty-text {
-    font-size: 14px;
-    color: #6b7280;
-  }
-  
+  width: min(100% - 32px, 1100px);
+  margin: 0 auto;
+  padding: clamp(30px, 5vw, 52px) 0;
+  color: #2c0735;
+  font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.adminjobs-header { max-width: 680px; margin-bottom: 22px; }
+.adminjobs-header > span, .adminjob-content > span { color: #613dc1; font-size: 10px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; }
+.adminjobs-title { margin: 5px 0 7px; font-size: clamp(28px, 4vw, 38px); letter-spacing: -0.04em; }
+.adminjobs-header p { margin: 0; color: rgba(44, 7, 53, 0.62); font-size: 14px; }
+.adminjobs-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.adminjob-card {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid rgba(44, 7, 53, 0.1);
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(44, 7, 53, 0.035);
+}
+.adminjob-content { min-width: 0; }
+.adminjob-title { margin: 5px 0 4px; overflow-wrap: anywhere; font-size: 16px; letter-spacing: -0.02em; }
+.adminjob-location { margin: 0; color: rgba(44, 7, 53, 0.58); font-size: 12px; }
+.adminjob-card .btn-danger {
+  flex: 0 0 auto;
+  min-height: 35px;
+  padding: 7px 12px;
+  border: 1px solid #b91c1c;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #b91c1c;
+  font-size: 12px;
+  font-weight: 800;
+}
+.adminjob-card .btn-danger:hover { background: #fef2f2; }
+.adminjob-card .btn-danger:focus-visible { outline: 3px solid rgba(185, 28, 28, 0.22); outline-offset: 2px; }
+.adminjob-card .btn-danger:disabled { opacity: 0.55; cursor: not-allowed; }
+.adminjobs-container .empty-text, .adminjobs-container > p { padding: 18px; border: 1px dashed rgba(97, 61, 193, 0.24); border-radius: 13px; color: rgba(44, 7, 53, 0.62); font-size: 13px; }
+@media (max-width: 760px) { .adminjobs-list { grid-template-columns: 1fr; } }
+@media (max-width: 420px) {
+  .adminjobs-container { width: min(100% - 24px, 1100px); }
+  .adminjob-card { align-items: stretch; flex-direction: column; }
+  .adminjob-card .btn-danger { align-self: flex-start; }
+}

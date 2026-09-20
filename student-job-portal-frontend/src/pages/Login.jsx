@@ -9,12 +9,14 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSubmitting(true);
 
     try {
       const res = await api.post("/auth/login", {
@@ -33,32 +35,46 @@ export default function Login() {
       }
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2 className="auth-title">Login</h2>
+        <div className="auth-heading">
+          <span>Welcome back</span>
+          <h1 className="auth-title">Login to StudentJob</h1>
+          <p>Access your dashboard and continue where you left off.</p>
+        </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
-          <input
-            className="auth-input"
-            type="email"
-            placeholder="Email"
-            value={email}
-            required
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <label className="auth-field">
+            <span>Email</span>
+            <input
+              className="auth-input"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              required
+              autoComplete="email"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </label>
 
-          <input
-            className="auth-input"
-            type="password"
-            placeholder="Password"
-            value={password}
-            required
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <label className="auth-field">
+            <span>Password</span>
+            <input
+              className="auth-input"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              required
+              autoComplete="current-password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
 
           {/* Forgot password link */}
           <div className="login-extra">
@@ -67,15 +83,15 @@ export default function Login() {
             </Link>
           </div>
 
-          <button className="auth-button" type="submit">
-            Login
+          <button className="auth-button" type="submit" disabled={submitting}>
+            {submitting ? "Logging in..." : "Login"}
           </button>
         </form>
 
         {error && <p className="auth-error">{error}</p>}
 
         {/* Register link */}
-        <p style={{ textAlign: "center", marginTop: "14px", fontSize: "14px" }}>
+        <p className="auth-switch">
           Don&apos;t have an account?{" "}
           <Link to="/register" className="forgot-link">
             Register

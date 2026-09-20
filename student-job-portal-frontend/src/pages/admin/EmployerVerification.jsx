@@ -32,7 +32,11 @@ export default function EmployerVerification() {
 
   return (
     <div className="verify-container">
-      <h2 className="verify-title">Pending Employers</h2>
+      <header className="verify-header">
+        <span>Account review</span>
+        <h1 className="verify-title">Verify Employers</h1>
+        <p>Approve or reject employer accounts waiting for platform access.</p>
+      </header>
 
       {loading && <p className="loading-text">Loading...</p>}
 
@@ -45,7 +49,8 @@ export default function EmployerVerification() {
           {employers.map((emp) => (
             <div key={emp.id} className="verify-card">
               <div className="verify-info">
-                <b>Email:</b> {emp.email}
+                <span>Employer email</span>
+                <strong>{emp.email}</strong>
               </div>
 
               <div className="verify-actions">

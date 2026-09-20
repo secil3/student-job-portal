@@ -6,6 +6,7 @@ import "../../styles/AdminDashboard.css";
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     api.get("/admin/dashboard")
@@ -14,18 +15,24 @@ export default function AdminDashboard() {
       })
       .catch((err) => {
         console.error("Admin dashboard error:", err);
+        setError("Dashboard data could not be loaded.");
       })
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <p className="loading">Loading admin dashboard...</p>;
-
   return (
     <div className="admin-container">
-      <h1 className="page-title">Admin Dashboard</h1>
+      <header className="admin-page-header">
+        <span>Platform overview</span>
+        <h1 className="page-title">Admin Dashboard</h1>
+        <p>Monitor platform activity and access essential management tools.</p>
+      </header>
+
+      {loading && <p className="admin-state-message">Loading admin dashboard...</p>}
+      {!loading && error && <p className="admin-state-message error">{error}</p>}
 
       {/* === STATS === */}
-      <div className="stats-grid">
+      {!loading && !error && stats && <div className="stats-grid">
         <div className="stat-card">
           <span>Total Students</span>
           <strong>{stats.students}</strong>
@@ -45,22 +52,31 @@ export default function AdminDashboard() {
           <span>Total Applications</span>
           <strong>{stats.applications}</strong>
         </div>
-      </div>
+      </div>}
 
       {/* === QUICK ACTIONS === */}
-      <div className="admin-actions">
+      {!loading && !error && <section className="admin-quick-section">
+        <div className="admin-section-heading">
+          <span>Management</span>
+          <h2>Quick actions</h2>
+        </div>
+        <div className="admin-actions">
         <Link to="/admin/employers" className="action-card">
-          🏢 Verify Employers
+          <strong>Verify Employers</strong>
+          <span>Review pending employer accounts</span>
         </Link>
 
         <Link to="/admin/jobs" className="action-card">
-          📄 Manage Jobs
+          <strong>Manage Jobs</strong>
+          <span>Review current job postings</span>
         </Link>
 
         <Link to="/admin/users" className="action-card">
-          👥 View Users
+          <strong>View Users</strong>
+          <span>See registered platform accounts</span>
         </Link>
-      </div>
+        </div>
+      </section>}
     </div>
   );
 }
