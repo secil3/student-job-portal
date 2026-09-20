@@ -121,6 +121,113 @@ export const getEmployerJobs = async (req, res) => {
   }
 };
 
+const normalizeJobUpdate = (body) => {
+  const fields = {
+    title: { required: true, maxLength: 255, label: "Title" },
+    description: { required: true, maxLength: 65535, label: "Description" },
+    location: { required: true, maxLength: 100, label: "Location" },
+    salary: { required: false, maxLength: 50, label: "Salary" },
+  };
+
+  const values = {};
+
+  for (const [field, rules] of Object.entries(fields)) {
+    const value = body?.[field];
+
+    if (value === undefined || value === null) {
+      if (rules.required) {
+        return { error: `${rules.label} is required` };
+      }
+      values[field] = null;
+      continue;
+    }
+
+    if (typeof value !== "string") {
+      return { error: `${rules.label} must be text` };
+    }
+
+    const normalized = value.trim();
+    if (rules.required && normalized.length === 0) {
+      return { error: `${rules.label} is required` };
+    }
+
+    if (normalized.length > rules.maxLength) {
+      return { error: `${rules.label} must be at most ${rules.maxLength} characters` };
+    }
+
+    values[field] = normalized || null;
+  }
+
+  return { values };
+};
+
+export const updateJob = async (req, res) => {
+  try {
+    const employerId = req.user?.id;
+
+    if (!employerId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const [users] = await db.query(
+      "SELECT role, status FROM users WHERE id = ?",
+      [employerId]
+    );
+
+    if (users.length === 0) {
+      return res.status(401).json({ message: "User account not found" });
+    }
+
+    const user = users[0];
+    if (user.role !== "employer") {
+      return res.status(403).json({ message: "Only employers can update job posts" });
+    }
+
+    if (user.status !== "approved") {
+      return res.status(403).json({ message: "Employer account is not approved" });
+    }
+
+    const normalized = normalizeJobUpdate(req.body);
+    if (normalized.error) {
+      return res.status(400).json({ message: normalized.error });
+    }
+
+    const [jobs] = await db.query(
+      "SELECT id, employer_id FROM jobs WHERE id = ?",
+      [req.params.id]
+    );
+
+    if (jobs.length === 0) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    if (Number(jobs[0].employer_id) !== Number(employerId)) {
+      return res.status(403).json({ message: "You can only update your own job posts" });
+    }
+
+    const { title, description, location, salary } = normalized.values;
+    const [result] = await db.query(
+      `UPDATE jobs
+       SET title = ?, description = ?, location = ?, salary = ?
+       WHERE id = ? AND employer_id = ?
+         AND EXISTS (
+           SELECT 1 FROM users
+           WHERE id = ? AND role = 'employer' AND status = 'approved'
+         )`,
+      [title, description, location, salary, req.params.id, employerId, employerId]
+    );
+
+    if (result.affectedRows !== 1) {
+      return res.status(409).json({ message: "Job could not be updated" });
+    }
+
+    return res.json({ message: "Job updated successfully" });
+  } catch (error) {
+    console.error("updateJob error:", error.code || error.name);
+    return res.status(500).json({ message: "Job could not be updated" });
+  }
+};
+
 
 export const deleteJob = async (req, res) => {
   try {

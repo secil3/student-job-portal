@@ -12,6 +12,7 @@ import MyResumes from "./pages/student/MyResumes";
 
 import EmployerDashboard from "./pages/employer/EmployerDashboard";
 import JobPost from "./pages/employer/JobPost";
+import EditJob from "./pages/employer/EditJob";
 import EmployerApplications from "./pages/employer/EmployerApplications";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -89,6 +90,14 @@ export default function App() {
               element={
                 <ProtectedRoute role="employer">
                   <JobPost />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/employer/jobs/:jobId/edit"
+              element={
+                <ProtectedRoute role="employer">
+                  <EditJob />
                 </ProtectedRoute>
               }
             />

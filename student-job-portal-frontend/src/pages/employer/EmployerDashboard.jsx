@@ -69,6 +69,13 @@ const EmployerDashboard = () => {
 
               <div className="job-actions">
                 <button
+                  className="btn btn-secondary"
+                  onClick={() => navigate(`/employer/jobs/${job.id}/edit`)}
+                >
+                  Edit
+                </button>
+
+                <button
                   className="btn btn-primary"
                   onClick={() =>
                     navigate(`/employer/applications/${job.id}`)

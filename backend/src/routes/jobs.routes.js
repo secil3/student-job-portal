@@ -4,6 +4,7 @@ import {
   createJob,
   getAllJobs,
   getEmployerJobs,
+  updateJob,
   deleteJob
 } from "../controllers/jobs.controller.js";
 
@@ -17,6 +18,9 @@ router.post("/", auth, createJob);
 
 // EMPLOYER – own jobs
 router.get("/employer", auth, getEmployerJobs);
+
+// EMPLOYER – update own job
+router.put("/:id", auth, updateJob);
 
 // DELETE job
 router.delete("/:id", auth, deleteJob);
