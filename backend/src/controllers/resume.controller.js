@@ -4,6 +4,7 @@ import fs from "node:fs/promises";
 import { removeUploadedFile } from "../middleware/upload.middleware.js";
 
 const uploadsDirectory = path.resolve(process.cwd(), "uploads");
+const MAX_RESUME_NAME_LENGTH = 255;
 
 const resolveStoredResumePath = (storedPath) => {
   const prefix = "/uploads/";
@@ -140,13 +141,35 @@ export const deleteResume = async (req, res) => {
 
 // Rename resume
 export const renameResume = async (req, res) => {
-  const { name } = req.body;
+  const name = req.body?.name;
 
-  await db.query(
-    "UPDATE resumes SET name=? WHERE id=? AND user_id=?",
-    [name, req.params.id, req.user.id]
-  );
-  res.json({ message: "Resume renamed" });
+  if (typeof name !== "string" || name.trim().length === 0) {
+    return res.status(400).json({ message: "Resume name is required" });
+  }
+
+  const trimmedName = name.trim();
+
+  if (trimmedName.length > MAX_RESUME_NAME_LENGTH) {
+    return res.status(400).json({
+      message: `Resume name must be ${MAX_RESUME_NAME_LENGTH} characters or fewer`
+    });
+  }
+
+  try {
+    const [result] = await db.query(
+      "UPDATE resumes SET name=? WHERE id=? AND user_id=?",
+      [trimmedName, req.params.id, req.user.id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Resume not found" });
+    }
+
+    return res.json({ message: "Resume renamed" });
+  } catch (error) {
+    console.error("RESUME RENAME ERROR:", error.code || error.name);
+    return res.status(500).json({ message: "Resume could not be renamed" });
+  }
 };
 
 export const getResumeFile = async (req, res) => {
