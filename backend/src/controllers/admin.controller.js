@@ -5,7 +5,6 @@ export const getPendingEmployers = async (req, res) => {
   const [rows] = await db.query(
     "SELECT id, email FROM users WHERE role='employer' AND status='pending'"
   );
-  console.log("PENDING EMPLOYERS:", rows); // 👈 EKLE
 
   res.json(rows);
 };

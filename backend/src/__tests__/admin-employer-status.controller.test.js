@@ -6,7 +6,7 @@ await jest.unstable_mockModule("../config/db.js", () => ({
   default: dbMock,
 }));
 
-const { updateEmployerStatus } = await import(
+const { getPendingEmployers, updateEmployerStatus } = await import(
   "../controllers/admin.controller.js"
 );
 
@@ -20,6 +20,19 @@ const mockResponse = () => {
 describe("Admin employer approval", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  test("returns pending employers without changing the query or response", async () => {
+    const employers = [{ id: 12, email: "employer@example.test" }];
+    dbMock.query.mockResolvedValueOnce([employers]);
+    const res = mockResponse();
+
+    await getPendingEmployers({}, res);
+
+    expect(dbMock.query).toHaveBeenCalledWith(
+      "SELECT id, email FROM users WHERE role='employer' AND status='pending'"
+    );
+    expect(res.json).toHaveBeenCalledWith(employers);
   });
 
   test.each(["approved", "rejected"])(
