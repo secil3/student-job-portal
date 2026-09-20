@@ -67,7 +67,13 @@ const EmployerApplications = () => {
     ? applications
     : applications.filter((application) => application.status === activeFilter);
 
-  if (loading) return <p>Loading applications...</p>;
+  if (loading) {
+    return (
+      <div className="applications-container">
+        <p className="applications-message">Loading applications...</p>
+      </div>
+    );
+  }
   if (error) {
     return (
       <div className="applications-container">
@@ -99,71 +105,70 @@ const EmployerApplications = () => {
       {actionError && <p className="applications-error">{actionError}</p>}
 
       {applications.length === 0 && (
-        <p>No applications for this job yet.</p>
+        <p className="applications-message">No applications for this job yet.</p>
       )}
 
       {applications.length > 0 && filteredApplications.length === 0 && (
-        <p>No {activeFilter} applications found.</p>
+        <p className="applications-message">No {activeFilter} applications found.</p>
       )}
 
-      {filteredApplications.map((app) => {
-        const isUpdating = updatingApplicationIds.includes(app.id);
+      <div className="applications-grid">
+        {filteredApplications.map((app) => {
+          const isUpdating = updatingApplicationIds.includes(app.id);
 
-        return (
-          <div key={app.id} className="application-card">
-          
-          {/* 👤 STUDENT */}
-          <div className="section">
-            <div className="section-title">Student Profile</div>
-            <div className="info-row"><b>Email:</b> {app.student_email}</div>
-            <div className="info-row"><b>University:</b> {app.university || "N/A"}</div>
-            <div className="info-row"><b>Major:</b> {app.major || "N/A"}</div>
-            <div className="info-row"><b>GPA:</b> {app.gpa || "N/A"}</div>
-          </div>
+          return (
+            <article key={app.id} className="application-card">
+              <div className="application-profile">
+                <div className="section-title">Student Profile</div>
+                <div className="profile-details">
+                  <div className="info-row"><b>Email</b><span>{app.student_email}</span></div>
+                  <div className="info-row"><b>University</b><span>{app.university || "N/A"}</span></div>
+                  <div className="info-row"><b>Major</b><span>{app.major || "N/A"}</span></div>
+                  <div className="info-row"><b>GPA</b><span>{app.gpa || "N/A"}</span></div>
+                </div>
+              </div>
 
-          {/* 📄 RESUME */}
-          <div className="section">
-            <div className="section-title">Resume</div>
-            {app.resume_id ? (
-              <ProtectedResumeButton resumeId={app.resume_id}>
-                View CV
-              </ProtectedResumeButton>
-            ) : (
-              <div className="info-row">Not provided</div>
-            )}
-          </div>
+              <div className="application-meta">
+                <div className="application-detail">
+                  <span className="detail-label">Resume</span>
+                  {app.resume_id ? (
+                    <ProtectedResumeButton resumeId={app.resume_id}>
+                      View CV
+                    </ProtectedResumeButton>
+                  ) : (
+                    <span className="detail-value">Not provided</span>
+                  )}
+                </div>
 
-          {/* 📌 STATUS */}
-          <div className="section">
-            <div className="section-title">Application Status</div>
-            <span
-              className={`status-badge status-${app.status}`}
-            >
-              {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
-            </span>
-          </div>
+                <div className="application-detail">
+                  <span className="detail-label">Status</span>
+                  <span className={`status-badge status-${app.status}`}>
+                    {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
+                  </span>
+                </div>
+              </div>
 
-          {/* 🎯 ACTIONS */}
-          <div className="action-buttons">
-            <button
-              className="accept-btn"
-              disabled={isUpdating || app.status === "accepted"}
-              onClick={() => handleStatusChange(app.id, "accepted")}
-            >
-              Accept
-            </button>
+              <div className="action-buttons">
+                <button
+                  className="accept-btn"
+                  disabled={isUpdating || app.status === "accepted"}
+                  onClick={() => handleStatusChange(app.id, "accepted")}
+                >
+                  Accept
+                </button>
 
-            <button
-              className="reject-btn"
-              disabled={isUpdating || app.status === "rejected"}
-              onClick={() => handleStatusChange(app.id, "rejected")}
-            >
-              Reject
-            </button>
-          </div>
-          </div>
-        );
-      })}
+                <button
+                  className="reject-btn"
+                  disabled={isUpdating || app.status === "rejected"}
+                  onClick={() => handleStatusChange(app.id, "rejected")}
+                >
+                  Reject
+                </button>
+              </div>
+            </article>
+          );
+        })}
+      </div>
     </div>
   );
 };

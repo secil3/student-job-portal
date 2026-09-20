@@ -8,49 +8,45 @@ const JobCard = ({ job }) => {
   const applied = Boolean(job.applied);
 
   return (
-    <div className="job-card">
-      {/* HEADER */}
-      <div className="job-header">
+    <article className="student-job-preview-card">
+      <div className="student-job-preview-header">
         <div>
-          <div className="job-title">{job.title}</div>
-          <div className="job-company">{job.companyName}</div>
+          <h3>{job.title}</h3>
+          {job.companyName && <div className="student-job-company">{job.companyName}</div>}
         </div>
       </div>
 
-      {/* BADGES */}
-      <div className="job-badges">
+      <div className="student-job-badges">
         {job.location && (
-          <span className="job-badge">{job.location}</span>
+          <span>{job.location}</span>
         )}
         {job.jobType && (
-          <span className="job-badge">{job.jobType}</span>
+          <span>{job.jobType}</span>
         )}
       </div>
 
-      {/* DESCRIPTION */}
-      <div className="job-description">
+      <p className="student-job-preview-description">
         {job.description}
-      </div>
+      </p>
 
-      {/* FOOTER */}
-      <div className="job-footer">
-        <div className="job-salary">
-          {job.salary ? `${job.salary} ₺` : "Salary not specified"}
+      <div className="student-job-preview-footer">
+        <div className="student-job-salary">
+          {job.salary || "Salary not specified"}
         </div>
 
         {role === "student" && (
           <button
-            className={`btn btn-primary apply-btn ${
+            className={`student-preview-apply-btn ${
               applied ? "applied" : ""
             }`}
             onClick={() => navigate("/student/jobs")}
             disabled={applied}
           >
-            {applied ? "Applied" : "Select CV & Apply"}
+            {applied ? "Applied" : "Apply"}
           </button>
         )}
       </div>
-    </div>
+    </article>
   );
 };
 

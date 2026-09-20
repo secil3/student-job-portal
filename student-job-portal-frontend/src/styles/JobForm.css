@@ -71,4 +71,113 @@
     color: #dc2626;
     text-align: center;
   }
-  
+
+/* Compact DigiPath treatment for the active Post Job page. */
+.jobpost-page {
+  max-width: 640px;
+  padding: clamp(24px, 4vw, 42px) 18px;
+  color: #2c0735;
+  font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.jobpost-page .jobform-card {
+  padding: clamp(20px, 3vw, 26px);
+  border: 1px solid rgba(44, 7, 53, 0.16);
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 5px 18px rgba(44, 7, 53, 0.045);
+}
+
+.jobpost-page .jobform-title {
+  margin: 0;
+  color: #2c0735;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.jobform-intro {
+  margin: 6px 0 17px;
+  color: rgba(44, 7, 53, 0.6);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.jobpost-page .jobform {
+  gap: 11px;
+}
+
+.jobform-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.jobform-field > span {
+  color: #2c0735;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.jobpost-page .jobform-input,
+.jobpost-page .jobform-textarea {
+  margin: 0;
+  border: 1px solid rgba(44, 7, 53, 0.28);
+  border-radius: 9px;
+  background: #ffffff;
+  color: #2c0735;
+}
+
+.jobpost-page .jobform-input:focus,
+.jobpost-page .jobform-textarea:focus {
+  outline: none;
+  border-color: #858ae3;
+  box-shadow: 0 0 0 3px rgba(133, 138, 227, 0.12);
+}
+
+.jobpost-page .jobform-input:focus-visible,
+.jobpost-page .jobform-textarea:focus-visible {
+  border-color: #613dc1;
+  box-shadow: 0 0 0 3px rgba(97, 61, 193, 0.16);
+}
+
+.jobpost-page .jobform-textarea {
+  min-height: 88px;
+  max-height: 180px;
+}
+
+.jobform-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.jobform-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 3px;
+}
+
+.jobpost-page .jobform-actions .btn-primary {
+  min-width: 112px;
+  border-color: #613dc1;
+  background: #613dc1;
+  font-family: inherit;
+  font-weight: 750;
+}
+
+.jobpost-page .jobform-actions .btn-primary:hover {
+  border-color: #2c0735;
+  background: #2c0735;
+}
+
+@media (max-width: 560px) {
+  .jobform-row {
+    grid-template-columns: 1fr;
+  }
+
+  .jobform-actions .btn {
+    width: 100%;
+  }
+}

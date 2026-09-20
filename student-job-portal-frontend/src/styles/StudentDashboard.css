@@ -1,119 +1,218 @@
-/* ===== PAGE BACKGROUND ===== */
 .student-page {
   min-height: 100%;
-  background: #f8fafc;   /* ⬅️ alttaki renk tamamen kalktı */
-  padding-bottom: 0;
+  background: #ffffff;
+  color: #2c0735;
+  font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-/* ===== CONTAINER ===== */
 .student-container {
-  max-width: 1100px;
+  max-width: 1120px;
   margin: 0 auto;
-  padding: 32px 20px;
+  padding: clamp(28px, 5vw, 52px) clamp(16px, 3vw, 28px);
 }
 
-/* ===== PAGE TITLE ===== */
-.page-title {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  color: #0f172a;
-  letter-spacing: -0.3px;
+.student-dashboard-header {
+  max-width: 650px;
+  margin-bottom: 22px;
 }
 
-/* ===== APPLICATIONS ===== */
-.applications-list {
+.student-dashboard-header > span,
+.student-section-heading > div > span {
+  color: #613dc1;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.student-dashboard-header h1 {
+  margin: 7px 0 0;
+  color: #2c0735;
+  font-size: clamp(27px, 4vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+}
+
+.student-dashboard-header p {
+  margin: 9px 0 0;
+  color: rgba(44, 7, 53, 0.62);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.student-summary-grid {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 180px));
+  gap: 10px;
+  margin-bottom: 34px;
+}
+
+.student-summary-card {
+  padding: 13px 15px;
+  border: 1px solid rgba(44, 7, 53, 0.1);
+  border-radius: 11px;
+  background: #ffffff;
+}
+
+.student-summary-card h4 {
+  margin: 0;
+  color: rgba(44, 7, 53, 0.52);
+  font-size: 10px;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+
+.student-summary-card p {
+  margin: 4px 0 0;
+  color: #613dc1;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.student-dashboard-section + .student-dashboard-section {
+  margin-top: 36px;
+}
+
+.student-section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
   gap: 16px;
-  margin-top: 10px;
-  margin-bottom: 40px;
+  margin-bottom: 14px;
 }
 
-.application-card {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  border-radius: 16px;
-  padding: 18px;
-  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
-  transition: transform 0.15s ease, box-shadow 0.2s ease;
+.student-section-heading h2 {
+  margin: 4px 0 0;
+  color: #2c0735;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
 }
 
-.application-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.10);
+.student-applications-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
+  gap: 10px;
 }
 
-.application-row {
-  margin-bottom: 6px;
-}
-
-.application-date {
-  font-size: 13px;
-  color: rgba(71, 85, 105, 0.95);
-  margin-top: 6px;
-}
-
-/* ===== STATUS BADGE ===== */
-.status-badge {
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.status-pending {
-  background-color: #fef3c7;
-  color: #92400e;
-}
-
-.status-accepted {
-  background-color: #dcfce7;
-  color: #166534;
-}
-
-.status-rejected {
-  background-color: #fee2e2;
-  color: #991b1b;
-}
-
-/* ===== JOBS HEADER ===== */
-.jobs-header {
+.student-application-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-/* ===== SECTION TITLE FIX ===== */
-.student-container h2.section {
-  margin: 0 !important;
-  padding: 0 !important;
-  font-size: 20px !important;
-  font-weight: 600 !important;
-}
-
-.student-container h2.section + * {
-  margin-top: 12px;
-}
-
-/* ===== DIVIDER ===== */
-.section-divider {
-  border: 0;
-  height: 1px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(148, 163, 184, 0.7),
-    transparent
-  );
-  margin: 14px 0 18px;
-}
-
-/* ===== JOB CARDS GRID ===== */
-.jobs-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 16px;
-} 
+  min-width: 0;
+  padding: 14px 15px;
+  border: 1px solid rgba(44, 7, 53, 0.1);
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 3px 12px rgba(44, 7, 53, 0.035);
+}
+
+.student-application-main {
+  min-width: 0;
+}
+
+.student-application-main > span {
+  color: rgba(44, 7, 53, 0.48);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.student-application-main h3 {
+  overflow: hidden;
+  margin: 4px 0 0;
+  color: #2c0735;
+  font-size: 13px;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.student-application-meta {
+  display: flex;
+  align-items: flex-end;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.student-application-meta time {
+  color: rgba(44, 7, 53, 0.48);
+  font-size: 9px;
+}
+
+.student-status-badge {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.student-status-badge.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.student-status-badge.status-accepted {
+  background: #d9ffe2;
+  color: #166534;
+}
+
+.student-status-badge.status-rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.browse-jobs-link {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  border: 1px solid #613dc1;
+  border-radius: 9px;
+  background: #613dc1;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.browse-jobs-link:hover {
+  background: #2c0735;
+  border-color: #2c0735;
+  text-decoration: none;
+}
+
+.student-dashboard-jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: 12px;
+}
+
+.student-empty-state,
+.student-container .error-text {
+  padding: 16px;
+  border: 1px dashed rgba(97, 61, 193, 0.22);
+  border-radius: 11px;
+  background: #ffffff;
+  color: rgba(44, 7, 53, 0.6);
+  font-size: 12px;
+}
+
+.student-container .error-text {
+  color: #b91c1c;
+}
+
+@media (max-width: 520px) {
+  .student-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .student-jobs-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .student-application-card {
+    align-items: flex-start;
+  }
+}

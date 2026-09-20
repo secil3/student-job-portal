@@ -1,122 +1,243 @@
 .applications-container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 24px;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: clamp(26px, 4vw, 46px) clamp(16px, 3vw, 28px);
+  color: #2c0735;
+  font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.applications-title {
+  margin: 0 0 16px;
+  color: #2c0735;
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.application-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(44, 7, 53, 0.09);
+}
+
+.filter-btn {
+  padding: 6px 11px;
+  border: 1px solid rgba(97, 61, 193, 0.18);
+  border-radius: 999px;
+  background: #ffffff;
+  color: rgba(44, 7, 53, 0.68);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.filter-btn:hover {
+  border-color: #858ae3;
+  color: #2c0735;
+}
+
+.filter-btn.active {
+  border-color: #613dc1;
+  background: #613dc1;
+  color: white;
+}
+
+.applications-error {
+  margin-bottom: 14px;
+  color: #b91c1c;
+  font-size: 13px;
+}
+
+.applications-message {
+  padding: 18px;
+  border: 1px dashed rgba(97, 61, 193, 0.22);
+  border-radius: 12px;
+  background: #ffffff;
+  color: rgba(44, 7, 53, 0.62);
+  font-size: 13px;
+}
+
+.applications-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: 12px;
+}
+
+.applications-container .application-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 16px;
+  margin: 0;
+  border: 1px solid rgba(44, 7, 53, 0.1);
+  border-radius: 13px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(44, 7, 53, 0.04);
+}
+
+.application-profile {
+  min-width: 0;
+}
+
+.applications-container .section-title {
+  margin: 0 0 10px;
+  color: #2c0735;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.profile-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+}
+
+.applications-container .info-row {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.applications-container .info-row b,
+.detail-label {
+  margin-bottom: 2px;
+  color: rgba(44, 7, 53, 0.5);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.applications-container .info-row span {
+  overflow-wrap: anywhere;
+  color: #2c0735;
+}
+
+.application-meta {
+  display: flex;
+  align-items: flex-end;
+  gap: 22px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(44, 7, 53, 0.07);
+}
+
+.application-detail {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-value {
+  color: rgba(44, 7, 53, 0.62);
+  font-size: 12px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.status-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-accepted {
+  background-color: #d9ffe2;
+  color: #166534;
+}
+
+.status-rejected {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.applications-container .resume-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #613dc1;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.applications-container .resume-link:hover {
+  text-decoration: underline;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 7px;
+  margin-top: 14px;
+}
+
+.accept-btn,
+.reject-btn {
+  min-height: 32px;
+  padding: 6px 11px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.accept-btn {
+  border: 1px solid #82c9aa;
+  background-color: #82c9aa;
+  color: #2c0735;
+}
+
+.reject-btn {
+  border: 1px solid rgba(185, 28, 28, 0.26);
+  background-color: transparent;
+  color: #b91c1c;
+}
+
+.accept-btn:hover:not(:disabled) {
+  background-color: #6fba98;
+}
+
+.reject-btn:hover:not(:disabled) {
+  background-color: #fef2f2;
+}
+
+.accept-btn:disabled,
+.reject-btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+@media (max-width: 520px) {
+  .applications-container {
+    padding-inline: 14px;
   }
 
-  .applications-title {
-    font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 20px;
+  .profile-details {
+    grid-template-columns: 1fr;
+    gap: 7px;
   }
 
-  .application-filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 20px;
+  .application-meta {
+    justify-content: space-between;
+    gap: 12px;
   }
 
-  .filter-btn {
-    padding: 7px 12px;
-    border: 1px solid var(--gray-border);
-    border-radius: 999px;
-    background: var(--white);
-    color: #374151;
-    cursor: pointer;
+  .action-buttons button {
+    flex: 1;
   }
-
-  .filter-btn.active {
-    border-color: var(--primary);
-    background: var(--primary);
-    color: white;
-    font-weight: 600;
-  }
-
-  .applications-error {
-    margin-bottom: 16px;
-    color: #b91c1c;
-  }
-
-  .application-card {
-    background-color: var(--white);
-    border: 1px solid var(--gray-border);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 16px;
-  }
-  
-  .section {
-    margin-bottom: 14px;
-  }
-  
-  .section-title {
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-  
-  .info-row {
-    font-size: 14px;
-    margin-bottom: 4px;
-  }
-  
-  .status-badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 500;
-  }
-  
-  .status-pending {
-    background-color: #fef3c7;
-    color: #b45309;
-  }
-  
-  .status-accepted {
-    background-color: #dcfce7;
-    color: #166534;
-  }
-  
-  .status-rejected {
-    background-color: #fee2e2;
-    color: #991b1b;
-  }
-  
-  .action-buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 12px;
-  }
-  
-  .accept-btn {
-    padding: 8px 14px;
-    border-radius: 8px;
-    border: none;
-    background-color: #22c55e;
-    color: white;
-    font-size: 13px;
-    cursor: pointer;
-  }
-  
-  .reject-btn {
-    padding: 8px 14px;
-    border-radius: 8px;
-    border: none;
-    background-color: #ef4444;
-    color: white;
-    font-size: 13px;
-    cursor: pointer;
-  }
-  
-  .accept-btn:disabled,
-  .reject-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .resume-link {
-    color: var(--primary);
-    font-size: 14px;
-  }
+}

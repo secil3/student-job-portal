@@ -56,13 +56,14 @@ export default function MyResumes() {
   return (
     <div className="resumes-container">
       <div className="resumes-header">
+        <span>Documents</span>
         <h2>My Resumes</h2>
-        <p>Open, rename, download, or delete your uploaded resumes.</p>
+        <p>Upload and manage the PDF CVs you use for job applications.</p>
       </div>
 
       <UploadResume onUploadSuccess={fetchResumes} />
 
-      {loading && <p>Loading...</p>}
+      {loading && <p className="resumes-message">Loading resumes...</p>}
       {error && <p className="resumes-error">{error}</p>}
 
       {!loading && resumes.length === 0 && (
@@ -73,14 +74,14 @@ export default function MyResumes() {
       )}
 
       {!loading &&
-        resumes.map((r) => {
+        <div className="resumes-list">
+          {resumes.map((r) => {
           const canRename = (renameMap[r.id] || "").trim().length > 0;
           const pdf = isPdf(r.file_path);
 
           return (
-            <div key={r.id} className="resume-card">
+            <article key={r.id} className="resume-card">
               <div className="resume-row">
-                {/* File name click: PDF => open new tab, others => download */}
                 <ProtectedResumeButton
                   resumeId={r.id}
                   fileName={r.name}
@@ -118,31 +119,36 @@ export default function MyResumes() {
               </div>
 
               <div className="resume-rename">
-                <input
-                  className="rename-input"
-                  placeholder="Type a new name..."
-                  value={renameMap[r.id] || ""}
-                  onChange={(e) =>
-                    setRenameMap((prev) => ({ ...prev, [r.id]: e.target.value }))
-                  }
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") renameResume(r.id);
-                  }}
-                />
+                <label htmlFor={`resume-name-${r.id}`}>Rename CV</label>
+                <div className="resume-rename-controls">
+                  <input
+                    id={`resume-name-${r.id}`}
+                    className="rename-input"
+                    placeholder="Enter a new file name"
+                    value={renameMap[r.id] || ""}
+                    onChange={(e) =>
+                      setRenameMap((prev) => ({ ...prev, [r.id]: e.target.value }))
+                    }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") renameResume(r.id);
+                    }}
+                  />
 
-                <button
-                  type="button"
-                  onClick={() => renameResume(r.id)}
-                  className="btn btn-primary-soft"
-                  disabled={!canRename}
-                  title="Rename this resume"
-                >
-                  Rename
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => renameResume(r.id)}
+                    className="btn btn-primary-soft"
+                    disabled={!canRename}
+                    title="Rename this resume"
+                  >
+                    Rename
+                  </button>
+                </div>
               </div>
-            </div>
+            </article>
           );
-        })}
+          })}
+        </div>}
     </div>
   );
 }

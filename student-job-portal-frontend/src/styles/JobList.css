@@ -1,18 +1,201 @@
-.joblist-container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 24px;
+.student-jobs-page {
+  max-width: 1080px;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: clamp(28px, 5vw, 52px) clamp(16px, 3vw, 28px);
+  color: #2c0735;
+  font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.student-jobs-header {
+  max-width: 620px;
+  margin-bottom: 20px;
+}
+
+.student-jobs-header > span {
+  color: #613dc1;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.student-jobs-header h1 {
+  margin: 6px 0 0;
+  color: #2c0735;
+  font-size: clamp(27px, 4vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+}
+
+.student-jobs-header p {
+  margin: 8px 0 0;
+  color: rgba(44, 7, 53, 0.62);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.student-jobs-page .resume-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  border: 1px solid rgba(44, 7, 53, 0.1);
+  border-radius: 11px;
+  background: #ffffff;
+}
+
+.student-jobs-page .resume-select label {
+  flex: 0 0 auto;
+  color: #2c0735;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.resume-select-control {
+  width: min(100%, 320px);
+}
+
+.student-jobs-page .resume-select select {
+  width: 100%;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid rgba(44, 7, 53, 0.2);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #2c0735;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.student-jobs-page .resume-select select:focus-visible {
+  outline: 3px solid rgba(133, 138, 227, 0.32);
+  outline-offset: 1px;
+  border-color: #613dc1;
+}
+
+.student-jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.student-job-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  min-height: 230px;
+  padding: 18px;
+  border: 1px solid rgba(44, 7, 53, 0.1);
+  border-radius: 13px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(44, 7, 53, 0.04);
+}
+
+.student-job-card h2 {
+  margin: 0;
+  color: #2c0735;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.student-job-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.student-job-meta span {
+  max-width: 100%;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #d9ffe2;
+  color: #2c0735;
+  font-size: 10px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.student-job-card-content > p {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 13px 0 16px;
+  color: rgba(44, 7, 53, 0.62);
+  font-size: 12px;
+  line-height: 1.65;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
+.student-job-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 12px;
+  border-top: 1px solid rgba(44, 7, 53, 0.07);
+}
+
+.student-apply-btn {
+  min-height: 34px;
+  padding: 7px 15px;
+  border: 1px solid #613dc1;
+  border-radius: 8px;
+  background: #613dc1;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.student-apply-btn:hover {
+  border-color: #2c0735;
+  background: #2c0735;
+}
+
+.student-apply-btn:focus-visible {
+  outline: 3px solid rgba(133, 138, 227, 0.38);
+  outline-offset: 2px;
+}
+
+.student-jobs-message {
+  padding: 17px;
+  border: 1px dashed rgba(97, 61, 193, 0.22);
+  border-radius: 11px;
+  background: #ffffff;
+  color: rgba(44, 7, 53, 0.62);
+  font-size: 12px;
+}
+
+.student-jobs-error {
+  border-color: rgba(185, 28, 28, 0.2);
+  color: #b91c1c;
+}
+
+@media (max-width: 720px) {
+  .student-jobs-grid {
+    grid-template-columns: 1fr;
   }
-  
-  .resume-select {
-    margin-bottom: 20px;
+}
+
+@media (max-width: 520px) {
+  .student-jobs-page .resume-select {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
   }
-  
-  .job-card {
-    background: var(--white);
-    border: 1px solid var(--gray-border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
+
+  .resume-select-control {
+    width: 100%;
   }
-  
+
+  .student-job-card {
+    min-height: 0;
+  }
+}

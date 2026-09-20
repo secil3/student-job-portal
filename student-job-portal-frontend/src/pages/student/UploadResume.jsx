@@ -50,27 +50,31 @@ export default function UploadResume({ onUploadSuccess, className = "" }) {
 
   return (
     <div className="upload-container">
-      <div className="upload-title">Upload Resume</div>
+      <div className="upload-heading">
+        <div className="upload-title">Upload a PDF CV</div>
+        <div className="upload-help">PDF only · Maximum 5 MB</div>
+      </div>
 
-      <input
-        className="upload-input"
-        type="file"
-        accept="application/pdf,.pdf"
-        ref={fileInputRef}
-        disabled={loading}
-        onChange={(e) => setFile(e.target.files[0])}
-      />
+      <div className="upload-controls">
+        <input
+          className="upload-input"
+          type="file"
+          accept="application/pdf,.pdf"
+          ref={fileInputRef}
+          disabled={loading}
+          aria-label="Choose a PDF CV to upload"
+          onChange={(e) => setFile(e.target.files[0])}
+        />
 
-      <div className="upload-help">PDF only, maximum 5 MB.</div>
-
-      <button
-        type="button"
-        className={`btn btn-primary upload-btn ${className}`.trim()}
-        onClick={handleUpload}
-        disabled={loading}
-      >
-        {loading ? "Uploading..." : "Upload Resume"}
-      </button>
+        <button
+          type="button"
+          className={`upload-btn ${className}`.trim()}
+          onClick={handleUpload}
+          disabled={loading}
+        >
+          {loading ? "Uploading..." : "Upload Resume"}
+        </button>
+      </div>
 
 
       {message && <div className="upload-success">{message}</div>}

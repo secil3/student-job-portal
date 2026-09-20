@@ -73,61 +73,82 @@ export default function EditProfile() {
 
   return (
     <div className="profile-container">
-      <div className="profile-card">
-        <h2>Edit Profile</h2>
+      <header className="profile-header">
+        <span>Student profile</span>
+        <h1>Edit Profile</h1>
+        <p>Keep your academic information current for your applications.</p>
+      </header>
 
-        <input
-          className="profile-input"
-          name="university"
-          placeholder="University"
-          value={form.university || ""}
-          onChange={handleChange}
-          maxLength={255}
-        />
+      <div className="profile-layout">
+        <div className="profile-card">
+          <div className="profile-fields">
+            <label className="profile-field">
+              <span>University</span>
+              <input
+                className="profile-input"
+                name="university"
+                placeholder="Enter your university"
+                value={form.university || ""}
+                onChange={handleChange}
+                maxLength={255}
+              />
+            </label>
 
-        <input
-          className="profile-input"
-          name="major"
-          placeholder="Major"
-          value={form.major || ""}
-          onChange={handleChange}
-          maxLength={255}
-        />
+            <label className="profile-field">
+              <span>Major</span>
+              <input
+                className="profile-input"
+                name="major"
+                placeholder="Enter your major"
+                value={form.major || ""}
+                onChange={handleChange}
+                maxLength={255}
+              />
+            </label>
 
-        <input
-          className="profile-input"
-          type="number"
-          name="GPA"
-          placeholder="GPA (0.00–4.00)"
-          value={form.GPA || ""}
-          onChange={handleChange}
-          min="0"
-          max="4"
-          step="0.01"
-        />
+            <label className="profile-field">
+              <span>GPA</span>
+              <input
+                className="profile-input"
+                type="number"
+                name="GPA"
+                placeholder="0.00–4.00"
+                value={form.GPA || ""}
+                onChange={handleChange}
+                min="0"
+                max="4"
+                step="0.01"
+              />
+              <small>Use a value between 0.00 and 4.00, with up to two decimal places.</small>
+            </label>
+          </div>
 
-        {/* Resume summary card */}
-        <div className="resume-summary">
-          <div>
-            <h3>Resume</h3>
+          {profileError && <p className="auth-error">{profileError}</p>}
+          {saveError && <p className="auth-error">{saveError}</p>}
+          {success && <p className="auth-success">{success}</p>}
+
+          <div className="profile-actions">
+            <button className="profile-save-btn" onClick={handleSubmit} disabled={isSaving}>
+              {isSaving ? "Saving..." : "Save Profile"}
+            </button>
+          </div>
+        </div>
+
+        <aside className="resume-summary">
+          <div className="resume-summary-icon" aria-hidden="true">PDF</div>
+          <div className="resume-summary-content">
+            <span>CV status</span>
+            <h2>Resume</h2>
             <p className={hasResume ? "resume-ok" : "resume-warn"}>
-              {hasResume ? "✅ Resume uploaded" : "⚠️ No resume uploaded yet"}
+              {hasResume ? "Resume uploaded" : "No resume uploaded yet"}
             </p>
             {resumeError && <p className="auth-error">{resumeError}</p>}
           </div>
 
-          <Link to="/student/resumes" className="btn btn-secondary">
+          <Link to="/student/resumes" className="manage-resumes-link">
             Manage My Resumes
           </Link>
-        </div>
-
-        {profileError && <p className="auth-error">{profileError}</p>}
-        {saveError && <p className="auth-error">{saveError}</p>}
-        {success && <p className="auth-success">{success}</p>}
-
-        <button className="btn btn-primary" onClick={handleSubmit} disabled={isSaving}>
-          {isSaving ? "Saving..." : "Save Profile"}
-        </button>
+        </aside>
       </div>
     </div>
   );

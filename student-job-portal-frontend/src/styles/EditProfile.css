@@ -1,61 +1,219 @@
 .profile-container {
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 24px;
-  }
-  
-  .profile-card {
-    background: var(--white);
-    border: 1px solid var(--gray-border);
-    border-radius: 12px;
-    padding: 20px;
-  }
-  
-  .profile-input {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 12px;
-  }
+  max-width: 920px;
+  margin: 0 auto;
+  padding: clamp(28px, 5vw, 52px) clamp(16px, 3vw, 28px);
+  color: #2c0735;
+  font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
 
-  
-  /* Upload Resume = secondary action */
-.upload-btn {
-  padding: 6px 10px;
+.profile-header {
+  max-width: 620px;
+  margin-bottom: 20px;
+}
+
+.profile-header > span {
+  color: #613dc1;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.profile-header h1 {
+  margin: 6px 0 0;
+  color: #2c0735;
+  font-size: clamp(27px, 4vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+}
+
+.profile-header p {
+  margin: 8px 0 0;
+  color: rgba(44, 7, 53, 0.62);
   font-size: 13px;
-  border-radius: 8px;
-  background-color: rgba(79, 70, 229, 0.85);
+  line-height: 1.6;
 }
 
-/* Hover daha soft */
-.upload-btn:hover {
-  background-color: rgba(79, 70, 229, 1);
+.profile-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  align-items: start;
+  gap: 14px;
 }
 
-/* Save Profile ana buton kalsın */
-.save-btn {
-  margin-top: 18px;
-}
-.resume-summary{
-  margin-top: 18px;
-  padding: 14px;
-  border: 1px solid #e5e7eb;
+.profile-card,
+.resume-summary {
+  border: 1px solid rgba(44, 7, 53, 0.11);
   border-radius: 14px;
-  background: #fff;
+  background: #ffffff;
+  box-shadow: 0 4px 15px rgba(44, 7, 53, 0.035);
+}
+
+.profile-card {
+  padding: 22px;
+}
+
+.profile-fields {
+  display: grid;
+  gap: 13px;
+}
+
+.profile-field {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.resume-summary h3{
+.profile-field > span {
+  color: #2c0735;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.profile-field small {
+  color: rgba(44, 7, 53, 0.52);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.profile-container .profile-input {
+  width: 100%;
   margin: 0;
+  padding: 9px 11px;
+  border: 1px solid rgba(44, 7, 53, 0.22);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #2c0735;
+  font-family: inherit;
+  font-size: 12px;
 }
 
-.resume-ok{ color:#16a34a; margin: 6px 0 0; }
-.resume-warn{ color:#d97706; margin: 6px 0 0; }
-
-.btn.btn-secondary{
-  background: #eef2ff;
-  color: #1f2937;
+.profile-container .profile-input:focus-visible {
+  outline: 3px solid rgba(133, 138, 227, 0.28);
+  outline-offset: 1px;
+  border-color: #613dc1;
 }
 
+.profile-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(44, 7, 53, 0.07);
+}
+
+.profile-save-btn {
+  min-height: 36px;
+  padding: 8px 15px;
+  border: 1px solid #613dc1;
+  border-radius: 9px;
+  background: #613dc1;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.profile-save-btn:hover:not(:disabled) {
+  border-color: #2c0735;
+  background: #2c0735;
+}
+
+.profile-save-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.resume-summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 11px;
+  padding: 17px;
+}
+
+.resume-summary-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: #d9ffe2;
+  color: #2c0735;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.resume-summary-content {
+  min-width: 0;
+}
+
+.resume-summary-content > span {
+  color: rgba(44, 7, 53, 0.48);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.resume-summary h2 {
+  margin: 3px 0 0;
+  color: #2c0735;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.resume-ok,
+.resume-warn {
+  margin: 4px 0 0;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.resume-ok {
+  color: #166534;
+}
+
+.resume-warn {
+  color: #92400e;
+}
+
+.manage-resumes-link {
+  grid-column: 1 / -1;
+  display: inline-flex;
+  justify-content: center;
+  padding: 8px 10px;
+  border: 1px solid rgba(97, 61, 193, 0.22);
+  border-radius: 8px;
+  background: rgba(133, 138, 227, 0.08);
+  color: #613dc1;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.manage-resumes-link:hover {
+  border-color: #858ae3;
+  text-decoration: none;
+}
+
+.profile-container .auth-error,
+.profile-container .auth-success {
+  margin: 12px 0 0;
+  font-size: 11px;
+}
+
+@media (max-width: 720px) {
+  .profile-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 440px) {
+  .profile-card {
+    padding: 18px;
+  }
+
+  .profile-actions .profile-save-btn {
+    width: 100%;
+  }
+}
