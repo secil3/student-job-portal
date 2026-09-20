@@ -8,6 +8,7 @@ import StudentDashboard from "./pages/student/StudentDashboard";
 import JobList from "./pages/student/JobList";
 import EditProfile from "./pages/student/EditProfile";
 import MyResumes from "./pages/student/MyResumes";
+import StudentApplications from "./pages/student/StudentApplications";
 
 
 import EmployerDashboard from "./pages/employer/EmployerDashboard";
@@ -72,6 +73,14 @@ export default function App() {
               element={
                 <ProtectedRoute role="student">
                   <MyResumes />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/applications"
+              element={
+                <ProtectedRoute role="student">
+                  <StudentApplications />
                 </ProtectedRoute>
               }
             />

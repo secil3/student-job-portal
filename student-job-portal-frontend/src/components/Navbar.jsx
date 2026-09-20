@@ -67,6 +67,10 @@ export default function Navbar() {
               Jobs
             </NavLink>
 
+            <NavLink to="/student/applications" className={navLinkClass}>
+              My Applications
+            </NavLink>
+
             <NavLink to="/student/profile" className={navLinkClass}>
               Profile
             </NavLink>
