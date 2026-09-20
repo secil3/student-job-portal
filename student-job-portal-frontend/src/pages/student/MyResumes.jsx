@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
+import ProtectedResumeButton from "../../components/ProtectedResumeButton";
+import UploadResume from "./UploadResume";
 import "../../styles/MyResumes.css";
 
 export default function MyResumes() {
@@ -27,11 +29,12 @@ export default function MyResumes() {
 
   const deleteResume = async (id) => {
     if (!confirm("Delete this resume?")) return;
+    setError("");
     try {
       await api.delete(`/resumes/${id}`);
-      fetchResumes();
+      await fetchResumes();
     } catch (e) {
-      alert(e.response?.data?.message || "Delete failed ❌");
+      setError(e.response?.data?.message || "Delete failed ❌");
     }
   };
 
@@ -50,18 +53,6 @@ export default function MyResumes() {
 
   const isPdf = (path = "") => path.toLowerCase().endsWith(".pdf");
 
-  // ✅ IMPORTANT: uploads are served by BACKEND, not by Vite (5173)
-  // Put your backend url here if different (e.g. http://localhost:5000)
-  const BACKEND_URL =
-    import.meta.env.VITE_BACKEND_URL || "http://localhost:5050";
-
-  const fileUrl = (path = "") => {
-    // already full url
-    if (path.startsWith("http://") || path.startsWith("https://")) return path;
-    // ensure /uploads/... works
-    return `${BACKEND_URL}${path.startsWith("/") ? "" : "/"}${path}`;
-  };
-
   return (
     <div className="resumes-container">
       <div className="resumes-header">
@@ -69,13 +60,15 @@ export default function MyResumes() {
         <p>Open, rename, download, or delete your uploaded resumes.</p>
       </div>
 
+      <UploadResume onUploadSuccess={fetchResumes} />
+
       {loading && <p>Loading...</p>}
       {error && <p className="resumes-error">{error}</p>}
 
       {!loading && resumes.length === 0 && (
         <div className="resumes-empty">
           <p>No resumes uploaded.</p>
-          <p className="muted">Upload one from your Profile page (Resume section).</p>
+          <p className="muted">Use the PDF upload form above to add your first resume.</p>
         </div>
       )}
 
@@ -83,56 +76,29 @@ export default function MyResumes() {
         resumes.map((r) => {
           const canRename = (renameMap[r.id] || "").trim().length > 0;
           const pdf = isPdf(r.file_path);
-          const url = fileUrl(r.file_path);
 
           return (
             <div key={r.id} className="resume-card">
               <div className="resume-row">
                 {/* File name click: PDF => open new tab, others => download */}
-                {pdf ? (
-                  <a
-                    className="resume-link"
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="Open this resume in a new tab"
-                  >
-                    <span className="resume-icon">📄</span>
-                    <span className="resume-name">{r.name}</span>
-                  </a>
-                ) : (
-                  <a
-                    className="resume-link"
-                    href={url}
-                    download
-                    title="Download this resume"
-                  >
-                    <span className="resume-icon">📄</span>
-                    <span className="resume-name">{r.name}</span>
-                  </a>
-                )}
+                <ProtectedResumeButton
+                  resumeId={r.id}
+                  fileName={r.name}
+                  download={!pdf}
+                >
+                  <span className="resume-icon">📄</span>
+                  <span className="resume-name">{r.name}</span>
+                </ProtectedResumeButton>
 
                 <div className="resume-actions">
-                  {pdf ? (
-                    <a
-                      className="btn btn-secondary-soft btn-link"
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title="Open this resume"
-                    >
-                      Open
-                    </a>
-                  ) : (
-                    <a
-                      className="btn btn-secondary-soft btn-link"
-                      href={url}
-                      download
-                      title="Download this resume"
-                    >
-                      Download
-                    </a>
-                  )}
+                  <ProtectedResumeButton
+                    resumeId={r.id}
+                    fileName={r.name}
+                    download={!pdf}
+                    className="btn btn-secondary-soft btn-link"
+                  >
+                    {pdf ? "Open" : "Download"}
+                  </ProtectedResumeButton>
 
                   <button
                     type="button"

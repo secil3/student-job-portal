@@ -1,12 +1,13 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import "../styles/Navbar.css";
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { user, logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.clear();
+    logout();
     navigate("/");
   };
 
@@ -74,9 +75,6 @@ export default function Navbar() {
             </NavLink>
             <NavLink to="/employer/job-post" className="nav-link">
               Post Job
-            </NavLink>
-            <NavLink to="/employer/applications" className="nav-link">
-              Applications
             </NavLink>
           </>
         )}

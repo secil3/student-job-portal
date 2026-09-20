@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { applyToJob } from "../../api/application.api";
 import api from "../../services/api";
 import "../../styles/JobList.css";
 
@@ -19,13 +20,10 @@ export default function JobList() {
     }
 
     try {
-      await api.post("/applications", {
-        jobId,
-        resumeId: selectedResume,
-      });
+      await applyToJob(jobId, selectedResume);
       alert("Applied successfully ✅");
     } catch (err) {
-      alert("Apply failed ❌");
+      alert(err?.response?.data?.message || "Apply failed ❌");
     }
   };
 

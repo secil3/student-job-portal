@@ -12,19 +12,45 @@ export const getPendingEmployers = async (req, res) => {
 
 // PATCH approve / reject employer
 export const updateEmployerStatus = async (req, res) => {
-  const { status } = req.body; // approved | rejected
-  const { id } = req.params;
+  try {
+    const { status } = req.body;
+    const { id } = req.params;
 
-  if (!["approved", "rejected"].includes(status)) {
-    return res.status(400).json({ message: "Invalid status" });
+    if (!["approved", "rejected"].includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
+
+    const [users] = await db.query(
+      "SELECT role FROM users WHERE id = ?",
+      [id]
+    );
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (users[0].role !== "employer") {
+      return res.status(403).json({
+        message: "Only employer accounts can be approved or rejected",
+      });
+    }
+
+    const [result] = await db.query(
+      "UPDATE users SET status = ? WHERE id = ? AND role = 'employer'",
+      [status, id]
+    );
+
+    if (result.affectedRows !== 1) {
+      return res.status(409).json({
+        message: "Employer status could not be updated",
+      });
+    }
+
+    return res.json({ message: "Employer status updated successfully" });
+  } catch (error) {
+    console.error("updateEmployerStatus error:", error.code || error.name);
+    return res.status(500).json({ message: "Server error" });
   }
-
-  await db.query(
-    "UPDATE users SET status=? WHERE id=?",
-    [status, id]
-  );
-
-  res.json({ message: "Employer status updated successfully" });
 };
 //admin data görüntüleme
 export const getAdminDashboard = async (req, res) => {

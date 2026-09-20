@@ -1,61 +1,70 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [role, setRole] = useState(null);
-  const [loading, setLoading] = useState(true);
+const clearStoredSession = () => {
+  localStorage.removeItem("user");
+  localStorage.removeItem("token");
+  localStorage.removeItem("role");
+};
 
-  // Sayfa refresh olunca localStorage'dan oku
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const storedToken = localStorage.getItem("token");
-    const storedRole = localStorage.getItem("role");
+const loadStoredSession = () => {
+  const storedUser = localStorage.getItem("user");
+  const storedToken = localStorage.getItem("token");
 
-    if (storedUser && storedToken && storedRole) {
-      setUser(JSON.parse(storedUser));
-      setToken(storedToken);
-      setRole(storedRole);
+  if (!storedUser || !storedToken) {
+    clearStoredSession();
+    return { user: null, token: null };
+  }
+
+  try {
+    const user = JSON.parse(storedUser);
+
+    if (!user?.id || !user?.role) {
+      clearStoredSession();
+      return { user: null, token: null };
     }
 
-    setLoading(false);
-  }, []);
+    // Remove the legacy duplicate role entry if it exists.
+    localStorage.removeItem("role");
+    return { user, token: storedToken };
+  } catch {
+    clearStoredSession();
+    return { user: null, token: null };
+  }
+};
 
-  const login = (userData, jwtToken, userRole) => {
-    setUser(userData);
-    setToken(jwtToken);
-    setRole(userRole);
+export const AuthProvider = ({ children }) => {
+  const [session, setSession] = useState(loadStoredSession);
+
+  const login = (userData, jwtToken) => {
+    setSession({ user: userData, token: jwtToken });
 
     localStorage.setItem("user", JSON.stringify(userData));
     localStorage.setItem("token", jwtToken);
-    localStorage.setItem("role", userRole);
+    localStorage.removeItem("role");
   };
 
   const logout = () => {
-    setUser(null);
-    setToken(null);
-    setRole(null);
-
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
+    setSession({ user: null, token: null });
+    clearStoredSession();
   };
+
+  const { user, token } = session;
 
   return (
     <AuthContext.Provider
       value={{
         user,
         token,
-        role,
+        role: user?.role ?? null,
         login,
         logout,
-        loading,
-        isAuthenticated: !!token,
+        loading: false,
+        isAuthenticated: Boolean(user && token),
       }}
     >
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

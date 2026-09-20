@@ -1,31 +1,42 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import api from "../../services/api";
+import ProtectedResumeButton from "../../components/ProtectedResumeButton";
 import "../../styles/EmployerApplications.css";
 
 const EmployerApplications = () => {
   const { jobId } = useParams();
+  const hasValidJobId = /^[1-9]\d*$/.test(jobId || "");
 
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  const fetchApplications = async () => {
-    try {
-      const res = await api.get(`/applications/job/${jobId}`);
-      setApplications(res.data);
-    } catch (err) {
-      setError("Failed to load applications");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [updatingApplicationIds, setUpdatingApplicationIds] = useState([]);
 
   useEffect(() => {
+    const fetchApplications = async () => {
+      if (!hasValidJobId) {
+        setError("Please select a valid job from the employer dashboard");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await api.get(`/applications/job/${jobId}`);
+        setApplications(res.data);
+      } catch {
+        setError("Failed to load applications");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchApplications();
-  }, [jobId]);
+  }, [jobId, hasValidJobId]);
 
   const handleStatusChange = async (applicationId, status) => {
+    setUpdatingApplicationIds((prev) => [...prev, applicationId]);
+
     try {
       await api.patch(`/applications/${applicationId}`, { status });
 
@@ -34,13 +45,26 @@ const EmployerApplications = () => {
           app.id === applicationId ? { ...app, status } : app
         )
       );
-    } catch (err) {
-      alert("Failed to update status");
+    } catch (requestError) {
+      alert(
+        requestError.response?.data?.message || "Failed to update status"
+      );
+    } finally {
+      setUpdatingApplicationIds((prev) =>
+        prev.filter((id) => id !== applicationId)
+      );
     }
   };
 
   if (loading) return <p>Loading applications...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (error) {
+    return (
+      <div className="applications-container">
+        <p style={{ color: "red" }}>{error}</p>
+        {!hasValidJobId && <Link to="/employer">Return to Dashboard</Link>}
+      </div>
+    );
+  }
 
   return (
     <div className="applications-container">
@@ -52,8 +76,11 @@ const EmployerApplications = () => {
         <p>No applications for this job yet.</p>
       )}
 
-      {applications.map((app) => (
-        <div key={app.id} className="application-card">
+      {applications.map((app) => {
+        const isUpdating = updatingApplicationIds.includes(app.id);
+
+        return (
+          <div key={app.id} className="application-card">
           
           {/* 👤 STUDENT */}
           <div className="section">
@@ -67,15 +94,10 @@ const EmployerApplications = () => {
           {/* 📄 RESUME */}
           <div className="section">
             <div className="section-title">Resume</div>
-            {app.resume_path ? (
-              <a
-                className="resume-link"
-                href={`http://localhost:5050/${app.resume_path}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+            {app.resume_id ? (
+              <ProtectedResumeButton resumeId={app.resume_id}>
                 View CV
-              </a>
+              </ProtectedResumeButton>
             ) : (
               <div className="info-row">Not provided</div>
             )}
@@ -95,7 +117,7 @@ const EmployerApplications = () => {
           <div className="action-buttons">
             <button
               className="accept-btn"
-              disabled={app.status === "accepted"}
+              disabled={isUpdating || app.status === "accepted"}
               onClick={() => handleStatusChange(app.id, "accepted")}
             >
               Accept
@@ -103,14 +125,15 @@ const EmployerApplications = () => {
 
             <button
               className="reject-btn"
-              disabled={app.status === "rejected"}
+              disabled={isUpdating || app.status === "rejected"}
               onClick={() => handleStatusChange(app.id, "rejected")}
             >
               Reject
             </button>
           </div>
-        </div>
-      ))}
+          </div>
+        );
+      })}
     </div>
   );
 };

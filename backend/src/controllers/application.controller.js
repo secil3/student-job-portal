@@ -5,12 +5,9 @@ import db from "../config/db.js";
 ========================= */
 export const applyToJob = async (req, res) => {
   try {
-    // 🔍 DEBUG (şimdilik kalsın, sonra silebilirsin)
-    console.log("REQ BODY:", req.body);
-    console.log("REQ USER:", req.user);
-
     const studentId = req.user?.id;
     const jobId = req.body?.jobId; // camelCase API contract
+    const resumeId = req.body?.resumeId;
 
     // 🔒 Güvenlik kontrolleri
     if (!studentId) {
@@ -21,11 +18,29 @@ export const applyToJob = async (req, res) => {
       return res.status(400).json({ message: "Job ID required" });
     }
 
-    // ✅ INSERT
+    if (!resumeId) {
+      return res.status(400).json({ message: "Resume is required" });
+    }
+
+    const [resumes] = await db.query(
+      "SELECT id, user_id FROM resumes WHERE id = ?",
+      [resumeId]
+    );
+
+    if (resumes.length === 0) {
+      return res.status(404).json({ message: "Resume not found" });
+    }
+
+    if (Number(resumes[0].user_id) !== Number(studentId)) {
+      return res.status(403).json({
+        message: "You can only apply with your own resume",
+      });
+    }
+
     await db.query(
-        "INSERT INTO applications (job_id, student_id) VALUES (?, ?)",
-        [jobId, studentId]
-      );
+      "INSERT INTO applications (job_id, student_id, resume_id) VALUES (?, ?, ?)",
+      [jobId, studentId, resumeId]
+    );
 
     return res.status(201).json({ message: "Applied successfully ✅" });
 
@@ -37,7 +52,7 @@ export const applyToJob = async (req, res) => {
         .json({ message: "Already applied to this job" });
     }
 
-    console.error("APPLY ERROR:", error);
+    console.error("applyToJob error:", error.code || error.name);
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -84,7 +99,6 @@ export const getEmployerApplications = async (req, res) => {
         u.university,
         u.major,
         u.GPA,
-        u.resume_path,
         j.title AS job_title
       FROM applications a
       JOIN users u ON a.student_id = u.id
@@ -106,21 +120,22 @@ export const getEmployerApplications = async (req, res) => {
 
 
 export const updateApplicationStatus = async (req, res) => {
-  console.log("🔥 UPDATE STATUS CONTROLLER ÇALIŞTI");
-  console.log("PARAM ID:", req.params.id);
-  console.log("BODY:", req.body);
   try {
-    const { id } = req.params; // application_id
+    const { id } = req.params;
     const { status } = req.body;
+    const employerId = req.user.id;
 
-    // status kontrolü
-    if (!["pending", "accepted", "rejected"].includes(status)) {
+    if (!["accepted", "rejected"].includes(status)) {
       return res.status(400).json({ message: "Invalid status" });
     }
 
-    // application var mı?
     const [rows] = await db.query(
-      "SELECT id FROM applications WHERE id = ?",
+      `
+      SELECT a.id, a.status, j.employer_id
+      FROM applications a
+      JOIN jobs j ON j.id = a.job_id
+      WHERE a.id = ?
+      `,
       [id]
     );
 
@@ -128,15 +143,35 @@ export const updateApplicationStatus = async (req, res) => {
       return res.status(404).json({ message: "Application not found" });
     }
 
-    // status update
-    await db.query(
-      "UPDATE applications SET status = ? WHERE id = ?",
-      [status, id]
+    if (Number(rows[0].employer_id) !== Number(employerId)) {
+      return res.status(403).json({
+        message: "You can only update applications for your own jobs",
+      });
+    }
+
+    if (rows[0].status === status) {
+      return res.json({ message: "Status updated ✅" });
+    }
+
+    const [result] = await db.query(
+      `
+      UPDATE applications a
+      JOIN jobs j ON j.id = a.job_id
+      SET a.status = ?
+      WHERE a.id = ? AND j.employer_id = ?
+      `,
+      [status, id, employerId]
     );
+
+    if (result.affectedRows !== 1) {
+      return res.status(409).json({
+        message: "Application status could not be updated",
+      });
+    }
 
     return res.json({ message: "Status updated ✅" });
   } catch (err) {
-    console.error("updateApplicationStatus error:", err);
+    console.error("updateApplicationStatus error:", err.code || err.name);
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -155,8 +190,8 @@ export const getApplicationsByJob = async (req, res) => {
       u.university,
       u.major,
       u.gpa,
-      r.name AS resume_name,
-      r.file_path AS resume_path
+      r.id AS resume_id,
+      r.name AS resume_name
     FROM applications a
     JOIN jobs j ON a.job_id = j.id
     JOIN users u ON a.student_id = u.id
@@ -169,6 +204,3 @@ export const getApplicationsByJob = async (req, res) => {
 
   res.json(rows);
 };
-
-
-

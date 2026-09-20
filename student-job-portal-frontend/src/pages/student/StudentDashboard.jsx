@@ -131,7 +131,7 @@ const StudentDashboard = () => {
         ) : (
           <div className="jobs-grid">
             {jobs.map((job) => (
-              <JobCard key={job.id} job={job} onApplied={fetchApplications} />
+              <JobCard key={job.id} job={job} />
             ))}
           </div>
         )}

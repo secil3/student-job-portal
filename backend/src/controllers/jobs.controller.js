@@ -3,23 +3,54 @@ import db from "../config/db.js";
 export const createJob = async (req, res) => {
   try {
     const { title, description, location, salary } = req.body;
+    const employerId = req.user?.id;
+
+    if (!employerId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const [users] = await db.query(
+      "SELECT role, status FROM users WHERE id = ?",
+      [employerId]
+    );
+
+    if (users.length === 0) {
+      return res.status(401).json({ message: "User account not found" });
+    }
+
+    const user = users[0];
+
+    if (user.role !== "employer") {
+      return res.status(403).json({
+        message: "Only employers can create job posts",
+      });
+    }
+
+    if (user.status === "pending") {
+      return res.status(403).json({
+        message: "Employer account approval is pending",
+      });
+    }
+
+    if (user.status !== "approved") {
+      return res.status(403).json({
+        message: "Employer account is not approved",
+      });
+    }
 
     if (!title || !description) {
       return res.status(400).json({ message: "Title and description required" });
     }
 
-    // 🔐 JWT'den employer id
-    const employer_id = req.user.id;
-
     await db.query(
       `INSERT INTO jobs (title, description, location, salary, employer_id)
        VALUES (?, ?, ?, ?, ?)`,
-      [title, description, location, salary, employer_id]
+      [title, description, location, salary, employerId]
     );
 
     res.status(201).json({ message: "Job created successfully ✅" });
   } catch (error) {
-    console.error("JOB CREATE ERROR:", error);
+    console.error("createJob error:", error.code || error.name);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -94,12 +125,63 @@ export const getEmployerJobs = async (req, res) => {
 export const deleteJob = async (req, res) => {
   try {
     const { id } = req.params;
+    const userId = req.user?.id;
 
-    await db.query("DELETE FROM jobs WHERE id = ?", [id]);
+    const [users] = await db.query(
+      "SELECT role FROM users WHERE id = ?",
+      [userId]
+    );
 
-    res.json({ message: "Job deleted 🗑️" });
+    if (users.length === 0) {
+      return res.status(401).json({ message: "User account not found" });
+    }
+
+    const role = users[0].role;
+
+    if (!['employer', 'admin'].includes(role)) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    const [jobs] = await db.query(
+      "SELECT id, employer_id FROM jobs WHERE id = ?",
+      [id]
+    );
+
+    if (jobs.length === 0) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    if (role === "employer" && Number(jobs[0].employer_id) !== Number(userId)) {
+      return res.status(403).json({
+        message: "You can only delete your own job posts",
+      });
+    }
+
+    const query = role === "admin"
+      ? `DELETE FROM jobs
+         WHERE id = ?
+           AND EXISTS (
+             SELECT 1 FROM users WHERE id = ? AND role = 'admin'
+           )`
+      : `DELETE FROM jobs
+         WHERE id = ? AND employer_id = ?
+           AND EXISTS (
+             SELECT 1 FROM users WHERE id = ? AND role = 'employer'
+           )`;
+
+    const params = role === "admin"
+      ? [id, userId]
+      : [id, userId, userId];
+
+    const [result] = await db.query(query, params);
+
+    if (result.affectedRows !== 1) {
+      return res.status(409).json({ message: "Job could not be deleted" });
+    }
+
+    return res.json({ message: "Job and its applications were deleted" });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    console.error("deleteJob error:", err.code || err.name);
+    return res.status(500).json({ message: "Job could not be deleted" });
   }
 };
-

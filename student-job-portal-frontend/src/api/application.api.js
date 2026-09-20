@@ -1,7 +1,7 @@
 import api from "../services/api";
 
-export const applyToJob = (jobId) =>
-  api.post("/applications", { jobId });
+export const applyToJob = (jobId, resumeId) =>
+  api.post("/applications", { jobId, resumeId });
 
 export const getEmployerApplications = () =>
   api.get("/applications/employer");

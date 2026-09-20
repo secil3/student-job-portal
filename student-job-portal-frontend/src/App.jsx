@@ -96,7 +96,7 @@ export default function App() {
               path="/employer/applications"
               element={
                 <ProtectedRoute role="employer">
-                  <EmployerApplications />
+                  <Navigate to="/employer" replace />
                 </ProtectedRoute>
               }
             />

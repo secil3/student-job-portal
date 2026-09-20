@@ -5,12 +5,13 @@ import "../../styles/AdminJobs.css";
 export default function AdminJobs() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deletingJobId, setDeletingJobId] = useState(null);
 
   const fetchJobs = async () => {
     try {
       const res = await api.get("/jobs");
       setJobs(res.data);
-    } catch (err) {
+    } catch {
       alert("Failed to load jobs");
     } finally {
       setLoading(false);
@@ -22,13 +23,20 @@ export default function AdminJobs() {
   }, []);
 
   const deleteJob = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this job?")) return;
+    const confirmed = window.confirm(
+      "Deleting this job will permanently delete all applications submitted for it. This action cannot be undone. Continue?"
+    );
+
+    if (!confirmed) return;
 
     try {
+      setDeletingJobId(id);
       await api.delete(`/jobs/${id}`);
-      fetchJobs();
+      await fetchJobs();
     } catch (err) {
-      alert("Failed to delete job");
+      alert(err.response?.data?.message || "Failed to delete job");
+    } finally {
+      setDeletingJobId(null);
     }
   };
 
@@ -52,8 +60,9 @@ export default function AdminJobs() {
               <button
                 className="btn btn-danger"
                 onClick={() => deleteJob(job.id)}
+                disabled={deletingJobId === job.id}
               >
-                Delete
+                {deletingJobId === job.id ? "Deleting..." : "Delete"}
               </button>
             </div>
           ))}

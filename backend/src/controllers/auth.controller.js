@@ -5,27 +5,19 @@ import crypto from "crypto";
 // ================= LOGIN =================
 export const login = async (req, res) => {
   try {
-    console.log("👉 LOGIN BODY:", req.body);
-
     const { email, password } = req.body;
 
     const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
 
-    console.log("👉 DB RESULT:", rows);
-
     if (rows.length === 0) {
-      console.log("❌ USER NOT FOUND");
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
     const user = rows[0];
-    console.log("👉 HASHED PASSWORD FROM DB:", user.password);
 
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log("👉 PASSWORD MATCH:", isMatch);
 
     if (!isMatch) {
-      console.log("❌ PASSWORD DOES NOT MATCH");
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
@@ -34,8 +26,6 @@ export const login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
-
-    console.log("✅ LOGIN SUCCESS FOR:", email);
 
     res.json({
       token,

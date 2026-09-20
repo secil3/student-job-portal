@@ -6,13 +6,14 @@ import "../../styles/EmployerDashboard.css";
 const EmployerDashboard = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deletingJobId, setDeletingJobId] = useState(null);
   const navigate = useNavigate();
 
   const fetchJobs = async () => {
     try {
       const res = await api.get("/jobs/employer");
       setJobs(res.data);
-    } catch (err) {
+    } catch {
       alert("Failed to load your job posts");
     } finally {
       setLoading(false);
@@ -24,13 +25,20 @@ const EmployerDashboard = () => {
   }, []);
 
   const handleDelete = async (jobId) => {
-    if (!window.confirm("Are you sure you want to delete this job?")) return;
+    const confirmed = window.confirm(
+      "Deleting this job will permanently delete all applications submitted for it. This action cannot be undone. Continue?"
+    );
+
+    if (!confirmed) return;
 
     try {
+      setDeletingJobId(jobId);
       await api.delete(`/jobs/${jobId}`);
       setJobs((prev) => prev.filter((job) => job.id !== jobId));
     } catch (err) {
-      alert("Failed to delete job");
+      alert(err.response?.data?.message || "Failed to delete job");
+    } finally {
+      setDeletingJobId(null);
     }
   };
 
@@ -72,8 +80,9 @@ const EmployerDashboard = () => {
                 <button
                   className="btn btn-danger"
                   onClick={() => handleDelete(job.id)}
+                  disabled={deletingJobId === job.id}
                 >
-                  Delete
+                  {deletingJobId === job.id ? "Deleting..." : "Delete"}
                 </button>
               </div>
             </div>

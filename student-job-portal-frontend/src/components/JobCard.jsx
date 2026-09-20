@@ -1,29 +1,11 @@
-import { useState } from "react";
-import { applyToJob } from "../api/application.api";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "../styles/JobCard.css";
 
-const JobCard = ({ job, onApplied }) => {
+const JobCard = ({ job }) => {
   const { role } = useAuth();
-
-  const [applied, setApplied] = useState(Boolean(job.applied));
-  const [loading, setLoading] = useState(false);
-
-  const handleApply = async () => {
-    try {
-      setLoading(true);
-      await applyToJob(job.id);
-      setApplied(true);
-
-      if (onApplied) {
-        await onApplied();
-      }
-    } catch (err) {
-      alert(err?.response?.data?.message || "Failed to apply ❌");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const navigate = useNavigate();
+  const applied = Boolean(job.applied);
 
   return (
     <div className="job-card">
@@ -61,10 +43,10 @@ const JobCard = ({ job, onApplied }) => {
             className={`btn btn-primary apply-btn ${
               applied ? "applied" : ""
             }`}
-            onClick={handleApply}
-            disabled={applied || loading}
+            onClick={() => navigate("/student/jobs")}
+            disabled={applied}
           >
-            {applied ? "Applied" : loading ? "Applying..." : "Apply"}
+            {applied ? "Applied" : "Select CV & Apply"}
           </button>
         )}
       </div>
