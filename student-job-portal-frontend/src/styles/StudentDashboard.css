@@ -198,6 +198,17 @@
   font-size: 12px;
 }
 
+.student-application-warning {
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(185, 28, 28, 0.18);
+  border-radius: 10px;
+  background: #fffafa;
+  color: #b91c1c;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
 .student-container .error-text {
   color: #b91c1c;
 }

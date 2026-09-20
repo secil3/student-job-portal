@@ -2,10 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "../styles/JobCard.css";
 
-const JobCard = ({ job }) => {
+const JobCard = ({ job, applicationState }) => {
   const { role } = useAuth();
   const navigate = useNavigate();
-  const applied = Boolean(job.applied);
+  const applied = applicationState === "applied";
+  const applicationStateUnknown = applicationState === "unknown";
 
   return (
     <article className="student-job-preview-card">
@@ -37,12 +38,12 @@ const JobCard = ({ job }) => {
         {role === "student" && (
           <button
             className={`student-preview-apply-btn ${
-              applied ? "applied" : ""
+              applied ? "applied" : applicationStateUnknown ? "unavailable" : ""
             }`}
             onClick={() => navigate("/student/jobs")}
-            disabled={applied}
+            disabled={applied || applicationStateUnknown}
           >
-            {applied ? "Applied" : "Apply"}
+            {applied ? "Already Applied" : applicationStateUnknown ? "Unavailable" : "Apply"}
           </button>
         )}
       </div>

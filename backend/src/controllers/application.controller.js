@@ -68,6 +68,7 @@ export const getStudentApplications = async (req, res) => {
       `
       SELECT
         a.id AS application_id,
+        a.job_id AS job_id,
         a.status,
         a.applied_at,
         j.title AS job_title

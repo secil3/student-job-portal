@@ -6,7 +6,7 @@ await jest.unstable_mockModule("../config/db.js", () => ({
   default: dbMock,
 }));
 
-const { applyToJob, getApplicationsByJob } = await import(
+const { applyToJob, getApplicationsByJob, getStudentApplications } = await import(
   "../controllers/application.controller.js"
 );
 
@@ -96,6 +96,27 @@ describe("Application resume relation", () => {
     await applyToJob(req, res);
 
     expect(res.status).toHaveBeenCalledWith(409);
+  });
+
+  test("includes job_id in the student application response", async () => {
+    const applications = [{
+      application_id: 30,
+      job_id: 4,
+      status: "pending",
+      applied_at: "2026-01-01T00:00:00.000Z",
+      job_title: "Synthetic Job",
+    }];
+    dbMock.query.mockResolvedValueOnce([applications]);
+    const req = { user: { id: 7, role: "student" } };
+    const res = mockResponse();
+
+    await getStudentApplications(req, res);
+
+    expect(dbMock.query).toHaveBeenCalledWith(
+      expect.stringContaining("a.job_id AS job_id"),
+      [7]
+    );
+    expect(res.json).toHaveBeenCalledWith(applications);
   });
 
   test("includes the stored resume relation in the employer job response", async () => {

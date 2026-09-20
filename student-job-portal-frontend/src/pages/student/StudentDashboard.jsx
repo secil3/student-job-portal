@@ -3,6 +3,10 @@ import { getAllJobs } from "../../api/job.api";
 import { getStudentApplications } from "../../api/application.api";
 import JobCard from "../../components/JobCard";
 import { Link } from "react-router-dom";
+import {
+  getAppliedJobIds,
+  getJobApplicationState,
+} from "../../utils/applicationStatus";
 
 import "../../styles/StudentDashboard.css";
 
@@ -12,6 +16,7 @@ const StudentDashboard = () => {
   const [loadingJobs, setLoadingJobs] = useState(true);
   const [loadingApps, setLoadingApps] = useState(true);
   const [error, setError] = useState("");
+  const [applicationsError, setApplicationsError] = useState("");
 
   // 🔹 Job list
   useEffect(() => {
@@ -34,7 +39,9 @@ const StudentDashboard = () => {
       const res = await getStudentApplications();
       setApplications(res.data);
     } catch (err) {
-      console.error("APPLICATIONS ERROR:", err);
+      setApplicationsError(
+        err.response?.data?.message || "Application history could not be loaded"
+      );
     } finally {
       setLoadingApps(false);
     }
@@ -43,6 +50,9 @@ const StudentDashboard = () => {
   useEffect(() => {
     fetchApplications();
   }, []);
+
+  const appliedJobIds = getAppliedJobIds(applications);
+  const applicationsLoaded = !applicationsError;
 
   if (loadingJobs || loadingApps) {
     return (
@@ -76,7 +86,7 @@ const StudentDashboard = () => {
         <div className="student-summary-grid">
           <div className="student-summary-card">
             <h4>Total Applications</h4>
-            <p>{applications.length}</p>
+            <p>{applicationsLoaded ? applications.length : "—"}</p>
           </div>
 
           <div className="student-summary-card">
@@ -93,7 +103,9 @@ const StudentDashboard = () => {
             </div>
           </div>
 
-          {applications.length === 0 ? (
+          {applicationsError ? (
+            <p className="student-application-warning">{applicationsError}</p>
+          ) : applications.length === 0 ? (
             <p className="student-empty-state">You haven’t applied to any jobs yet.</p>
           ) : (
             <div className="student-applications-grid">
@@ -130,12 +142,26 @@ const StudentDashboard = () => {
             </Link>
           </div>
 
+          {applicationsError && (
+            <p className="student-application-warning">
+              Application history is unavailable. Applying is temporarily disabled.
+            </p>
+          )}
+
           {jobs.length === 0 ? (
             <p className="student-empty-state">No jobs available.</p>
           ) : (
             <div className="student-dashboard-jobs-grid">
               {jobs.map((job) => (
-                <JobCard key={job.id} job={job} />
+                <JobCard
+                  key={job.id}
+                  job={job}
+                  applicationState={getJobApplicationState(
+                    job.id,
+                    appliedJobIds,
+                    applicationsLoaded
+                  )}
+                />
               ))}
             </div>
           )}
