@@ -3,13 +3,41 @@
     margin: 0 auto;
     padding: 24px;
   }
-  
+
   .applications-title {
     font-size: 22px;
     font-weight: 600;
     margin-bottom: 20px;
   }
-  
+
+  .application-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .filter-btn {
+    padding: 7px 12px;
+    border: 1px solid var(--gray-border);
+    border-radius: 999px;
+    background: var(--white);
+    color: #374151;
+    cursor: pointer;
+  }
+
+  .filter-btn.active {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+  }
+
+  .applications-error {
+    margin-bottom: 16px;
+    color: #b91c1c;
+  }
+
   .application-card {
     background-color: var(--white);
     border: 1px solid var(--gray-border);
@@ -87,9 +115,8 @@
     opacity: 0.5;
     cursor: not-allowed;
   }
-  
+
   .resume-link {
     color: var(--primary);
     font-size: 14px;
   }
-  

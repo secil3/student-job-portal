@@ -4,6 +4,8 @@ import api from "../../services/api";
 import ProtectedResumeButton from "../../components/ProtectedResumeButton";
 import "../../styles/EmployerApplications.css";
 
+const FILTERS = ["all", "pending", "accepted", "rejected"];
+
 const EmployerApplications = () => {
   const { jobId } = useParams();
   const hasValidJobId = /^[1-9]\d*$/.test(jobId || "");
@@ -11,6 +13,8 @@ const EmployerApplications = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [actionError, setActionError] = useState("");
+  const [activeFilter, setActiveFilter] = useState("all");
   const [updatingApplicationIds, setUpdatingApplicationIds] = useState([]);
 
   useEffect(() => {
@@ -24,8 +28,10 @@ const EmployerApplications = () => {
       try {
         const res = await api.get(`/applications/job/${jobId}`);
         setApplications(res.data);
-      } catch {
-        setError("Failed to load applications");
+      } catch (requestError) {
+        setError(
+          requestError.response?.data?.message || "Failed to load applications"
+        );
       } finally {
         setLoading(false);
       }
@@ -35,6 +41,7 @@ const EmployerApplications = () => {
   }, [jobId, hasValidJobId]);
 
   const handleStatusChange = async (applicationId, status) => {
+    setActionError("");
     setUpdatingApplicationIds((prev) => [...prev, applicationId]);
 
     try {
@@ -46,7 +53,7 @@ const EmployerApplications = () => {
         )
       );
     } catch (requestError) {
-      alert(
+      setActionError(
         requestError.response?.data?.message || "Failed to update status"
       );
     } finally {
@@ -56,12 +63,16 @@ const EmployerApplications = () => {
     }
   };
 
+  const filteredApplications = activeFilter === "all"
+    ? applications
+    : applications.filter((application) => application.status === activeFilter);
+
   if (loading) return <p>Loading applications...</p>;
   if (error) {
     return (
       <div className="applications-container">
-        <p style={{ color: "red" }}>{error}</p>
-        {!hasValidJobId && <Link to="/employer">Return to Dashboard</Link>}
+        <p className="applications-error">{error}</p>
+        <Link to="/employer">Return to Dashboard</Link>
       </div>
     );
   }
@@ -72,11 +83,30 @@ const EmployerApplications = () => {
         Applications for Job #{jobId}
       </h2>
 
+      <div className="application-filters" aria-label="Filter applications by status">
+        {FILTERS.map((filter) => (
+          <button
+            key={filter}
+            type="button"
+            className={`filter-btn${activeFilter === filter ? " active" : ""}`}
+            onClick={() => setActiveFilter(filter)}
+          >
+            {filter.charAt(0).toUpperCase() + filter.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {actionError && <p className="applications-error">{actionError}</p>}
+
       {applications.length === 0 && (
         <p>No applications for this job yet.</p>
       )}
 
-      {applications.map((app) => {
+      {applications.length > 0 && filteredApplications.length === 0 && (
+        <p>No {activeFilter} applications found.</p>
+      )}
+
+      {filteredApplications.map((app) => {
         const isUpdating = updatingApplicationIds.includes(app.id);
 
         return (
@@ -109,7 +139,7 @@ const EmployerApplications = () => {
             <span
               className={`status-badge status-${app.status}`}
             >
-              {app.status}
+              {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
             </span>
           </div>
 

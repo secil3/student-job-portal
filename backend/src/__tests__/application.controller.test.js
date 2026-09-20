@@ -100,13 +100,16 @@ describe("Application resume relation", () => {
 
   test("includes the stored resume relation in the employer job response", async () => {
     const applications = [{ id: 30, resume_id: 12, resume_name: "CV" }];
-    dbMock.query.mockResolvedValueOnce([applications]);
+    dbMock.query
+      .mockResolvedValueOnce([[{ id: 4, employer_id: 9 }]])
+      .mockResolvedValueOnce([applications]);
     const req = { user: { id: 9 }, params: { jobId: "4" } };
     const res = mockResponse();
 
     await getApplicationsByJob(req, res);
 
-    expect(dbMock.query).toHaveBeenCalledWith(
+    expect(dbMock.query).toHaveBeenNthCalledWith(
+      2,
       expect.stringContaining("r.id AS resume_id"),
       ["4", 9]
     );

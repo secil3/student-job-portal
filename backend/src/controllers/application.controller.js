@@ -92,7 +92,7 @@ export const getStudentApplications = async (req, res) => {
 export const getEmployerApplications = async (req, res) => {
   try {
     const [rows] = await db.query(`
-      SELECT 
+      SELECT
         a.id AS application_id,
         a.status,
         u.email,
@@ -177,30 +177,50 @@ export const updateApplicationStatus = async (req, res) => {
 };
 //get application by job
 export const getApplicationsByJob = async (req, res) => {
-  const { jobId } = req.params;
-  const employerId = req.user.id;
+  try {
+    const { jobId } = req.params;
+    const employerId = req.user.id;
 
-  const [rows] = await db.query(
-    `
-    SELECT 
-      a.id,
-      a.status,
-      u.id AS student_id,
-      u.email AS student_email,
-      u.university,
-      u.major,
-      u.gpa,
-      r.id AS resume_id,
-      r.name AS resume_name
-    FROM applications a
-    JOIN jobs j ON a.job_id = j.id
-    JOIN users u ON a.student_id = u.id
-    LEFT JOIN resumes r ON a.resume_id = r.id
-    WHERE a.job_id = ?
-      AND j.employer_id = ?
-    `,
-    [jobId, employerId]
-  );
+    const [jobs] = await db.query(
+      "SELECT id, employer_id FROM jobs WHERE id = ?",
+      [jobId]
+    );
 
-  res.json(rows);
+    if (jobs.length === 0) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    if (Number(jobs[0].employer_id) !== Number(employerId)) {
+      return res.status(403).json({
+        message: "You can only view applications for your own jobs",
+      });
+    }
+
+    const [rows] = await db.query(
+      `
+      SELECT
+        a.id,
+        a.status,
+        u.id AS student_id,
+        u.email AS student_email,
+        u.university,
+        u.major,
+        u.gpa,
+        r.id AS resume_id,
+        r.name AS resume_name
+      FROM applications a
+      JOIN jobs j ON a.job_id = j.id
+      JOIN users u ON a.student_id = u.id
+      LEFT JOIN resumes r ON a.resume_id = r.id
+      WHERE a.job_id = ?
+        AND j.employer_id = ?
+      `,
+      [jobId, employerId]
+    );
+
+    return res.json(rows);
+  } catch (err) {
+    console.error("getApplicationsByJob error:", err.code || err.name);
+    return res.status(500).json({ message: "Failed to fetch applications" });
+  }
 };
