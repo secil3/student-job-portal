@@ -25,7 +25,7 @@ export default function EmployerVerification() {
     try {
       await api.patch(`/admin/employers/${id}`, { status });
       fetchEmployers();
-    } catch (err) {
+    } catch {
       alert("Failed to update employer status");
     }
   };
