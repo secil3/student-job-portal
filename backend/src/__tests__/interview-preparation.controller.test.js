@@ -46,7 +46,7 @@ const request = (body = {}) => ({
 
 const mockVerifiedStudent = () => {
   dbMock.query.mockResolvedValueOnce([[
-    { role: "student", is_verified: 1 },
+    { role: "student", is_verified: 1, is_active: 1 },
   ]]);
 };
 
@@ -114,7 +114,7 @@ describe("AI interview preparation controller", () => {
 
   test("blocks a user whose current database role is not student", async () => {
     dbMock.query.mockResolvedValueOnce([[
-      { role: "employer", is_verified: 1 },
+      { role: "employer", is_verified: 1, is_active: 1 },
     ]]);
     const res = mockResponse();
 
@@ -126,7 +126,7 @@ describe("AI interview preparation controller", () => {
 
   test("blocks an unverified student", async () => {
     dbMock.query.mockResolvedValueOnce([[
-      { role: "student", is_verified: 0 },
+      { role: "student", is_verified: 0, is_active: 1 },
     ]]);
     const res = mockResponse();
 
@@ -134,6 +134,20 @@ describe("AI interview preparation controller", () => {
 
     expect(res.status).toHaveBeenCalledWith(403);
     expect(dbMock.query).toHaveBeenCalledTimes(1);
+  });
+
+  test("blocks an inactive student before using the AI provider", async () => {
+    dbMock.query.mockResolvedValueOnce([[
+      { role: "student", is_verified: 1, is_active: 0 },
+    ]]);
+    const res = mockResponse();
+
+    await createInterviewPreparation(request({ jobId: 4 }), res);
+
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith({ message: "Account is inactive" });
+    expect(dbMock.query).toHaveBeenCalledTimes(1);
+    expect(generateInterviewPreparationMock).not.toHaveBeenCalled();
   });
 
   test("uses the shared AI request limit before loading the job", async () => {

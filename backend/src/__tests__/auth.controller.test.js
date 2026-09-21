@@ -49,7 +49,8 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
       id: 1,
       email: "student@stu.adu.edu.tr",
       password: "hashedPassword",
-      role: "student"
+      role: "student",
+      is_active: 1,
     }]]);
 
     bcryptMock.compare.mockResolvedValueOnce(true);
@@ -98,6 +99,28 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
 
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({ message: "Invalid credentials" });
+  });
+
+  test("blocks a valid password for an inactive account", async () => {
+    const req = { body: { email: "inactive@stu.adu.edu.tr", password: "123456" } };
+    const res = mockRes();
+
+    dbMock.query.mockResolvedValueOnce([[
+      {
+        id: 9,
+        email: "inactive@stu.adu.edu.tr",
+        password: "hashedPassword",
+        role: "student",
+        is_active: 0,
+      },
+    ]]);
+    bcryptMock.compare.mockResolvedValueOnce(true);
+
+    await login(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith({ message: "Account is inactive" });
+    expect(jwtMock.sign).not.toHaveBeenCalled();
   });
 
   // ================= REGISTER =================

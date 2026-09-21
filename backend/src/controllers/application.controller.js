@@ -42,7 +42,7 @@ export const applyToJob = async (req, res) => {
     }
 
     const [students] = await db.query(
-      "SELECT role, is_verified FROM users WHERE id = ?",
+      "SELECT role, is_verified, is_active FROM users WHERE id = ?",
       [studentId]
     );
 
@@ -52,6 +52,10 @@ export const applyToJob = async (req, res) => {
 
     if (students[0].role !== "student") {
       return res.status(403).json({ message: "Only students can apply to jobs" });
+    }
+
+    if (Number(students[0].is_active) !== 1) {
+      return res.status(403).json({ message: "Account is inactive" });
     }
 
     if (Number(students[0].is_verified) !== 1) {
@@ -76,7 +80,9 @@ export const applyToJob = async (req, res) => {
     }
 
     const [jobs] = await db.query(
-      `SELECT j.id, u.role AS employer_role, u.status AS employer_status
+      `SELECT j.id, j.is_active AS job_is_active,
+              u.role AS employer_role, u.status AS employer_status,
+              u.is_active AS employer_is_active
        FROM jobs j
        JOIN users u ON u.id = j.employer_id
        WHERE j.id = ?`,
@@ -90,6 +96,8 @@ export const applyToJob = async (req, res) => {
     if (
       jobs[0].employer_role !== "employer"
       || jobs[0].employer_status !== "approved"
+      || Number(jobs[0].employer_is_active) !== 1
+      || Number(jobs[0].job_is_active) !== 1
     ) {
       return res.status(403).json({
         message: "Job is not available for applications",
@@ -105,8 +113,11 @@ export const applyToJob = async (req, res) => {
        WHERE j.id = ?
          AND employer.role = 'employer'
          AND employer.status = 'approved'
+         AND employer.is_active = 1
          AND student.role = 'student'
-         AND student.is_verified = 1`,
+         AND student.is_verified = 1
+         AND student.is_active = 1
+         AND j.is_active = 1`,
       [studentId, resumeId, studentId, jobId]
     );
 

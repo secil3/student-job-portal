@@ -54,7 +54,7 @@ export const createApplicationMessage = async (req, res) => {
 
   try {
     const [users] = await db.query(
-      "SELECT role, is_verified FROM users WHERE id = ?",
+      "SELECT role, is_verified, is_active FROM users WHERE id = ?",
       [studentId]
     );
 
@@ -64,6 +64,10 @@ export const createApplicationMessage = async (req, res) => {
 
     if (users[0].role !== "student") {
       return res.status(403).json({ message: "Only students can use AI Assistant" });
+    }
+
+    if (Number(users[0].is_active) !== 1) {
+      return res.status(403).json({ message: "Account is inactive" });
     }
 
     if (Number(users[0].is_verified) !== 1) {
@@ -183,7 +187,7 @@ export const createInterviewPreparation = async (req, res) => {
 
   try {
     const [users] = await db.query(
-      "SELECT role, is_verified FROM users WHERE id = ?",
+      "SELECT role, is_verified, is_active FROM users WHERE id = ?",
       [studentId]
     );
 
@@ -192,6 +196,9 @@ export const createInterviewPreparation = async (req, res) => {
     }
     if (users[0].role !== "student") {
       return res.status(403).json({ message: "Only students can use interview preparation" });
+    }
+    if (Number(users[0].is_active) !== 1) {
+      return res.status(403).json({ message: "Account is inactive" });
     }
     if (Number(users[0].is_verified) !== 1) {
       return res.status(403).json({

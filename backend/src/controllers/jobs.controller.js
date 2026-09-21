@@ -73,7 +73,10 @@ export const getAllJobs = async (req, res) => {
     }
 
     const studentVisibility = requesters[0].role === "student"
-      ? "WHERE users.role = 'employer' AND users.status = 'approved'"
+      ? `WHERE jobs.is_active = 1
+           AND users.role = 'employer'
+           AND users.status = 'approved'
+           AND users.is_active = 1`
       : "";
 
     const [rows] = await db.query(`

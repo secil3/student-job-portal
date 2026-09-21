@@ -24,10 +24,16 @@ describe("Application resume relation", () => {
 
   test("stores a resume owned by the applying student", async () => {
     dbMock.query
-      .mockResolvedValueOnce([[{ role: "student", is_verified: 1 }]])
+      .mockResolvedValueOnce([[{ role: "student", is_verified: 1, is_active: 1 }]])
       .mockResolvedValueOnce([[{ id: 12, user_id: 7 }]])
       .mockResolvedValueOnce([[
-        { id: 4, employer_role: "employer", employer_status: "approved" },
+        {
+          id: 4,
+          job_is_active: 1,
+          employer_role: "employer",
+          employer_status: "approved",
+          employer_is_active: 1,
+        },
       ]])
       .mockResolvedValueOnce([{ affectedRows: 1, insertId: 30 }]);
     const req = {
@@ -44,6 +50,9 @@ describe("Application resume relation", () => {
       [7, 12, 7, 4]
     );
     expect(dbMock.query.mock.calls[3][0]).toContain("employer.status = 'approved'");
+    expect(dbMock.query.mock.calls[3][0]).toContain("employer.is_active = 1");
+    expect(dbMock.query.mock.calls[3][0]).toContain("student.is_active = 1");
+    expect(dbMock.query.mock.calls[3][0]).toContain("j.is_active = 1");
     expect(res.status).toHaveBeenCalledWith(201);
   });
 
@@ -62,7 +71,7 @@ describe("Application resume relation", () => {
 
   test("rejects a resume owned by another student", async () => {
     dbMock.query
-      .mockResolvedValueOnce([[{ role: "student", is_verified: 1 }]])
+      .mockResolvedValueOnce([[{ role: "student", is_verified: 1, is_active: 1 }]])
       .mockResolvedValueOnce([[{ id: 12, user_id: 8 }]]);
     const req = {
       user: { id: 7, role: "student" },
@@ -78,7 +87,7 @@ describe("Application resume relation", () => {
 
   test("returns not found for a missing resume", async () => {
     dbMock.query
-      .mockResolvedValueOnce([[{ role: "student", is_verified: 1 }]])
+      .mockResolvedValueOnce([[{ role: "student", is_verified: 1, is_active: 1 }]])
       .mockResolvedValueOnce([[]]);
     const req = {
       user: { id: 7, role: "student" },
@@ -94,10 +103,16 @@ describe("Application resume relation", () => {
 
   test("returns conflict for a duplicate application", async () => {
     dbMock.query
-      .mockResolvedValueOnce([[{ role: "student", is_verified: 1 }]])
+      .mockResolvedValueOnce([[{ role: "student", is_verified: 1, is_active: 1 }]])
       .mockResolvedValueOnce([[{ id: 12, user_id: 7 }]])
       .mockResolvedValueOnce([[
-        { id: 4, employer_role: "employer", employer_status: "approved" },
+        {
+          id: 4,
+          job_is_active: 1,
+          employer_role: "employer",
+          employer_status: "approved",
+          employer_is_active: 1,
+        },
       ]])
       .mockRejectedValueOnce({ code: "ER_DUP_ENTRY" });
     const req = {
@@ -113,7 +128,7 @@ describe("Application resume relation", () => {
 
   test("returns not found when the job does not exist", async () => {
     dbMock.query
-      .mockResolvedValueOnce([[{ role: "student", is_verified: 1 }]])
+      .mockResolvedValueOnce([[{ role: "student", is_verified: 1, is_active: 1 }]])
       .mockResolvedValueOnce([[{ id: 12, user_id: 7 }]])
       .mockResolvedValueOnce([[]]);
     const req = {
@@ -132,10 +147,16 @@ describe("Application resume relation", () => {
     "blocks applications to a job owned by a %s employer",
     async (employerStatus) => {
       dbMock.query
-        .mockResolvedValueOnce([[{ role: "student", is_verified: 1 }]])
+        .mockResolvedValueOnce([[{ role: "student", is_verified: 1, is_active: 1 }]])
         .mockResolvedValueOnce([[{ id: 12, user_id: 7 }]])
         .mockResolvedValueOnce([[
-          { id: 4, employer_role: "employer", employer_status: employerStatus },
+          {
+            id: 4,
+            job_is_active: 1,
+            employer_role: "employer",
+            employer_status: employerStatus,
+            employer_is_active: 1,
+          },
         ]]);
       const req = {
         user: { id: 7, role: "student" },
@@ -153,9 +174,56 @@ describe("Application resume relation", () => {
     }
   );
 
+  test.each([
+    ["inactive job", { job_is_active: 0, employer_is_active: 1 }],
+    ["inactive employer", { job_is_active: 1, employer_is_active: 0 }],
+  ])("blocks an application to an %s", async (_label, activeState) => {
+    dbMock.query
+      .mockResolvedValueOnce([[{ role: "student", is_verified: 1, is_active: 1 }]])
+      .mockResolvedValueOnce([[{ id: 12, user_id: 7 }]])
+      .mockResolvedValueOnce([[
+        {
+          id: 4,
+          employer_role: "employer",
+          employer_status: "approved",
+          ...activeState,
+        },
+      ]]);
+    const req = {
+      user: { id: 7, role: "student" },
+      body: { jobId: 4, resumeId: 12 },
+    };
+    const res = mockResponse();
+
+    await applyToJob(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Job is not available for applications",
+    });
+    expect(dbMock.query).toHaveBeenCalledTimes(3);
+  });
+
+  test("blocks an inactive student before checking the resume", async () => {
+    dbMock.query.mockResolvedValueOnce([[
+      { role: "student", is_verified: 1, is_active: 0 },
+    ]]);
+    const req = {
+      user: { id: 7, role: "student" },
+      body: { jobId: 4, resumeId: 12 },
+    };
+    const res = mockResponse();
+
+    await applyToJob(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith({ message: "Account is inactive" });
+    expect(dbMock.query).toHaveBeenCalledTimes(1);
+  });
+
   test("blocks an unverified student before checking the resume", async () => {
     dbMock.query.mockResolvedValueOnce([[
-      { role: "student", is_verified: 0 },
+      { role: "student", is_verified: 0, is_active: 1 },
     ]]);
     const req = {
       user: { id: 7, role: "student" },
@@ -190,6 +258,7 @@ describe("Application resume relation", () => {
       expect.stringContaining("a.job_id AS job_id"),
       [7]
     );
+    expect(dbMock.query.mock.calls[0][0]).not.toContain("is_active");
     expect(res.json).toHaveBeenCalledWith(applications);
   });
 

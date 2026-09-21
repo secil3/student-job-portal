@@ -37,6 +37,8 @@ describe("Job list visibility", () => {
     );
     expect(dbMock.query.mock.calls[1][0]).toContain("users.role = 'employer'");
     expect(dbMock.query.mock.calls[1][0]).toContain("users.status = 'approved'");
+    expect(dbMock.query.mock.calls[1][0]).toContain("users.is_active = 1");
+    expect(dbMock.query.mock.calls[1][0]).toContain("jobs.is_active = 1");
     expect(res.json).toHaveBeenCalledWith(jobs);
   });
 
@@ -51,6 +53,7 @@ describe("Job list visibility", () => {
     await getAllJobs(req, res);
 
     expect(dbMock.query.mock.calls[1][0]).not.toContain("users.status = 'approved'");
+    expect(dbMock.query.mock.calls[1][0]).not.toContain("jobs.is_active = 1");
     expect(res.json).toHaveBeenCalledWith(jobs);
   });
 
