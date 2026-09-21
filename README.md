@@ -8,7 +8,9 @@ Student Job Portal is a full-stack educational MVP that connects students with e
 
 ### Student
 
-- Register and log in with a student account
+- Register only with an Aydın Adnan Menderes University student address ending exactly in `@stu.adu.edu.tr`
+- Verify the student email address before submitting job applications
+- Log in and browse jobs while email verification is pending
 - Maintain university, major, and GPA profile fields
 - Browse available job postings
 - Upload, list, rename, open, and delete owned PDF resumes
@@ -40,7 +42,7 @@ The password-reset flow generates a local reset link in the API response. It doe
 ## Technology
 
 - Frontend: React 19, React Router, Axios, Vite, CSS
-- Backend: Node.js, Express, JWT, bcrypt, Multer
+- Backend: Node.js, Express, JWT, bcrypt, Multer, Nodemailer
 - Database: MySQL 8 with `mysql2`
 - Testing and quality: Jest, Node's test runner, ESLint, Vite production build
 - Local database orchestration: Docker Compose
@@ -103,21 +105,28 @@ Do not use `docker compose down -v` when you need to preserve the existing local
 
 ### 4. Prepare the backend environment
 
-Create an ignored `backend/.env` file. The backend reads the following keys:
+Create the ignored backend configuration from its tracked example:
 
-```dotenv
-DB_HOST=127.0.0.1
-DB_PORT=3307
-DB_USER=your-local-mysql-user
-DB_PASSWORD=your-local-mysql-password
-DB_NAME=your-local-database-name
-JWT_SECRET=replace-with-a-strong-local-secret
-PORT=5050
+```bash
+cp backend/.env.example backend/.env
 ```
 
-Use the same application database name, user, and password configured in the root `.env` (`MYSQL_DATABASE`, `MYSQL_USER`, and `MYSQL_PASSWORD`). `PORT` is optional; the backend defaults to `5050`.
+Replace every placeholder in `backend/.env` with local values. Use the same application database name, user, and password configured in the root `.env` (`MYSQL_DATABASE`, `MYSQL_USER`, and `MYSQL_PASSWORD`). `PORT` is optional; the backend defaults to `5050`.
 
-The committed `.env.example` does not contain backend JWT or database connection values, so `backend/.env` must currently be prepared manually. Never commit this file.
+The backend example also contains the SMTP settings required for student email verification:
+
+| Variable | Purpose |
+| --- | --- |
+| `SMTP_HOST` | SMTP server hostname; use `smtp.gmail.com` for Gmail |
+| `SMTP_PORT` | SMTP port; the current Gmail example uses `465` with TLS |
+| `SMTP_USER` | Gmail account used to authenticate with SMTP |
+| `SMTP_APP_PASSWORD` | Google app password used by the backend |
+| `EMAIL_FROM` | Sender shown on verification messages |
+| `FRONTEND_URL` | Frontend origin used to build the `/verify-email` link, such as `http://localhost:5173` |
+
+A Gmail app password is different from the account's normal sign-in password. Keep the real Gmail address and app password only in the Git-ignored `backend/.env`; never put them in source files, examples, logs, or documentation. Gmail service availability, quotas, and delivery limits depend on Google's policies and are not guaranteed by this project.
+
+Student registration requires working SMTP configuration to deliver the verification link. If email delivery fails, the API reports that the account was created but the verification message could not be sent; it does not report successful delivery. The student remains unverified and can request another message from the verification page.
 
 ### 5. Install dependencies and start the backend
 
@@ -140,6 +149,20 @@ npm run dev
 ```
 
 Open `http://localhost:5173`.
+
+## ADÜ student email verification
+
+The student pilot is restricted to Aydın Adnan Menderes University student email accounts:
+
+- The backend normalizes email addresses and accepts only an exact `@stu.adu.edu.tr` domain match.
+- Addresses ending in `@adu.edu.tr`, subdomains, or look-alike suffixes are not accepted as student addresses.
+- A new student is stored with `is_verified = 0`.
+- The verification link contains a cryptographically random, single-use token valid for **30 minutes**.
+- Only the token hash and expiry are stored in MySQL; the raw token is sent only in the verification link.
+- A successful verification sets `is_verified = 1` and clears the stored token hash and expiry.
+- Unverified students may log in and browse jobs, but the backend rejects job applications until the current database record is verified.
+
+The `/verify-email` frontend page submits the token to `POST /api/auth/verify-email`. It also supports requesting another message through `POST /api/auth/resend-verification`. Resend responses are deliberately generic, and the current backend applies an in-memory limit of three requests per email address in a 15-minute window. This limit resets when the backend process restarts and is not a replacement for production-grade distributed rate limiting.
 
 ## Admin account provisioning
 
@@ -209,13 +232,25 @@ The initialization script creates these tables on a new empty MySQL volume:
 
 It creates schema only; it does not insert example users, jobs, applications, resumes, or an admin account. Existing installations require deliberate migrations when the schema changes. Do not reset a populated volume merely to rerun `init.sql`.
 
+For a new empty MySQL volume, `docker/mysql/init.sql` already creates the student verification columns and sets the `is_verified` default to `0`.
+
+For an existing database created before email verification was added, first create and verify a restorable backup. Then configure `backend/.env` for that database and run the targeted migration from the backend directory:
+
+```bash
+cd backend
+npm run migrate:email-verification
+```
+
+The script adds the missing token-hash and expiry columns and changes the `is_verified` default for future rows to `0`. It does not bulk-update existing users' verification values. The script checks for the new columns before adding them, but it still performs an `ALTER TABLE` for the default; run it deliberately against the intended database rather than as an application startup step.
+
 ## Known MVP limitations
 
 - Forgot Password returns a local reset link instead of sending email.
 - Admin provisioning is manual and is not automated by the repository.
 - The frontend API base URL is currently configured for the local backend at `http://localhost:5050/api`.
 - The project has not been hardened or configured for public production deployment.
-- No migration framework is included for updating existing databases.
+- No general migration framework is included. The repository currently provides only the targeted `migrate:email-verification` script for the verification schema change.
+- Verification-email resend limiting is process-local and resets when the backend restarts.
 - Resume creation and editing are outside the product scope.
 
 ## Contributors
