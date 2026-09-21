@@ -64,7 +64,7 @@ describe("application message Groq service", () => {
 
     expect(url).toBe("https://api.groq.com/openai/v1/chat/completions");
     expect(options.headers.Authorization).toBe("Bearer test-only-api-key");
-    expect(requestBody.model).toBe("llama-3.1-8b-instant");
+    expect(requestBody.model).toBe("openai/gpt-oss-20b");
     expect(requestBody.max_completion_tokens).toBe(500);
     expect(requestBody.messages[0].content).toContain(expectedLanguage);
     expect(requestBody.messages[0].content).toContain("untrusted content");

@@ -1,7 +1,7 @@
 export const AI_PROVIDER_NOT_CONFIGURED = "AI_PROVIDER_NOT_CONFIGURED";
 
 const GROQ_CHAT_COMPLETIONS_URL = "https://api.groq.com/openai/v1/chat/completions";
-const DEFAULT_MODEL = "llama-3.1-8b-instant";
+const DEFAULT_MODEL = "openai/gpt-oss-20b";
 const REQUEST_TIMEOUT_MS = 10_000;
 const MAX_COMPLETION_TOKENS = 500;
 
