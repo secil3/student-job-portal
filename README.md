@@ -253,9 +253,7 @@ The script adds the missing token-hash and expiry columns and changes the `is_ve
 - Verification-email resend limiting is process-local and resets when the backend restarts.
 - Resume creation and editing are outside the product scope.
 
-## Contributors
+## Contributor
 
 - Seçil Keser
-- Hilal Aslan
 
-This project was developed for an educational Software Engineering course.
