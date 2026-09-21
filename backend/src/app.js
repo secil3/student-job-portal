@@ -12,6 +12,7 @@ import testRoutes from "./routes/test.routes.js";
 import auth from "./middleware/auth.middleware.js";
 import adminRoutes from "./routes/admin.routes.js";
 import studentRoutes from "./routes/student.routes.js";
+import aiRoutes from "./routes/ai.routes.js";
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ app.use("/api/jobs", jobRoutes);
 app.use("/api/resumes", resumeRoutes);
 app.use("/api/applications", auth, applicationRoutes);
 app.use("/api/student", studentRoutes);
+app.use("/api/ai", aiRoutes);
 
 app.use("/api/admin", adminRoutes);
 // optional
