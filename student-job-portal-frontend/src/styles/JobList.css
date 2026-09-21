@@ -217,6 +217,35 @@
   color: #b91c1c;
 }
 
+.student-jobs-cv-empty,
+.student-jobs-retry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.student-jobs-cv-empty a,
+.student-jobs-retry button {
+  flex: 0 0 auto;
+  padding: 7px 11px;
+  border: 1px solid #613dc1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #613dc1;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.student-jobs-cv-empty a:focus-visible,
+.student-jobs-retry button:focus-visible {
+  outline: 3px solid rgba(133, 138, 227, 0.38);
+  outline-offset: 2px;
+}
+
 @media (max-width: 720px) {
   .student-jobs-grid {
     grid-template-columns: 1fr;
@@ -224,6 +253,17 @@
 }
 
 @media (max-width: 520px) {
+  .student-jobs-cv-empty,
+  .student-jobs-retry {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .student-jobs-cv-empty a,
+  .student-jobs-retry button {
+    text-align: center;
+  }
+
   .student-jobs-page .resume-select {
     align-items: stretch;
     flex-direction: column;
