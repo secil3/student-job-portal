@@ -10,6 +10,7 @@ import EditProfile from "./pages/student/EditProfile";
 import MyResumes from "./pages/student/MyResumes";
 import StudentApplications from "./pages/student/StudentApplications";
 import AiAssistant from "./pages/student/AiAssistant";
+import InterviewPrep from "./pages/student/InterviewPrep";
 
 
 import EmployerDashboard from "./pages/employer/EmployerDashboard";
@@ -93,6 +94,14 @@ export default function App() {
               element={
                 <ProtectedRoute role="student">
                   <AiAssistant />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/jobs/:jobId/interview-prep"
+              element={
+                <ProtectedRoute role="student">
+                  <InterviewPrep />
                 </ProtectedRoute>
               }
             />

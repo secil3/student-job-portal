@@ -136,6 +136,12 @@ export default function JobList() {
                 >
                   AI Assistant
                 </Link>
+                <Link
+                  to={`/student/jobs/${job.id}/interview-prep`}
+                  className="student-interview-prep-link"
+                >
+                  Mülakata hazırlan
+                </Link>
                 {(() => {
                   const applicationState = getJobApplicationState(
                     job.id,

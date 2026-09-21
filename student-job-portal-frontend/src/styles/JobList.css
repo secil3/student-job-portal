@@ -143,7 +143,8 @@
   border-top: 1px solid rgba(44, 7, 53, 0.07);
 }
 
-.student-ai-assistant-link {
+.student-ai-assistant-link,
+.student-interview-prep-link {
   min-height: 34px;
   padding: 7px 13px;
   border: 1px solid rgba(97, 61, 193, 0.24);
@@ -156,12 +157,14 @@
   text-decoration: none;
 }
 
-.student-ai-assistant-link:hover {
+.student-ai-assistant-link:hover,
+.student-interview-prep-link:hover {
   border-color: #613dc1;
   background: #ffffff;
 }
 
-.student-ai-assistant-link:focus-visible {
+.student-ai-assistant-link:focus-visible,
+.student-interview-prep-link:focus-visible {
   outline: 3px solid rgba(133, 138, 227, 0.38);
   outline-offset: 2px;
 }
@@ -240,6 +243,7 @@
   }
 
   .student-ai-assistant-link,
+  .student-interview-prep-link,
   .student-apply-btn {
     flex: 1 1 auto;
     text-align: center;
