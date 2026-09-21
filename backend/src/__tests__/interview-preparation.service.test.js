@@ -32,6 +32,11 @@ const responseWithContent = (content, finishReason = "stop") => ({
   }),
 });
 
+const getSystemInstructions = () => {
+  const requestBody = JSON.parse(global.fetch.mock.calls[0][1].body);
+  return requestBody.messages[0].content;
+};
+
 describe("interview preparation Groq service", () => {
   beforeEach(() => {
     process.env.GROQ_API_KEY = "test-only-api-key";
@@ -84,6 +89,42 @@ describe("interview preparation Groq service", () => {
     expect(options.body).not.toContain(job.student_email);
     expect(options.body).not.toContain(String(job.resume_id));
     expect(options.body).not.toContain(String(job.id));
+  });
+
+  test("requires general questions when the job description is short or vague", async () => {
+    global.fetch.mockResolvedValueOnce(
+      responseWithContent(JSON.stringify({ questions }))
+    );
+
+    await generateInterviewPreparation({
+      job: {
+        title: "Intern",
+        description: "Join our team.",
+        location: "Aydin",
+      },
+      language: "tr",
+    });
+
+    const instructions = getSystemInstructions();
+    expect(instructions).toContain("short or vague");
+    expect(instructions).toContain("general role-appropriate preparation questions");
+    expect(instructions).toContain("Do not use the location to infer stereotypes");
+  });
+
+  test("forbids unsupported tools and student experience assumptions", async () => {
+    global.fetch.mockResolvedValueOnce(
+      responseWithContent(JSON.stringify({ questions }))
+    );
+
+    await generateInterviewPreparation({ job, language: "en" });
+
+    const instructions = getSystemInstructions();
+    expect(instructions).toContain("Jira or Trello");
+    expect(instructions).toContain("unless they are explicitly present in the job data");
+    expect(instructions).toContain("Do not assume that the student has used a particular tool");
+    expect(instructions).toContain("if they have one");
+    expect(instructions).toContain("if they do not");
+    expect(instructions).toContain("Do not claim or imply that the real employer will ask");
   });
 
   test("rejects a timed out request", async () => {
