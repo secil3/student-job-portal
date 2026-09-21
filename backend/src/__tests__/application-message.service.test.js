@@ -24,6 +24,12 @@ const successfulResponse = (content) => ({
   }),
 });
 
+const responseWithPayload = (payload) => ({
+  ok: true,
+  status: 200,
+  json: jest.fn().mockResolvedValue(payload),
+});
+
 describe("application message Groq service", () => {
   beforeEach(() => {
     process.env.GROQ_API_KEY = "test-only-api-key";
@@ -65,7 +71,9 @@ describe("application message Groq service", () => {
     expect(url).toBe("https://api.groq.com/openai/v1/chat/completions");
     expect(options.headers.Authorization).toBe("Bearer test-only-api-key");
     expect(requestBody.model).toBe("openai/gpt-oss-20b");
-    expect(requestBody.max_completion_tokens).toBe(500);
+    expect(requestBody.max_completion_tokens).toBe(1024);
+    expect(requestBody.include_reasoning).toBe(false);
+    expect(requestBody.reasoning_effort).toBe("low");
     expect(requestBody.messages[0].content).toContain(expectedLanguage);
     expect(requestBody.messages[0].content).toContain("untrusted content");
     expect(requestBody.messages[1].content).toContain(job.title);
@@ -81,6 +89,47 @@ describe("application message Groq service", () => {
 
     const requestBody = JSON.parse(global.fetch.mock.calls[0][1].body);
     expect(requestBody.model).toBe("llama-3.3-70b-versatile");
+  });
+
+  test("forbids attributing an age from the job description to the student", async () => {
+    global.fetch.mockResolvedValueOnce(successfulResponse("General application message"));
+
+    await generateApplicationMessage({
+      job: {
+        ...job,
+        description: "22 yaşında bir ekip üyesi arıyoruz.",
+      },
+      notes: "",
+      language: "tr",
+    });
+
+    const requestBody = JSON.parse(global.fetch.mock.calls[0][1].body);
+    const systemInstruction = requestBody.messages[0].content;
+    const untrustedInput = JSON.parse(requestBody.messages[1].content);
+
+    expect(systemInstruction).toContain("never facts about the student");
+    expect(systemInstruction).toContain("Never attribute an age");
+    expect(systemInstruction).toContain("Only information that the student notes explicitly state");
+    expect(untrustedInput.untrustedJobData.description).toContain("22 yaşında");
+    expect(untrustedInput.untrustedStudentNotes).toBe("");
+  });
+
+  test("forbids salary repetition and application-process questions", async () => {
+    global.fetch.mockResolvedValueOnce(successfulResponse("Professional intent message"));
+
+    await generateApplicationMessage({
+      job: { ...job, salary: "Synthetic salary" },
+      notes: "selam, örnek metin",
+      language: "tr",
+    });
+
+    const requestBody = JSON.parse(global.fetch.mock.calls[0][1].body);
+    const systemInstruction = requestBody.messages[0].content;
+
+    expect(systemInstruction).toContain("short, professional statement of intent");
+    expect(systemInstruction).toContain("Do not repeat salary");
+    expect(systemInstruction).toContain("Do not ask questions about salary, documents, or the application process");
+    expect(systemInstruction).toContain("'hello', 'selam', or 'example text'");
   });
 
   test("keeps the not-configured error when the API key is missing", async () => {
@@ -126,6 +175,56 @@ describe("application message Groq service", () => {
       status: 200,
       json: jest.fn().mockRejectedValue(new SyntaxError("invalid JSON")),
     });
+
+    await expect(generateApplicationMessage({ job, notes: "", language: "tr" }))
+      .rejects.toMatchObject({ code: "AI_PROVIDER_INVALID_RESPONSE" });
+  });
+
+  test("classifies an empty response stopped by the token limit as incomplete", async () => {
+    global.fetch.mockResolvedValueOnce(responseWithPayload({
+      choices: [{
+        finish_reason: "length",
+        message: { content: "", reasoning: "Synthetic reasoning" },
+      }],
+    }));
+
+    await expect(generateApplicationMessage({ job, notes: "", language: "tr" }))
+      .rejects.toMatchObject({ code: "AI_PROVIDER_INCOMPLETE_RESPONSE" });
+  });
+
+  test("never substitutes reasoning for empty final content", async () => {
+    global.fetch.mockResolvedValueOnce(responseWithPayload({
+      choices: [{
+        finish_reason: "stop",
+        message: { content: "", reasoning: "Synthetic reasoning" },
+      }],
+    }));
+
+    await expect(generateApplicationMessage({ job, notes: "", language: "en" }))
+      .rejects.toMatchObject({ code: "AI_PROVIDER_INVALID_RESPONSE" });
+  });
+
+  test("returns final content and ignores a separate reasoning field", async () => {
+    global.fetch.mockResolvedValueOnce(responseWithPayload({
+      choices: [{
+        finish_reason: "stop",
+        message: {
+          content: "  Final application message  ",
+          reasoning: "Synthetic reasoning that must not be returned",
+        },
+      }],
+    }));
+
+    await expect(generateApplicationMessage({ job, notes: "", language: "en" }))
+      .resolves.toBe("Final application message");
+  });
+
+  test.each([
+    { label: "missing choices", payload: {} },
+    { label: "missing message", payload: { choices: [{}] } },
+    { label: "missing content", payload: { choices: [{ message: {} }] } },
+  ])("rejects a response with $label", async ({ payload }) => {
+    global.fetch.mockResolvedValueOnce(responseWithPayload(payload));
 
     await expect(generateApplicationMessage({ job, notes: "", language: "tr" }))
       .rejects.toMatchObject({ code: "AI_PROVIDER_INVALID_RESPONSE" });

@@ -135,9 +135,35 @@
 
 .student-job-card-actions {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
   padding-top: 12px;
   border-top: 1px solid rgba(44, 7, 53, 0.07);
+}
+
+.student-ai-assistant-link {
+  min-height: 34px;
+  padding: 7px 13px;
+  border: 1px solid rgba(97, 61, 193, 0.24);
+  border-radius: 8px;
+  background: #f5f1fa;
+  color: #613dc1;
+  font-size: 11px;
+  font-weight: 750;
+  line-height: 18px;
+  text-decoration: none;
+}
+
+.student-ai-assistant-link:hover {
+  border-color: #613dc1;
+  background: #ffffff;
+}
+
+.student-ai-assistant-link:focus-visible {
+  outline: 3px solid rgba(133, 138, 227, 0.38);
+  outline-offset: 2px;
 }
 
 .student-apply-btn {
@@ -207,5 +233,15 @@
 
   .student-job-card {
     min-height: 0;
+  }
+
+  .student-job-card-actions {
+    align-items: stretch;
+  }
+
+  .student-ai-assistant-link,
+  .student-apply-btn {
+    flex: 1 1 auto;
+    text-align: center;
   }
 }

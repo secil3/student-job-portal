@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { applyToJob, getStudentApplications } from "../../api/application.api";
 import api from "../../services/api";
 import {
@@ -129,6 +130,12 @@ export default function JobList() {
               </div>
 
               <div className="student-job-card-actions">
+                <Link
+                  to={`/student/jobs/${job.id}/assistant`}
+                  className="student-ai-assistant-link"
+                >
+                  AI Assistant
+                </Link>
                 {(() => {
                   const applicationState = getJobApplicationState(
                     job.id,
