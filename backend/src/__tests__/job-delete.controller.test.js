@@ -21,7 +21,7 @@ describe("Job deletion authorization", () => {
   });
 
   test("blocks students before reading the job", async () => {
-    dbMock.query.mockResolvedValueOnce([[{ role: "student" }]]);
+    dbMock.query.mockResolvedValueOnce([[{ role: "student", status: "approved" }]]);
     const req = { user: { id: 4 }, params: { id: "20" } };
     const res = mockResponse();
 
@@ -33,7 +33,7 @@ describe("Job deletion authorization", () => {
 
   test("allows an employer to delete their own job", async () => {
     dbMock.query
-      .mockResolvedValueOnce([[{ role: "employer" }]])
+      .mockResolvedValueOnce([[{ role: "employer", status: "approved" }]])
       .mockResolvedValueOnce([[{ id: 20, employer_id: 7 }]])
       .mockResolvedValueOnce([{ affectedRows: 1 }]);
     const req = { user: { id: 7 }, params: { id: "20" } };
@@ -49,11 +49,29 @@ describe("Job deletion authorization", () => {
     expect(res.json).toHaveBeenCalledWith({
       message: "Job and its applications were deleted",
     });
+    expect(dbMock.query.mock.calls[2][0]).toContain("status = 'approved'");
   });
+
+  test.each(["pending", "rejected"])(
+    "blocks a %s employer before reading the job",
+    async (status) => {
+      dbMock.query.mockResolvedValueOnce([[{ role: "employer", status }]]);
+      const req = { user: { id: 7 }, params: { id: "20" } };
+      const res = mockResponse();
+
+      await deleteJob(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Employer account is not approved",
+      });
+      expect(dbMock.query).toHaveBeenCalledTimes(1);
+    }
+  );
 
   test("blocks an employer from deleting another employer's job", async () => {
     dbMock.query
-      .mockResolvedValueOnce([[{ role: "employer" }]])
+      .mockResolvedValueOnce([[{ role: "employer", status: "approved" }]])
       .mockResolvedValueOnce([[{ id: 20, employer_id: 8 }]]);
     const req = { user: { id: 7 }, params: { id: "20" } };
     const res = mockResponse();
@@ -66,7 +84,7 @@ describe("Job deletion authorization", () => {
 
   test("allows an admin to delete a job", async () => {
     dbMock.query
-      .mockResolvedValueOnce([[{ role: "admin" }]])
+      .mockResolvedValueOnce([[{ role: "admin", status: "approved" }]])
       .mockResolvedValueOnce([[{ id: 20, employer_id: 8 }]])
       .mockResolvedValueOnce([{ affectedRows: 1 }]);
     const req = { user: { id: 2 }, params: { id: "20" } };
@@ -84,7 +102,7 @@ describe("Job deletion authorization", () => {
 
   test("returns 404 when the job does not exist", async () => {
     dbMock.query
-      .mockResolvedValueOnce([[{ role: "employer" }]])
+      .mockResolvedValueOnce([[{ role: "employer", status: "approved" }]])
       .mockResolvedValueOnce([[]]);
     const req = { user: { id: 7 }, params: { id: "404" } };
     const res = mockResponse();
@@ -97,7 +115,7 @@ describe("Job deletion authorization", () => {
 
   test("does not report success when the database delete fails", async () => {
     dbMock.query
-      .mockResolvedValueOnce([[{ role: "admin" }]])
+      .mockResolvedValueOnce([[{ role: "admin", status: "approved" }]])
       .mockResolvedValueOnce([[{ id: 20, employer_id: 8 }]])
       .mockRejectedValueOnce({ code: "ER_TEST_FAILURE" });
     const req = { user: { id: 2 }, params: { id: "20" } };

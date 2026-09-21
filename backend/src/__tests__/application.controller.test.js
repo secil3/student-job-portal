@@ -26,6 +26,9 @@ describe("Application resume relation", () => {
     dbMock.query
       .mockResolvedValueOnce([[{ role: "student", is_verified: 1 }]])
       .mockResolvedValueOnce([[{ id: 12, user_id: 7 }]])
+      .mockResolvedValueOnce([[
+        { id: 4, employer_role: "employer", employer_status: "approved" },
+      ]])
       .mockResolvedValueOnce([{ affectedRows: 1, insertId: 30 }]);
     const req = {
       user: { id: 7, role: "student" },
@@ -36,10 +39,11 @@ describe("Application resume relation", () => {
     await applyToJob(req, res);
 
     expect(dbMock.query).toHaveBeenNthCalledWith(
-      3,
+      4,
       expect.stringContaining("resume_id"),
-      [4, 7, 12, 7]
+      [7, 12, 7, 4]
     );
+    expect(dbMock.query.mock.calls[3][0]).toContain("employer.status = 'approved'");
     expect(res.status).toHaveBeenCalledWith(201);
   });
 
@@ -92,6 +96,9 @@ describe("Application resume relation", () => {
     dbMock.query
       .mockResolvedValueOnce([[{ role: "student", is_verified: 1 }]])
       .mockResolvedValueOnce([[{ id: 12, user_id: 7 }]])
+      .mockResolvedValueOnce([[
+        { id: 4, employer_role: "employer", employer_status: "approved" },
+      ]])
       .mockRejectedValueOnce({ code: "ER_DUP_ENTRY" });
     const req = {
       user: { id: 7, role: "student" },
@@ -103,6 +110,48 @@ describe("Application resume relation", () => {
 
     expect(res.status).toHaveBeenCalledWith(409);
   });
+
+  test("returns not found when the job does not exist", async () => {
+    dbMock.query
+      .mockResolvedValueOnce([[{ role: "student", is_verified: 1 }]])
+      .mockResolvedValueOnce([[{ id: 12, user_id: 7 }]])
+      .mockResolvedValueOnce([[]]);
+    const req = {
+      user: { id: 7, role: "student" },
+      body: { jobId: 404, resumeId: 12 },
+    };
+    const res = mockResponse();
+
+    await applyToJob(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(dbMock.query).toHaveBeenCalledTimes(3);
+  });
+
+  test.each(["pending", "rejected"])(
+    "blocks applications to a job owned by a %s employer",
+    async (employerStatus) => {
+      dbMock.query
+        .mockResolvedValueOnce([[{ role: "student", is_verified: 1 }]])
+        .mockResolvedValueOnce([[{ id: 12, user_id: 7 }]])
+        .mockResolvedValueOnce([[
+          { id: 4, employer_role: "employer", employer_status: employerStatus },
+        ]]);
+      const req = {
+        user: { id: 7, role: "student" },
+        body: { jobId: 4, resumeId: 12 },
+      };
+      const res = mockResponse();
+
+      await applyToJob(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Job is not available for applications",
+      });
+      expect(dbMock.query).toHaveBeenCalledTimes(3);
+    }
+  );
 
   test("blocks an unverified student before checking the resume", async () => {
     dbMock.query.mockResolvedValueOnce([[

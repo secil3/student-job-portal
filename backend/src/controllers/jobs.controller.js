@@ -58,11 +58,30 @@ export const createJob = async (req, res) => {
 
 export const getAllJobs = async (req, res) => {
   try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const [requesters] = await db.query(
+      "SELECT role FROM users WHERE id = ?",
+      [userId]
+    );
+
+    if (requesters.length === 0) {
+      return res.status(401).json({ message: "User account not found" });
+    }
+
+    const studentVisibility = requesters[0].role === "student"
+      ? "WHERE users.role = 'employer' AND users.status = 'approved'"
+      : "";
+
     const [rows] = await db.query(`
       SELECT jobs.*, users.email AS employer_email
       FROM jobs
       JOIN users ON jobs.employer_id = users.id
-      ORDER BY created_at DESC
+      ${studentVisibility}
+      ORDER BY jobs.created_at DESC
     `);
 
     res.json(rows);
@@ -235,7 +254,7 @@ export const deleteJob = async (req, res) => {
     const userId = req.user?.id;
 
     const [users] = await db.query(
-      "SELECT role FROM users WHERE id = ?",
+      "SELECT role, status FROM users WHERE id = ?",
       [userId]
     );
 
@@ -247,6 +266,10 @@ export const deleteJob = async (req, res) => {
 
     if (!['employer', 'admin'].includes(role)) {
       return res.status(403).json({ message: "Forbidden" });
+    }
+
+    if (role === "employer" && users[0].status !== "approved") {
+      return res.status(403).json({ message: "Employer account is not approved" });
     }
 
     const [jobs] = await db.query(
@@ -273,7 +296,8 @@ export const deleteJob = async (req, res) => {
       : `DELETE FROM jobs
          WHERE id = ? AND employer_id = ?
            AND EXISTS (
-             SELECT 1 FROM users WHERE id = ? AND role = 'employer'
+             SELECT 1 FROM users
+             WHERE id = ? AND role = 'employer' AND status = 'approved'
            )`;
 
     const params = role === "admin"

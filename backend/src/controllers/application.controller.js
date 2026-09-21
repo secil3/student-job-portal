@@ -75,17 +75,44 @@ export const applyToJob = async (req, res) => {
       });
     }
 
+    const [jobs] = await db.query(
+      `SELECT j.id, u.role AS employer_role, u.status AS employer_status
+       FROM jobs j
+       JOIN users u ON u.id = j.employer_id
+       WHERE j.id = ?`,
+      [jobId]
+    );
+
+    if (jobs.length === 0) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    if (
+      jobs[0].employer_role !== "employer"
+      || jobs[0].employer_status !== "approved"
+    ) {
+      return res.status(403).json({
+        message: "Job is not available for applications",
+      });
+    }
+
     const [result] = await db.query(
       `INSERT INTO applications (job_id, student_id, resume_id)
-       SELECT ?, ?, ?
-       FROM users
-       WHERE id = ? AND role = 'student' AND is_verified = 1`,
-      [jobId, studentId, resumeId, studentId]
+       SELECT j.id, ?, ?
+       FROM jobs j
+       JOIN users employer ON employer.id = j.employer_id
+       JOIN users student ON student.id = ?
+       WHERE j.id = ?
+         AND employer.role = 'employer'
+         AND employer.status = 'approved'
+         AND student.role = 'student'
+         AND student.is_verified = 1`,
+      [studentId, resumeId, studentId, jobId]
     );
 
     if (result.affectedRows !== 1) {
-      return res.status(403).json({
-        message: "Verify your ADU student email before applying",
+      return res.status(409).json({
+        message: "Job is no longer available for applications",
       });
     }
 
