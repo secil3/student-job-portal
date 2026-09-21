@@ -72,6 +72,12 @@
   font-weight: 750;
 }
 
+.auth-field-help {
+  color: rgba(44, 7, 53, 0.58);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
 .auth-input {
   width: 100%;
   min-width: 0;
@@ -180,6 +186,7 @@
 }
 .auth-error { border: 1px solid rgba(185, 28, 28, 0.18); background: #fffafa; color: #b91c1c; }
 .auth-success { border: 1px solid rgba(23, 96, 60, 0.18); background: #f3fff6; color: #17603c; }
+.auth-success p { margin: 0 0 8px; }
 .auth-switch { margin: 18px 0 0; color: rgba(44, 7, 53, 0.62); font-size: 13px; text-align: center; }
 
 @media (max-width: 375px) {
