@@ -180,6 +180,7 @@ export const register = async (req, res) => {
       } catch (emailError) {
         console.error("VERIFICATION EMAIL ERROR:", emailError.code || emailError.name);
         return res.status(502).json({
+          code: "STUDENT_VERIFICATION_EMAIL_DELIVERY_FAILED",
           message: "Account created, but the verification email could not be sent. Please request a new email."
         });
       }

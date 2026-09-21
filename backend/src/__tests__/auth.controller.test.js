@@ -259,9 +259,33 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
 
     expect(res.status).toHaveBeenCalledWith(502);
     expect(res.json).toHaveBeenCalledWith({
+      code: "STUDENT_VERIFICATION_EMAIL_DELIVERY_FAILED",
       message: "Account created, but the verification email could not be sent. Please request a new email."
     });
     expect(res.status).not.toHaveBeenCalledWith(201);
+    consoleErrorSpy.mockRestore();
+  });
+
+  test("keeps a database registration failure distinct from email delivery failure", async () => {
+    const req = {
+      body: {
+        email: "student@stu.adu.edu.tr",
+        password: "123456",
+        role: "student",
+      },
+    };
+    const res = mockRes();
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+    dbMock.query.mockResolvedValueOnce([[]]);
+    bcryptMock.hash.mockResolvedValueOnce("hashed-pass");
+    dbMock.query.mockRejectedValueOnce({ code: "ER_TEST_FAILURE" });
+
+    await register(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ message: "Register failed" });
+    expect(sendVerificationEmailMock).not.toHaveBeenCalled();
     consoleErrorSpy.mockRestore();
   });
 });

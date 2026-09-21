@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../services/api";
+import {
+  REGISTRATION_EMAIL_DELIVERY_MESSAGE,
+  isVerificationEmailDeliveryFailure,
+} from "../utils/registrationError";
 import "../styles/Auth.css";
 
 export default function Register() {
@@ -8,12 +12,14 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("student");
   const [error, setError] = useState("");
+  const [verificationRecovery, setVerificationRecovery] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
+    setVerificationRecovery(false);
     setSubmitting(true);
 
     try {
@@ -24,7 +30,11 @@ export default function Register() {
         navigate("/login");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Register failed");
+      if (isVerificationEmailDeliveryFailure(err)) {
+        setVerificationRecovery(true);
+      } else {
+        setError(err.response?.data?.message || "Register failed");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -103,6 +113,15 @@ export default function Register() {
         </form>
 
         {error && <p className="auth-error">{error}</p>}
+
+        {verificationRecovery && (
+          <div className="auth-success" role="status">
+            <p>{REGISTRATION_EMAIL_DELIVERY_MESSAGE}</p>
+            <Link to="/verify-email" className="auth-link">
+              Doğrulama e-postasını yeniden iste
+            </Link>
+          </div>
+        )}
 
         <p className="auth-switch">
           Already have an account?{" "}
