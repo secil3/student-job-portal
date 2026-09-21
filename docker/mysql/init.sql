@@ -9,6 +9,8 @@ CREATE TABLE `users` (
     `email_verification_token_expires` DATETIME DEFAULT NULL,
     `resume_path` VARCHAR(255) DEFAULT NULL,
     `status` ENUM('pending', 'approved', 'rejected') DEFAULT 'approved',
+    `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+    `deactivated_at` DATETIME DEFAULT NULL,
     `university` VARCHAR(255) DEFAULT NULL,
     `major` VARCHAR(255) DEFAULT NULL,
     `GPA` DECIMAL(3,2) DEFAULT NULL,
@@ -26,6 +28,8 @@ CREATE TABLE `jobs` (
     `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     `location` VARCHAR(100) DEFAULT NULL,
     `salary` VARCHAR(50) DEFAULT NULL,
+    `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+    `deactivated_at` DATETIME DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY `employer_id` (`employer_id`),
     CONSTRAINT `jobs_ibfk_1`
