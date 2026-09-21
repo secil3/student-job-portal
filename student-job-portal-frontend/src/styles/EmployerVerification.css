@@ -37,13 +37,40 @@
 }
 .approve-btn { border: 1px solid #613dc1; background: #613dc1; }
 .reject-btn { border: 1px solid #b91c1c; background: #b91c1c; }
-.approve-btn:hover { background: #2c0735; border-color: #2c0735; }
-.reject-btn:hover { background: #991b1b; border-color: #991b1b; }
+.approve-btn:hover:not(:disabled) { background: #2c0735; border-color: #2c0735; }
+.reject-btn:hover:not(:disabled) { background: #991b1b; border-color: #991b1b; }
 .approve-btn:focus-visible, .reject-btn:focus-visible { outline: 3px solid rgba(133, 138, 227, 0.42); outline-offset: 2px; }
+.approve-btn:disabled, .reject-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.verify-message {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(44, 7, 53, 0.12);
+  border-radius: 11px;
+  background: #ffffff;
+  font-size: 12px;
+}
+.verify-message--error { border-color: rgba(185, 28, 28, 0.2); color: #b91c1c; }
+.verify-message--success { border-color: rgba(23, 96, 60, 0.18); background: #f3fff6; color: #17603c; }
+.verify-retry { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.verify-retry button {
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 7px 11px;
+  border: 1px solid #b91c1c;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #b91c1c;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.verify-retry button:focus-visible { outline: 3px solid rgba(133, 138, 227, 0.42); outline-offset: 2px; }
 .loading-text, .empty-text { padding: 18px; border: 1px dashed rgba(97, 61, 193, 0.24); border-radius: 13px; color: rgba(44, 7, 53, 0.62); font-size: 13px; }
 @media (max-width: 560px) {
   .verify-card { align-items: stretch; flex-direction: column; }
   .verify-actions { width: 100%; }
   .approve-btn, .reject-btn { flex: 1; }
+  .verify-retry { align-items: stretch; flex-direction: column; }
 }
 @media (max-width: 420px) { .verify-container { width: min(100% - 24px, 1000px); } }

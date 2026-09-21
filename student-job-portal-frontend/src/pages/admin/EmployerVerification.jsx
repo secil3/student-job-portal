@@ -1,34 +1,64 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import api from "../../services/api";
+import {
+  getEmployerVerificationView,
+  removeEmployerFromPendingList,
+} from "../../utils/employerVerificationState";
 import "../../styles/EmployerVerification.css";
 
 export default function EmployerVerification() {
   const [employers, setEmployers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [actionError, setActionError] = useState("");
+  const [actionMessage, setActionMessage] = useState("");
+  const [updatingEmployerId, setUpdatingEmployerId] = useState(null);
 
-  useEffect(() => {
-    fetchEmployers();
-  }, []);
-
-  const fetchEmployers = async () => {
+  const fetchEmployers = useCallback(async () => {
+    setLoading(true);
+    setLoadError("");
     try {
       const res = await api.get("/admin/employers/pending");
-      setEmployers(res.data);
-    } catch (err) {
-      console.error("Failed to fetch employers", err);
+      setEmployers(Array.isArray(res.data) ? res.data : []);
+    } catch (requestError) {
+      setLoadError(
+        requestError.response?.data?.message ||
+          "Bekleyen işverenler yüklenemedi. Lütfen tekrar deneyin."
+      );
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchEmployers();
+  }, [fetchEmployers]);
 
   const updateStatus = async (id, status) => {
+    if (updatingEmployerId !== null) return;
+
+    setActionError("");
+    setActionMessage("");
+    setUpdatingEmployerId(id);
     try {
       await api.patch(`/admin/employers/${id}`, { status });
-      fetchEmployers();
-    } catch {
-      alert("Failed to update employer status");
+      setEmployers((current) => removeEmployerFromPendingList(current, id));
+      setActionMessage(
+        status === "approved"
+          ? "İşveren hesabı onaylandı."
+          : "İşveren hesabı reddedildi."
+      );
+    } catch (requestError) {
+      setActionError(
+        requestError.response?.data?.message ||
+          "İşveren durumu güncellenemedi. Lütfen tekrar deneyin."
+      );
+    } finally {
+      setUpdatingEmployerId(null);
     }
   };
+
+  const view = getEmployerVerificationView({ loading, loadError, employers });
 
   return (
     <div className="verify-container">
@@ -38,13 +68,33 @@ export default function EmployerVerification() {
         <p>Approve or reject employer accounts waiting for platform access.</p>
       </header>
 
-      {loading && <p className="loading-text">Loading...</p>}
-
-      {!loading && employers.length === 0 && (
-        <p className="empty-text">No pending employers.</p>
+      {actionError && (
+        <p className="verify-message verify-message--error">{actionError}</p>
+      )}
+      {actionMessage && (
+        <p className="verify-message verify-message--success">
+          {actionMessage}
+        </p>
       )}
 
-      {!loading && employers.length > 0 && (
+      {view === "loading" && (
+        <p className="loading-text">Bekleyen işverenler yükleniyor...</p>
+      )}
+
+      {view === "error" && (
+        <div className="verify-message verify-message--error verify-retry">
+          <span>{loadError}</span>
+          <button type="button" onClick={fetchEmployers}>
+            Tekrar dene
+          </button>
+        </div>
+      )}
+
+      {view === "empty" && (
+        <p className="empty-text">Bekleyen işveren yok.</p>
+      )}
+
+      {view === "list" && (
         <div className="verify-list">
           {employers.map((emp) => (
             <div key={emp.id} className="verify-card">
@@ -57,15 +107,17 @@ export default function EmployerVerification() {
                 <button
                   className="approve-btn"
                   onClick={() => updateStatus(emp.id, "approved")}
+                  disabled={updatingEmployerId !== null}
                 >
-                  Approve
+                  {updatingEmployerId === emp.id ? "İşleniyor..." : "Approve"}
                 </button>
 
                 <button
                   className="reject-btn"
                   onClick={() => updateStatus(emp.id, "rejected")}
+                  disabled={updatingEmployerId !== null}
                 >
-                  Reject
+                  {updatingEmployerId === emp.id ? "İşleniyor..." : "Reject"}
                 </button>
               </div>
             </div>
