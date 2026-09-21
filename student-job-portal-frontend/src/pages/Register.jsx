@@ -18,7 +18,11 @@ export default function Register() {
 
     try {
       await api.post("/auth/register", { email, password, role });
-      navigate("/login");
+      if (role === "student") {
+        navigate("/verify-email?sent=1", { state: { email: email.trim() } });
+      } else {
+        navigate("/login");
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Register failed");
     } finally {

@@ -27,6 +27,9 @@ describe("Employer application status updates", () => {
     async (status) => {
       dbMock.query
         .mockResolvedValueOnce([[
+          { role: "employer", status: "approved" },
+        ]])
+        .mockResolvedValueOnce([[
           { id: 14, status: "pending", employer_id: 8 },
         ]])
         .mockResolvedValueOnce([{ affectedRows: 1 }]);
@@ -40,18 +43,20 @@ describe("Employer application status updates", () => {
       await updateApplicationStatus(req, res);
 
       expect(dbMock.query).toHaveBeenNthCalledWith(
-        2,
+        3,
         expect.stringContaining("j.employer_id = ?"),
-        [status, "14", 8]
+        [status, "14", 8, 8]
       );
       expect(res.json).toHaveBeenCalledWith({ message: "Status updated ✅" });
     }
   );
 
   test("rejects an application owned by another employer", async () => {
-    dbMock.query.mockResolvedValueOnce([[
-      { id: 14, status: "pending", employer_id: 9 },
-    ]]);
+    dbMock.query
+      .mockResolvedValueOnce([[{ role: "employer", status: "approved" }]])
+      .mockResolvedValueOnce([[
+        { id: 14, status: "pending", employer_id: 9 },
+      ]]);
     const req = {
       user: { id: 8, role: "employer" },
       params: { id: "14" },
@@ -62,11 +67,12 @@ describe("Employer application status updates", () => {
     await updateApplicationStatus(req, res);
 
     expect(res.status).toHaveBeenCalledWith(403);
-    expect(dbMock.query).toHaveBeenCalledTimes(1);
+    expect(dbMock.query).toHaveBeenCalledTimes(2);
   });
 
   test("allows changing a previous decision", async () => {
     dbMock.query
+      .mockResolvedValueOnce([[{ role: "employer", status: "approved" }]])
       .mockResolvedValueOnce([[
         { id: 14, status: "accepted", employer_id: 8 },
       ]])
@@ -80,12 +86,14 @@ describe("Employer application status updates", () => {
 
     await updateApplicationStatus(req, res);
 
-    expect(dbMock.query).toHaveBeenCalledTimes(2);
+    expect(dbMock.query).toHaveBeenCalledTimes(3);
     expect(res.json).toHaveBeenCalledWith({ message: "Status updated ✅" });
   });
 
   test("returns 404 for a missing application", async () => {
-    dbMock.query.mockResolvedValueOnce([[]]);
+    dbMock.query
+      .mockResolvedValueOnce([[{ role: "employer", status: "approved" }]])
+      .mockResolvedValueOnce([[]]);
     const req = {
       user: { id: 8, role: "employer" },
       params: { id: "404" },
@@ -96,7 +104,7 @@ describe("Employer application status updates", () => {
     await updateApplicationStatus(req, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
-    expect(dbMock.query).toHaveBeenCalledTimes(1);
+    expect(dbMock.query).toHaveBeenCalledTimes(2);
   });
 
   test.each(["pending", "invalid"])(
@@ -113,6 +121,29 @@ describe("Employer application status updates", () => {
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(dbMock.query).not.toHaveBeenCalled();
+    }
+  );
+
+  test.each(["pending", "rejected"])(
+    "blocks a %s employer from updating an application",
+    async (accountStatus) => {
+      dbMock.query.mockResolvedValueOnce([[
+        { role: "employer", status: accountStatus },
+      ]]);
+      const req = {
+        user: { id: 8, role: "employer" },
+        params: { id: "14" },
+        body: { status: "accepted" },
+      };
+      const res = mockResponse();
+
+      await updateApplicationStatus(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Employer account is not approved",
+      });
+      expect(dbMock.query).toHaveBeenCalledTimes(1);
     }
   );
 });

@@ -1,5 +1,24 @@
 import db from "../config/db.js";
 
+const requireApprovedEmployer = async (employerId, res) => {
+  const [users] = await db.query(
+    "SELECT role, status FROM users WHERE id = ?",
+    [employerId]
+  );
+
+  if (users.length === 0) {
+    res.status(401).json({ message: "User account not found" });
+    return false;
+  }
+
+  if (users[0].role !== "employer" || users[0].status !== "approved") {
+    res.status(403).json({ message: "Employer account is not approved" });
+    return false;
+  }
+
+  return true;
+};
+
 /* =========================
    STUDENT → APPLY TO JOB
 ========================= */
@@ -22,6 +41,25 @@ export const applyToJob = async (req, res) => {
       return res.status(400).json({ message: "Resume is required" });
     }
 
+    const [students] = await db.query(
+      "SELECT role, is_verified FROM users WHERE id = ?",
+      [studentId]
+    );
+
+    if (students.length === 0) {
+      return res.status(401).json({ message: "User account not found" });
+    }
+
+    if (students[0].role !== "student") {
+      return res.status(403).json({ message: "Only students can apply to jobs" });
+    }
+
+    if (Number(students[0].is_verified) !== 1) {
+      return res.status(403).json({
+        message: "Verify your ADU student email before applying",
+      });
+    }
+
     const [resumes] = await db.query(
       "SELECT id, user_id FROM resumes WHERE id = ?",
       [resumeId]
@@ -37,10 +75,19 @@ export const applyToJob = async (req, res) => {
       });
     }
 
-    await db.query(
-      "INSERT INTO applications (job_id, student_id, resume_id) VALUES (?, ?, ?)",
-      [jobId, studentId, resumeId]
+    const [result] = await db.query(
+      `INSERT INTO applications (job_id, student_id, resume_id)
+       SELECT ?, ?, ?
+       FROM users
+       WHERE id = ? AND role = 'student' AND is_verified = 1`,
+      [jobId, studentId, resumeId, studentId]
     );
+
+    if (result.affectedRows !== 1) {
+      return res.status(403).json({
+        message: "Verify your ADU student email before applying",
+      });
+    }
 
     return res.status(201).json({ message: "Applied successfully ✅" });
 
@@ -92,6 +139,8 @@ export const getStudentApplications = async (req, res) => {
 ========================= */
 export const getEmployerApplications = async (req, res) => {
   try {
+    if (!await requireApprovedEmployer(req.user.id, res)) return;
+
     const [rows] = await db.query(`
       SELECT
         a.id AS application_id,
@@ -130,6 +179,8 @@ export const updateApplicationStatus = async (req, res) => {
       return res.status(400).json({ message: "Invalid status" });
     }
 
+    if (!await requireApprovedEmployer(employerId, res)) return;
+
     const [rows] = await db.query(
       `
       SELECT a.id, a.status, j.employer_id
@@ -160,8 +211,12 @@ export const updateApplicationStatus = async (req, res) => {
       JOIN jobs j ON j.id = a.job_id
       SET a.status = ?
       WHERE a.id = ? AND j.employer_id = ?
+        AND EXISTS (
+          SELECT 1 FROM users
+          WHERE id = ? AND role = 'employer' AND status = 'approved'
+        )
       `,
-      [status, id, employerId]
+      [status, id, employerId, employerId]
     );
 
     if (result.affectedRows !== 1) {
@@ -181,6 +236,8 @@ export const getApplicationsByJob = async (req, res) => {
   try {
     const { jobId } = req.params;
     const employerId = req.user.id;
+
+    if (!await requireApprovedEmployer(employerId, res)) return;
 
     const [jobs] = await db.query(
       "SELECT id, employer_id FROM jobs WHERE id = ?",

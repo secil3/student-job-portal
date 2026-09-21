@@ -24,8 +24,9 @@ describe("Application resume relation", () => {
 
   test("stores a resume owned by the applying student", async () => {
     dbMock.query
+      .mockResolvedValueOnce([[{ role: "student", is_verified: 1 }]])
       .mockResolvedValueOnce([[{ id: 12, user_id: 7 }]])
-      .mockResolvedValueOnce([{ insertId: 30 }]);
+      .mockResolvedValueOnce([{ affectedRows: 1, insertId: 30 }]);
     const req = {
       user: { id: 7, role: "student" },
       body: { jobId: 4, resumeId: 12 },
@@ -35,9 +36,9 @@ describe("Application resume relation", () => {
     await applyToJob(req, res);
 
     expect(dbMock.query).toHaveBeenNthCalledWith(
-      2,
+      3,
       expect.stringContaining("resume_id"),
-      [4, 7, 12]
+      [4, 7, 12, 7]
     );
     expect(res.status).toHaveBeenCalledWith(201);
   });
@@ -56,7 +57,9 @@ describe("Application resume relation", () => {
   });
 
   test("rejects a resume owned by another student", async () => {
-    dbMock.query.mockResolvedValueOnce([[{ id: 12, user_id: 8 }]]);
+    dbMock.query
+      .mockResolvedValueOnce([[{ role: "student", is_verified: 1 }]])
+      .mockResolvedValueOnce([[{ id: 12, user_id: 8 }]]);
     const req = {
       user: { id: 7, role: "student" },
       body: { jobId: 4, resumeId: 12 },
@@ -66,11 +69,13 @@ describe("Application resume relation", () => {
     await applyToJob(req, res);
 
     expect(res.status).toHaveBeenCalledWith(403);
-    expect(dbMock.query).toHaveBeenCalledTimes(1);
+    expect(dbMock.query).toHaveBeenCalledTimes(2);
   });
 
   test("returns not found for a missing resume", async () => {
-    dbMock.query.mockResolvedValueOnce([[]]);
+    dbMock.query
+      .mockResolvedValueOnce([[{ role: "student", is_verified: 1 }]])
+      .mockResolvedValueOnce([[]]);
     const req = {
       user: { id: 7, role: "student" },
       body: { jobId: 4, resumeId: 999 },
@@ -80,11 +85,12 @@ describe("Application resume relation", () => {
     await applyToJob(req, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
-    expect(dbMock.query).toHaveBeenCalledTimes(1);
+    expect(dbMock.query).toHaveBeenCalledTimes(2);
   });
 
   test("returns conflict for a duplicate application", async () => {
     dbMock.query
+      .mockResolvedValueOnce([[{ role: "student", is_verified: 1 }]])
       .mockResolvedValueOnce([[{ id: 12, user_id: 7 }]])
       .mockRejectedValueOnce({ code: "ER_DUP_ENTRY" });
     const req = {
@@ -96,6 +102,25 @@ describe("Application resume relation", () => {
     await applyToJob(req, res);
 
     expect(res.status).toHaveBeenCalledWith(409);
+  });
+
+  test("blocks an unverified student before checking the resume", async () => {
+    dbMock.query.mockResolvedValueOnce([[
+      { role: "student", is_verified: 0 },
+    ]]);
+    const req = {
+      user: { id: 7, role: "student" },
+      body: { jobId: 4, resumeId: 12 },
+    };
+    const res = mockResponse();
+
+    await applyToJob(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Verify your ADU student email before applying",
+    });
+    expect(dbMock.query).toHaveBeenCalledTimes(1);
   });
 
   test("includes job_id in the student application response", async () => {
@@ -122,6 +147,7 @@ describe("Application resume relation", () => {
   test("includes the stored resume relation in the employer job response", async () => {
     const applications = [{ id: 30, resume_id: 12, resume_name: "CV" }];
     dbMock.query
+      .mockResolvedValueOnce([[{ role: "employer", status: "approved" }]])
       .mockResolvedValueOnce([[{ id: 4, employer_id: 9 }]])
       .mockResolvedValueOnce([applications]);
     const req = { user: { id: 9 }, params: { jobId: "4" } };
@@ -130,7 +156,7 @@ describe("Application resume relation", () => {
     await getApplicationsByJob(req, res);
 
     expect(dbMock.query).toHaveBeenNthCalledWith(
-      2,
+      3,
       expect.stringContaining("r.id AS resume_id"),
       ["4", 9]
     );

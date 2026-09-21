@@ -5,6 +5,7 @@ import { jest } from "@jest/globals";
 const dbMock = { query: jest.fn() };
 const bcryptMock = { compare: jest.fn(), hash: jest.fn() };
 const jwtMock = { sign: jest.fn() };
+const sendVerificationEmailMock = jest.fn();
 
 await jest.unstable_mockModule("../config/db.js", () => ({
   default: dbMock
@@ -16,6 +17,10 @@ await jest.unstable_mockModule("bcrypt", () => ({
 
 await jest.unstable_mockModule("jsonwebtoken", () => ({
   default: jwtMock
+}));
+
+await jest.unstable_mockModule("../services/email.service.js", () => ({
+  sendStudentVerificationEmail: sendVerificationEmailMock,
 }));
 
 // Import controller AFTER mocks
@@ -37,12 +42,12 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
   // ================= LOGIN =================
 
   test("UT-L1: login success -> returns token and user", async () => {
-    const req = { body: { email: "student@test.com", password: "123456" } };
+    const req = { body: { email: " STUDENT@STU.ADU.EDU.TR ", password: "123456" } };
     const res = mockRes();
 
     dbMock.query.mockResolvedValueOnce([[{
       id: 1,
-      email: "student@test.com",
+      email: "student@stu.adu.edu.tr",
       password: "hashedPassword",
       role: "student"
     }]]);
@@ -60,7 +65,7 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
 
     expect(res.json).toHaveBeenCalledWith({
       token: "fake-token",
-      user: { id: 1, email: "student@test.com", role: "student" }
+      user: { id: 1, email: "student@stu.adu.edu.tr", role: "student" }
     });
   });
 
@@ -120,7 +125,7 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
   });
 
   test("UT-R3: email already exists -> returns 409", async () => {
-    const req = { body: { email: "exists@test.com", password: "123456", role: "student" } };
+    const req = { body: { email: "exists@stu.adu.edu.tr", password: "123456", role: "student" } };
     const res = mockRes();
 
     dbMock.query.mockResolvedValueOnce([[{ id: 7 }]]);
@@ -148,5 +153,92 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
 
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({ message: "User registered successfully" });
+  });
+
+  test.each([
+    "student@adu.edu.tr",
+    "student@stu.adu.edu.tr.evil.example",
+    "student@sub.stu.adu.edu.tr",
+    "student@example.com",
+  ])("rejects a non-ADU student address: %s", async (email) => {
+    const req = { body: { email, password: "123456", role: "student" } };
+    const res = mockRes();
+
+    await register(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Students must register with an @stu.adu.edu.tr email address"
+    });
+    expect(dbMock.query).not.toHaveBeenCalled();
+  });
+
+  test("normalizes and accepts an exact ADU student address", async () => {
+    const req = {
+      body: {
+        email: "  Student.Number@STU.ADU.EDU.TR  ",
+        password: "123456",
+        role: "student",
+      },
+    };
+    const res = mockRes();
+
+    dbMock.query.mockResolvedValueOnce([[]]);
+    bcryptMock.hash.mockResolvedValueOnce("hashed-pass");
+    dbMock.query.mockResolvedValueOnce([{ insertId: 101 }]);
+    sendVerificationEmailMock.mockResolvedValueOnce();
+
+    await register(req, res);
+
+    expect(dbMock.query).toHaveBeenNthCalledWith(
+      1,
+      "SELECT id FROM users WHERE email = ?",
+      ["student.number@stu.adu.edu.tr"]
+    );
+    expect(dbMock.query).toHaveBeenNthCalledWith(
+      2,
+      expect.stringContaining("email_verification_token_hash"),
+      [
+        "student.number@stu.adu.edu.tr",
+        "hashed-pass",
+        "student",
+        "approved",
+        expect.stringMatching(/^[a-f0-9]{64}$/),
+        expect.any(Date),
+      ]
+    );
+    expect(sendVerificationEmailMock).toHaveBeenCalledWith({
+      to: "student.number@stu.adu.edu.tr",
+      token: expect.stringMatching(/^[a-f0-9]{64}$/),
+    });
+    expect(res.status).toHaveBeenCalledWith(201);
+  });
+
+  test("does not report registration success when verification email delivery fails", async () => {
+    const req = {
+      body: {
+        email: "student@stu.adu.edu.tr",
+        password: "123456",
+        role: "student",
+      },
+    };
+    const res = mockRes();
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+    dbMock.query.mockResolvedValueOnce([[]]);
+    bcryptMock.hash.mockResolvedValueOnce("hashed-pass");
+    dbMock.query.mockResolvedValueOnce([{ insertId: 102 }]);
+    sendVerificationEmailMock.mockRejectedValueOnce(
+      Object.assign(new Error("delivery failed"), { code: "SMTP_FAILURE" })
+    );
+
+    await register(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(502);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Account created, but the verification email could not be sent. Please request a new email."
+    });
+    expect(res.status).not.toHaveBeenCalledWith(201);
+    consoleErrorSpy.mockRestore();
   });
 });

@@ -30,6 +30,7 @@ describe("Employer application list ownership", () => {
   test("returns applications for an owned job", async () => {
     const applications = [{ id: 14, status: "pending", resume_id: 5 }];
     dbMock.query
+      .mockResolvedValueOnce([[{ role: "employer", status: "approved" }]])
       .mockResolvedValueOnce([[{ id: 20, employer_id: 8 }]])
       .mockResolvedValueOnce([applications]);
     const res = mockResponse();
@@ -37,7 +38,7 @@ describe("Employer application list ownership", () => {
     await getApplicationsByJob(request, res);
 
     expect(dbMock.query).toHaveBeenNthCalledWith(
-      2,
+      3,
       expect.stringContaining("j.employer_id = ?"),
       ["20", 8]
     );
@@ -46,6 +47,7 @@ describe("Employer application list ownership", () => {
 
   test("returns an empty list for an owned job without applications", async () => {
     dbMock.query
+      .mockResolvedValueOnce([[{ role: "employer", status: "approved" }]])
       .mockResolvedValueOnce([[{ id: 20, employer_id: 8 }]])
       .mockResolvedValueOnce([[]]);
     const res = mockResponse();
@@ -56,23 +58,27 @@ describe("Employer application list ownership", () => {
   });
 
   test("returns 403 for another employer's job", async () => {
-    dbMock.query.mockResolvedValueOnce([[{ id: 20, employer_id: 9 }]]);
+    dbMock.query
+      .mockResolvedValueOnce([[{ role: "employer", status: "approved" }]])
+      .mockResolvedValueOnce([[{ id: 20, employer_id: 9 }]]);
     const res = mockResponse();
 
     await getApplicationsByJob(request, res);
 
     expect(res.status).toHaveBeenCalledWith(403);
-    expect(dbMock.query).toHaveBeenCalledTimes(1);
+    expect(dbMock.query).toHaveBeenCalledTimes(2);
   });
 
   test("returns 404 for a missing job", async () => {
-    dbMock.query.mockResolvedValueOnce([[]]);
+    dbMock.query
+      .mockResolvedValueOnce([[{ role: "employer", status: "approved" }]])
+      .mockResolvedValueOnce([[]]);
     const res = mockResponse();
 
     await getApplicationsByJob(request, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
-    expect(dbMock.query).toHaveBeenCalledTimes(1);
+    expect(dbMock.query).toHaveBeenCalledTimes(2);
   });
 
   test("returns a safe 500 response when the database fails", async () => {
@@ -84,4 +90,22 @@ describe("Employer application list ownership", () => {
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({ message: "Failed to fetch applications" });
   });
+
+  test.each(["pending", "rejected"])(
+    "blocks a %s employer from viewing applications",
+    async (accountStatus) => {
+      dbMock.query.mockResolvedValueOnce([[
+        { role: "employer", status: accountStatus },
+      ]]);
+      const res = mockResponse();
+
+      await getApplicationsByJob(request, res);
+
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Employer account is not approved",
+      });
+      expect(dbMock.query).toHaveBeenCalledTimes(1);
+    }
+  );
 });
