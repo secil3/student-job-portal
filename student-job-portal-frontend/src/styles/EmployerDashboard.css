@@ -118,6 +118,25 @@
   min-width: 0;
 }
 
+.job-card-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.job-status-badge {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.job-status-badge.is-active { background: #d9ffe2; color: #17603c; }
+.job-status-badge.is-inactive { background: #fef2f2; color: #b91c1c; }
+
 .job-card h4 {
   overflow-wrap: anywhere;
   margin: 0;
@@ -204,27 +223,34 @@
   background: rgba(133, 138, 227, 0.15);
 }
 
-.job-delete-btn {
+.job-activation-link {
   flex: 0 0 auto;
   padding: 5px 2px;
   border: 0;
   background: transparent;
-  color: #b91c1c;
   font-family: inherit;
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
 }
 
-.job-delete-btn:hover {
-  color: #dc2626;
+.job-activation-link.is-deactivate { color: #b91c1c; }
+.job-activation-link.is-reactivate { color: #613dc1; }
+
+.job-activation-link:hover {
   text-decoration: underline;
 }
 
-.job-delete-btn:disabled {
+.job-activation-link:focus-visible { outline: 3px solid rgba(97, 61, 193, 0.22); outline-offset: 2px; }
+
+.job-activation-link:disabled {
   opacity: 0.55;
   cursor: not-allowed;
 }
+
+.dashboard-message { margin: 0 0 14px; padding: 11px 13px; border-radius: 10px; font-size: 12px; }
+.dashboard-message.is-error { border: 1px solid #fecaca; background: #fef2f2; color: #991b1b; }
+.dashboard-message.is-success { border: 1px solid #b7efc5; background: #effff3; color: #17603c; }
 
 .empty-text {
   padding: 28px;

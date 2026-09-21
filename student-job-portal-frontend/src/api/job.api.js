@@ -9,8 +9,3 @@ export const getAllJobs = () => {
 export const createJob = (jobData) => {
   return api.get("/jobs", jobData);
 };
-
-// Employer
-export const deleteJob = (jobId) => {
-  return api.get(`/jobs/${jobId}`);
-};

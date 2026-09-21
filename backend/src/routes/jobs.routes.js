@@ -5,7 +5,7 @@ import {
   getAllJobs,
   getEmployerJobs,
   updateJob,
-  deleteJob
+  updateJobActivation
 } from "../controllers/jobs.controller.js";
 
 const router = express.Router();
@@ -22,7 +22,7 @@ router.get("/employer", auth, getEmployerJobs);
 // EMPLOYER – update own job
 router.put("/:id", auth, updateJob);
 
-// DELETE job
-router.delete("/:id", auth, deleteJob);
+// ADMIN / EMPLOYER – deactivate or reactivate a job
+router.patch("/:id/activation", auth, updateJobActivation);
 
 export default router;

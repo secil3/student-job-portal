@@ -51,6 +51,92 @@ export const updateEmployerStatus = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
+
+export const updateUserActivation = async (req, res) => {
+  try {
+    const actorId = req.user?.id;
+    const targetId = req.params.id;
+    const { isActive } = req.body ?? {};
+
+    if (typeof isActive !== "boolean") {
+      return res.status(400).json({ message: "isActive must be boolean" });
+    }
+
+    const [actors] = await db.query(
+      "SELECT role, is_active FROM users WHERE id = ?",
+      [actorId]
+    );
+
+    if (actors.length === 0) {
+      return res.status(401).json({ message: "User account not found" });
+    }
+
+    if (actors[0].role !== "admin" || Number(actors[0].is_active) !== 1) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    const [targets] = await db.query(
+      "SELECT id, role, is_active FROM users WHERE id = ?",
+      [targetId]
+    );
+
+    if (targets.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!isActive && Number(targetId) === Number(actorId)) {
+      return res.status(403).json({ message: "You cannot deactivate your own account" });
+    }
+
+    const requestedValue = isActive ? 1 : 0;
+    if (Number(targets[0].is_active) === requestedValue) {
+      return res.json({
+        message: isActive ? "User is already active" : "User is already inactive",
+      });
+    }
+
+    const [result] = await db.query(
+      `UPDATE users AS target
+       JOIN users AS actor
+         ON actor.id = ? AND actor.role = 'admin' AND actor.is_active = 1
+       SET target.is_active = ?,
+           target.deactivated_at = CASE
+             WHEN ? = 1 THEN NULL
+             ELSE COALESCE(target.deactivated_at, CURRENT_TIMESTAMP)
+           END
+       WHERE target.id = ?
+         AND (
+           target.role <> 'admin'
+           OR ? = 1
+           OR (
+             SELECT active_admins
+             FROM (
+               SELECT COUNT(*) AS active_admins
+               FROM users
+               WHERE role = 'admin' AND is_active = 1
+             ) AS admin_count
+           ) > 1
+         )`,
+      [actorId, requestedValue, requestedValue, targetId, requestedValue]
+    );
+
+    if (result.affectedRows !== 1) {
+      if (!isActive && targets[0].role === "admin") {
+        return res.status(409).json({
+          message: "The last active admin account cannot be deactivated",
+        });
+      }
+      return res.status(409).json({ message: "User activation could not be updated" });
+    }
+
+    return res.json({
+      message: isActive ? "User reactivated successfully" : "User deactivated successfully",
+    });
+  } catch (error) {
+    console.error("updateUserActivation error:", error.code || error.name);
+    return res.status(500).json({ message: "User activation could not be updated" });
+  }
+};
 //admin data görüntüleme
 export const getAdminDashboard = async (req, res) => {
     try {
@@ -96,7 +182,7 @@ export const getAdminDashboard = async (req, res) => {
 // US-5.3.1 – View All Users
 export const getAllUsers = async (req, res) => {
   const [rows] = await db.query(
-    "SELECT id, email, role, status FROM users"
+    "SELECT id, email, role, status, is_active, deactivated_at FROM users"
   );
   res.json(rows);
 };

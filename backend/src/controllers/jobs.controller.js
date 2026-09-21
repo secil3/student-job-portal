@@ -128,7 +128,8 @@ export const getEmployerJobs = async (req, res) => {
 
     const [rows] = await db.query(
       `
-      SELECT id, title, description, location, salary, created_at
+      SELECT id, title, description, location, salary, created_at,
+             is_active, deactivated_at
       FROM jobs
       WHERE employer_id = ?
       ORDER BY created_at DESC
@@ -251,13 +252,18 @@ export const updateJob = async (req, res) => {
 };
 
 
-export const deleteJob = async (req, res) => {
+export const updateJobActivation = async (req, res) => {
   try {
-    const { id } = req.params;
+    const jobId = req.params.id;
     const userId = req.user?.id;
+    const { isActive } = req.body ?? {};
+
+    if (typeof isActive !== "boolean") {
+      return res.status(400).json({ message: "isActive must be boolean" });
+    }
 
     const [users] = await db.query(
-      "SELECT role, status FROM users WHERE id = ?",
+      "SELECT role, status, is_active FROM users WHERE id = ?",
       [userId]
     );
 
@@ -271,13 +277,17 @@ export const deleteJob = async (req, res) => {
       return res.status(403).json({ message: "Forbidden" });
     }
 
+    if (Number(users[0].is_active) !== 1) {
+      return res.status(403).json({ message: "Account is inactive" });
+    }
+
     if (role === "employer" && users[0].status !== "approved") {
       return res.status(403).json({ message: "Employer account is not approved" });
     }
 
     const [jobs] = await db.query(
-      "SELECT id, employer_id FROM jobs WHERE id = ?",
-      [id]
+      "SELECT id, employer_id, is_active FROM jobs WHERE id = ?",
+      [jobId]
     );
 
     if (jobs.length === 0) {
@@ -286,36 +296,57 @@ export const deleteJob = async (req, res) => {
 
     if (role === "employer" && Number(jobs[0].employer_id) !== Number(userId)) {
       return res.status(403).json({
-        message: "You can only delete your own job posts",
+        message: "You can only update your own job posts",
+      });
+    }
+
+    const requestedValue = isActive ? 1 : 0;
+    if (Number(jobs[0].is_active) === requestedValue) {
+      return res.json({
+        message: isActive ? "Job is already active" : "Job is already inactive",
       });
     }
 
     const query = role === "admin"
-      ? `DELETE FROM jobs
+      ? `UPDATE jobs
+         SET is_active = ?,
+             deactivated_at = CASE
+               WHEN ? = 1 THEN NULL
+               ELSE COALESCE(deactivated_at, CURRENT_TIMESTAMP)
+             END
          WHERE id = ?
            AND EXISTS (
-             SELECT 1 FROM users WHERE id = ? AND role = 'admin'
+             SELECT 1 FROM users
+             WHERE id = ? AND role = 'admin' AND is_active = 1
            )`
-      : `DELETE FROM jobs
+      : `UPDATE jobs
+         SET is_active = ?,
+             deactivated_at = CASE
+               WHEN ? = 1 THEN NULL
+               ELSE COALESCE(deactivated_at, CURRENT_TIMESTAMP)
+             END
          WHERE id = ? AND employer_id = ?
            AND EXISTS (
              SELECT 1 FROM users
-             WHERE id = ? AND role = 'employer' AND status = 'approved'
+             WHERE id = ? AND role = 'employer'
+               AND status = 'approved' AND is_active = 1
            )`;
 
     const params = role === "admin"
-      ? [id, userId]
-      : [id, userId, userId];
+      ? [requestedValue, requestedValue, jobId, userId]
+      : [requestedValue, requestedValue, jobId, userId, userId];
 
     const [result] = await db.query(query, params);
 
     if (result.affectedRows !== 1) {
-      return res.status(409).json({ message: "Job could not be deleted" });
+      return res.status(409).json({ message: "Job activation could not be updated" });
     }
 
-    return res.json({ message: "Job and its applications were deleted" });
+    return res.json({
+      message: isActive ? "Job reactivated successfully" : "Job deactivated successfully",
+    });
   } catch (err) {
-    console.error("deleteJob error:", err.code || err.name);
-    return res.status(500).json({ message: "Job could not be deleted" });
+    console.error("updateJobActivation error:", err.code || err.name);
+    return res.status(500).json({ message: "Job activation could not be updated" });
   }
 };

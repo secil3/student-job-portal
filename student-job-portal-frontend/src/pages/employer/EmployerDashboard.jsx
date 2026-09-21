@@ -1,12 +1,19 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { updateJobActivation } from "../../api/activation.api";
 import api from "../../services/api";
+import {
+  isRecordActive,
+  updateRecordActivation,
+} from "../../utils/activationStatus";
 import "../../styles/EmployerDashboard.css";
 
 const EmployerDashboard = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [deletingJobId, setDeletingJobId] = useState(null);
+  const [updatingJobId, setUpdatingJobId] = useState(null);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   const fetchJobs = async () => {
@@ -14,7 +21,7 @@ const EmployerDashboard = () => {
       const res = await api.get("/jobs/employer");
       setJobs(res.data);
     } catch {
-      alert("Failed to load your job posts");
+      setError("Failed to load your job posts.");
     } finally {
       setLoading(false);
     }
@@ -24,21 +31,21 @@ const EmployerDashboard = () => {
     fetchJobs();
   }, []);
 
-  const handleDelete = async (jobId) => {
-    const confirmed = window.confirm(
-      "Deleting this job will permanently delete all applications submitted for it. This action cannot be undone. Continue?"
-    );
-
-    if (!confirmed) return;
-
+  const handleActivation = async (jobId, isActive) => {
+    setError("");
+    setMessage("");
+    setUpdatingJobId(jobId);
     try {
-      setDeletingJobId(jobId);
-      await api.delete(`/jobs/${jobId}`);
-      setJobs((prev) => prev.filter((job) => job.id !== jobId));
-    } catch (err) {
-      alert(err.response?.data?.message || "Failed to delete job");
+      const response = await updateJobActivation(jobId, isActive);
+      setJobs((current) => updateRecordActivation(current, jobId, isActive));
+      setMessage(response.data?.message || "Job status updated.");
+    } catch (requestError) {
+      setError(
+        requestError.response?.data?.message ||
+          "Job status could not be updated."
+      );
     } finally {
-      setDeletingJobId(null);
+      setUpdatingJobId(null);
     }
   };
 
@@ -74,7 +81,10 @@ const EmployerDashboard = () => {
         </div>
       </div>
 
-      {jobs.length === 0 ? (
+      {error && <p className="dashboard-message is-error">{error}</p>}
+      {message && <p className="dashboard-message is-success">{message}</p>}
+
+      {!error && jobs.length === 0 ? (
         <p className="empty-text">
           You haven’t posted any jobs yet.
         </p>
@@ -85,6 +95,13 @@ const EmployerDashboard = () => {
               <div className="job-card-content">
                 <div className="job-card-heading">
                   <h4>{job.title}</h4>
+                  <span
+                    className={`job-status-badge ${
+                      isRecordActive(job) ? "is-active" : "is-inactive"
+                    }`}
+                  >
+                    {isRecordActive(job) ? "Active" : "Inactive"}
+                  </span>
                 </div>
 
                 {(job.location || job.salary) && (
@@ -117,11 +134,17 @@ const EmployerDashboard = () => {
                 </div>
 
                 <button
-                  className="job-delete-btn"
-                  onClick={() => handleDelete(job.id)}
-                  disabled={deletingJobId === job.id}
+                  className={`job-activation-link ${
+                    isRecordActive(job) ? "is-deactivate" : "is-reactivate"
+                  }`}
+                  onClick={() => handleActivation(job.id, !isRecordActive(job))}
+                  disabled={updatingJobId === job.id}
                 >
-                  {deletingJobId === job.id ? "Deleting..." : "Delete"}
+                  {updatingJobId === job.id
+                    ? "Updating..."
+                    : isRecordActive(job)
+                      ? "Pasife al"
+                      : "Yeniden etkinleştir"}
                 </button>
               </div>
             </div>

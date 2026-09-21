@@ -4,6 +4,7 @@ import roleCheck from "../middleware/role.middleware.js";
 import {
   getPendingEmployers,
   updateEmployerStatus,
+  updateUserActivation,
   getAllUsers,
   getAdminDashboard
 } from "../controllers/admin.controller.js";
@@ -29,6 +30,13 @@ router.patch(
   auth,
   roleCheck("admin"),
   updateEmployerStatus
+);
+
+router.patch(
+  "/users/:id/activation",
+  auth,
+  roleCheck("admin"),
+  updateUserActivation
 );
 
 // admin dashboard

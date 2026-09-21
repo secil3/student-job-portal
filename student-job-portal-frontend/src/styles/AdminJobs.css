@@ -6,7 +6,7 @@
   font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 .adminjobs-header { max-width: 680px; margin-bottom: 22px; }
-.adminjobs-header > span, .adminjob-content > span { color: #613dc1; font-size: 10px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; }
+.adminjobs-header > span { color: #613dc1; font-size: 10px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; }
 .adminjobs-title { margin: 5px 0 7px; font-size: clamp(28px, 4vw, 38px); letter-spacing: -0.04em; }
 .adminjobs-header p { margin: 0; color: rgba(44, 7, 53, 0.62); font-size: 14px; }
 .adminjobs-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
@@ -25,24 +25,38 @@
 .adminjob-content { min-width: 0; }
 .adminjob-title { margin: 5px 0 4px; overflow-wrap: anywhere; font-size: 16px; letter-spacing: -0.02em; }
 .adminjob-location { margin: 0; color: rgba(44, 7, 53, 0.58); font-size: 12px; }
-.adminjob-card .btn-danger {
+.job-activation-badge {
+  display: inline-flex;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.job-activation-badge.is-active { background: #d9ffe2; color: #17603c; }
+.job-activation-badge.is-inactive { background: #fef2f2; color: #b91c1c; }
+.adminjob-card .job-activation-btn {
   flex: 0 0 auto;
   min-height: 35px;
   padding: 7px 12px;
-  border: 1px solid #b91c1c;
+  border: 1px solid transparent;
   border-radius: 9px;
-  background: #ffffff;
-  color: #b91c1c;
+  font-family: inherit;
   font-size: 12px;
   font-weight: 800;
+  cursor: pointer;
 }
-.adminjob-card .btn-danger:hover { background: #fef2f2; }
-.adminjob-card .btn-danger:focus-visible { outline: 3px solid rgba(185, 28, 28, 0.22); outline-offset: 2px; }
-.adminjob-card .btn-danger:disabled { opacity: 0.55; cursor: not-allowed; }
+.adminjob-card .job-activation-btn.is-deactivate { border-color: #b91c1c; background: #fff; color: #b91c1c; }
+.adminjob-card .job-activation-btn.is-reactivate { border-color: #613dc1; background: #f5f1fa; color: #613dc1; }
+.adminjob-card .job-activation-btn:focus-visible { outline: 3px solid rgba(97, 61, 193, 0.22); outline-offset: 2px; }
+.adminjob-card .job-activation-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.adminjobs-message { margin: 0 0 14px; padding: 11px 13px; border-radius: 10px; font-size: 12px; }
+.adminjobs-message.is-error { border: 1px solid #fecaca; background: #fef2f2; color: #991b1b; }
+.adminjobs-message.is-success { border: 1px solid #b7efc5; background: #effff3; color: #17603c; }
 .adminjobs-container .empty-text, .adminjobs-container > p { padding: 18px; border: 1px dashed rgba(97, 61, 193, 0.24); border-radius: 13px; color: rgba(44, 7, 53, 0.62); font-size: 13px; }
 @media (max-width: 760px) { .adminjobs-list { grid-template-columns: 1fr; } }
 @media (max-width: 420px) {
   .adminjobs-container { width: min(100% - 24px, 1100px); }
   .adminjob-card { align-items: stretch; flex-direction: column; }
-  .adminjob-card .btn-danger { align-self: flex-start; }
+  .adminjob-card .job-activation-btn { align-self: flex-start; }
 }

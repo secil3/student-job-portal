@@ -38,13 +38,34 @@
 .users-table tbody tr:last-child td { border-bottom: 0; }
 .users-table tbody tr:hover { background: rgba(245, 241, 250, 0.5); }
 .role-badge,
-.user-status-badge { display: inline-flex; padding: 5px 9px; border-radius: 999px; font-size: 11px; font-weight: 800; text-transform: capitalize; }
+.user-status-badge,
+.account-status-badge { display: inline-flex; padding: 5px 9px; border-radius: 999px; font-size: 11px; font-weight: 800; text-transform: capitalize; }
 .role-student { background: #f0ebfa; color: #613dc1; }
 .role-employer { background: rgba(133, 138, 227, 0.15); color: #484eaa; }
 .role-admin { background: #f5f1fa; color: #613dc1; }
 .user-status-badge.status-approved { background: #d9ffe2; color: #17603c; }
 .user-status-badge.status-pending { background: #fff7db; color: #8a5a00; }
 .user-status-badge.status-rejected { background: #fef2f2; color: #b91c1c; }
+.account-status-badge.is-active { background: #d9ffe2; color: #17603c; }
+.account-status-badge.is-inactive { background: #fef2f2; color: #b91c1c; }
+.user-activation-btn {
+  min-height: 34px;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.user-activation-btn.is-deactivate { border-color: #b91c1c; background: #fff; color: #b91c1c; }
+.user-activation-btn.is-reactivate { border-color: #613dc1; background: #f5f1fa; color: #613dc1; }
+.user-activation-btn:focus-visible { outline: 3px solid rgba(97, 61, 193, 0.22); outline-offset: 2px; }
+.user-activation-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.current-account-label { color: rgba(44, 7, 53, 0.55); font-size: 11px; font-weight: 700; }
+.adminusers-message { margin: 0 0 14px; padding: 11px 13px; border-radius: 10px; font-size: 12px; }
+.adminusers-message.is-error { border: 1px solid #fecaca; background: #fef2f2; color: #991b1b; }
+.adminusers-message.is-success { border: 1px solid #b7efc5; background: #effff3; color: #17603c; }
 .loading-text,
 .empty-text { padding: 18px; border: 1px dashed rgba(97, 61, 193, 0.24); border-radius: 13px; color: rgba(44, 7, 53, 0.62); font-size: 13px; }
 @media (max-width: 640px) {
