@@ -194,7 +194,12 @@ export const getResumeFile = async (req, res) => {
         `SELECT a.id
          FROM applications a
          JOIN jobs j ON j.id = a.job_id
-         WHERE a.resume_id = ? AND j.employer_id = ?
+         JOIN users employer ON employer.id = j.employer_id
+         WHERE a.resume_id = ?
+           AND j.employer_id = ?
+           AND employer.role = 'employer'
+           AND employer.status = 'approved'
+           AND employer.is_active = 1
          LIMIT 1`,
         [resume.id, req.user.id]
       );

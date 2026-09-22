@@ -75,10 +75,31 @@ describe("Protected resume file access", () => {
     await getResumeFile(req, res);
 
     expect(dbMock.query).toHaveBeenLastCalledWith(
-      expect.stringContaining("j.employer_id = ?"),
+      expect.stringMatching(
+        /j\.employer_id = \?[\s\S]*employer\.role = 'employer'[\s\S]*employer\.status = 'approved'[\s\S]*employer\.is_active = 1/
+      ),
       [10, 5]
     );
     expect(res.sendFile).toHaveBeenCalledTimes(1);
+  });
+
+  test.each([
+    "approval removed",
+    "account inactive",
+    "current role is no longer employer",
+  ])("denies an employer when the current account has %s", async () => {
+    dbMock.query
+      .mockResolvedValueOnce([[
+        { id: 10, user_id: 1, file_path: "/uploads/resume.pdf" },
+      ]])
+      .mockResolvedValueOnce([[]]);
+    const req = { params: { id: "10" }, user: { id: 5, role: "employer" } };
+    const res = mockResponse();
+
+    await getResumeFile(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.sendFile).not.toHaveBeenCalled();
   });
 
   test("denies an employer without an authorized application relation", async () => {
