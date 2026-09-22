@@ -128,6 +128,21 @@ export default function Home() {
           </article>
         </div>
       </section>
+
+      <section className="home-more" aria-label="StudentJob hakkında daha fazlası">
+        <article className="home-more-card">
+          <span>Nasıl çalışır?</span>
+          <h2>Öğrenciden işverene, anlaşılır bir süreç.</h2>
+          <p>Kayıt, doğrulama, ilan ve başvuru adımlarını öğrenin.</p>
+          <Link to="/about">StudentJob hakkında →</Link>
+        </article>
+        <article className="home-more-card">
+          <span>Özellikler</span>
+          <h2>Başvurularınız için pratik araçlar.</h2>
+          <p>CV ile başvurmayı, takibi ve AI hazırlık araçlarını keşfedin.</p>
+          <Link to="/features">Özellikleri keşfet →</Link>
+        </article>
+      </section>
     </div>
   );
 }
