@@ -9,7 +9,7 @@
     font-weight: 500;
     cursor: pointer;
     border: 1px solid transparent;
-    transition: all 0.2s ease;
+    transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
   }
   
   .btn-primary {
@@ -64,6 +64,93 @@
     border-color: var(--surface-bg);
   }
   
-  .navbar .btn-primary:hover {
+.navbar .btn-primary:hover {
     background-color: var(--legacy-button-hover);
   }
+
+/* Shared feedback for primary and secondary actions, not destructive or icon controls. */
+.app-layout :is(
+  .btn-primary, .btn-secondary, .btn-outline,
+  .home-btn-primary, .home-btn-secondary, .auth-button,
+  .new-job-btn, .student-apply-btn, .student-ai-assistant-link,
+  .student-interview-prep-link, .browse-jobs-link,
+  .profile-save-btn, .upload-btn, .jobform-btn,
+  .approve-btn, :where(.user-activation-btn.is-reactivate)
+) {
+  transition: background-color 0.18s ease, border-color 0.18s ease,
+    color 0.18s ease, transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .app-layout :is(
+    .btn-primary, .btn-secondary, .btn-outline,
+    .home-btn-primary, .home-btn-secondary, .auth-button,
+    .new-job-btn, .student-apply-btn, .student-ai-assistant-link,
+    .student-interview-prep-link, .browse-jobs-link,
+    .profile-save-btn, .upload-btn, .jobform-btn,
+    .approve-btn, :where(.user-activation-btn.is-reactivate)
+  ):not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):not(.is-loading):hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 13px rgba(var(--shadow-rgb), 0.14);
+  }
+
+  .app-layout a:not(.btn):not(.home-btn):not([aria-disabled="true"]):hover {
+    text-decoration-color: currentColor;
+  }
+}
+
+.app-layout :is(
+  .btn-primary, .btn-secondary, .btn-outline,
+  .home-btn-primary, .home-btn-secondary, .auth-button,
+  .new-job-btn, .student-apply-btn, .student-ai-assistant-link,
+  .student-interview-prep-link, .browse-jobs-link,
+  .profile-save-btn, .upload-btn, .jobform-btn,
+  .approve-btn, :where(.user-activation-btn.is-reactivate)
+):not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):not(.is-loading):active {
+  transform: scale(0.99);
+  box-shadow: 0 1px 4px rgba(var(--shadow-rgb), 0.1);
+}
+
+.app-layout :is(
+  .btn-primary, .btn-secondary, .btn-outline,
+  .home-btn-primary, .home-btn-secondary, .auth-button,
+  .new-job-btn, .student-apply-btn, .student-ai-assistant-link,
+  .student-interview-prep-link, .browse-jobs-link,
+  .profile-save-btn, .upload-btn, .jobform-btn,
+  .approve-btn, :where(.user-activation-btn.is-reactivate)
+):focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-layout :is(
+    .btn-primary, .btn-secondary, .btn-outline,
+    .home-btn-primary, .home-btn-secondary, .auth-button,
+    .new-job-btn, .student-apply-btn, .student-ai-assistant-link,
+    .student-interview-prep-link, .browse-jobs-link,
+    .profile-save-btn, .upload-btn, .jobform-btn,
+    .approve-btn, :where(.user-activation-btn.is-reactivate)
+  ) {
+    transition: none;
+  }
+
+  .app-layout :is(
+    .btn-primary, .btn-secondary, .btn-outline,
+    .home-btn-primary, .home-btn-secondary, .auth-button,
+    .new-job-btn, .student-apply-btn, .student-ai-assistant-link,
+    .student-interview-prep-link, .browse-jobs-link,
+    .profile-save-btn, .upload-btn, .jobform-btn,
+    .approve-btn, :where(.user-activation-btn.is-reactivate)
+  ):not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):not(.is-loading):hover,
+  .app-layout :is(
+    .btn-primary, .btn-secondary, .btn-outline,
+    .home-btn-primary, .home-btn-secondary, .auth-button,
+    .new-job-btn, .student-apply-btn, .student-ai-assistant-link,
+    .student-interview-prep-link, .browse-jobs-link,
+    .profile-save-btn, .upload-btn, .jobform-btn,
+    .approve-btn, :where(.user-activation-btn.is-reactivate)
+  ):not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):not(.is-loading):active {
+    transform: none;
+  }
+}

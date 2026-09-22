@@ -139,7 +139,6 @@
 }
 
 .auth-button:hover:not(:disabled) { border-color: var(--primary-hover-bg); background: var(--primary-hover-bg); }
-.auth-button:active:not(:disabled) { transform: translateY(1px); }
 .auth-button:focus-visible { outline: 3px solid rgba(var(--support-rgb), 0.42); outline-offset: 2px; }
 .auth-button:disabled { opacity: 0.58; cursor: not-allowed; }
 
