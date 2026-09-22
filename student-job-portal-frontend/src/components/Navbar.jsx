@@ -7,24 +7,45 @@ export default function Navbar() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navbarRef = useRef(null);
   const accountMenuRef = useRef(null);
   const accountButtonRef = useRef(null);
+  const mobileButtonRef = useRef(null);
+  const dashboardPath = {
+    student: "/student",
+    employer: "/employer",
+    admin: "/admin/dashboard",
+  }[user?.role];
+  const roleLabel = {
+    student: "Öğrenci",
+    employer: "İşveren",
+    admin: "Yönetici",
+  }[user?.role];
   const navLinkClass = ({ isActive }) =>
     isActive ? "nav-link active" : "nav-link";
 
   useEffect(() => {
-    if (!isAccountMenuOpen) return undefined;
+    if (!isAccountMenuOpen && !isMobileMenuOpen) return undefined;
 
     const handlePointerDown = (event) => {
-      if (!accountMenuRef.current?.contains(event.target)) {
+      if (isAccountMenuOpen && !accountMenuRef.current?.contains(event.target)) {
         setIsAccountMenuOpen(false);
+      }
+      if (isMobileMenuOpen && !navbarRef.current?.contains(event.target)) {
+        setIsMobileMenuOpen(false);
       }
     };
 
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
-        setIsAccountMenuOpen(false);
-        accountButtonRef.current?.focus();
+        if (isAccountMenuOpen) {
+          setIsAccountMenuOpen(false);
+          accountButtonRef.current?.focus();
+        } else if (isMobileMenuOpen) {
+          setIsMobileMenuOpen(false);
+          mobileButtonRef.current?.focus();
+        }
       }
     };
 
@@ -35,16 +56,17 @@ export default function Navbar() {
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isAccountMenuOpen]);
+  }, [isAccountMenuOpen, isMobileMenuOpen]);
 
   const handleLogout = () => {
     setIsAccountMenuOpen(false);
+    setIsMobileMenuOpen(false);
     logout();
     navigate("/");
   };
 
   return (
-    <nav className="navbar">
+    <nav className="navbar" ref={navbarRef} aria-label="Main navigation">
       <div className="nav-left">
         <Link to="/" className="nav-brand" aria-label="StudentJob home">
           <span className="nav-brand-mark" aria-hidden="true">S</span>
@@ -52,17 +74,42 @@ export default function Navbar() {
         </Link>
       </div>
 
-      <div className="nav-center" aria-label="Primary navigation">
-        <NavLink to="/" end className={navLinkClass}>
-          Home
-        </NavLink>
-        <NavLink to="/about" className={navLinkClass}>
-          About
-        </NavLink>
-        <NavLink to="/features" className={navLinkClass}>
-          Features
-        </NavLink>
+      <button
+        ref={mobileButtonRef}
+        type="button"
+        className="nav-mobile-trigger"
+        aria-label={isMobileMenuOpen ? "Menüyü kapat" : "Gezinme menüsü"}
+        aria-expanded={isMobileMenuOpen}
+        aria-controls="navbar-links"
+        onClick={() => {
+          setIsAccountMenuOpen(false);
+          setIsMobileMenuOpen((open) => !open);
+        }}
+      >
+        <span aria-hidden="true">{isMobileMenuOpen ? "×" : "☰"}</span>
+      </button>
 
+      <div
+        id="navbar-links"
+        className={`nav-center${isMobileMenuOpen ? " nav-center-open" : ""}`}
+        aria-label="Primary navigation"
+        onClick={(event) => {
+          if (event.target.closest("a")) setIsMobileMenuOpen(false);
+        }}
+      >
+        <div className="nav-public-links">
+          <NavLink to="/" end className={navLinkClass}>
+            Home
+          </NavLink>
+          <NavLink to="/about" className={navLinkClass}>
+            About
+          </NavLink>
+          <NavLink to="/features" className={navLinkClass}>
+            Features
+          </NavLink>
+        </div>
+
+        {user && <div className="nav-role-links">
         {user?.role === "student" && (
           <>
             <NavLink to="/student" end className={navLinkClass}>
@@ -114,6 +161,13 @@ export default function Navbar() {
             </NavLink>
           </>
         )}
+        </div>}
+        {!user && (
+          <div className="nav-mobile-auth">
+            <Link to="/login" className="nav-link">Giriş Yap</Link>
+            <Link to="/register" className="nav-link">Kayıt Ol</Link>
+          </div>
+        )}
       </div>
 
       <div className="nav-right">
@@ -130,15 +184,21 @@ export default function Navbar() {
               ref={accountButtonRef}
               type="button"
               className="account-menu-trigger"
-              aria-haspopup="menu"
               aria-expanded={isAccountMenuOpen}
               aria-controls="navbar-account-menu"
-              onClick={() => setIsAccountMenuOpen((open) => !open)}
+              aria-label="Hesap menüsü"
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                setIsAccountMenuOpen((open) => !open);
+              }}
             >
               <span className="account-avatar" aria-hidden="true">
-                {user.role.charAt(0).toUpperCase()}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" focusable="false">
+                  <circle cx="12" cy="8" r="3.5" />
+                  <path d="M5 20c0-3.5 2.8-6 7-6s7 2.5 7 6" />
+                </svg>
               </span>
-              <span className="account-label">Account</span>
+              <span className="account-label">Hesap</span>
               <span className="account-chevron" aria-hidden="true">⌄</span>
             </button>
 
@@ -146,16 +206,23 @@ export default function Navbar() {
               <div
                 id="navbar-account-menu"
                 className="account-menu-panel"
-                role="menu"
               >
-                <div className="account-menu-role">{user.role}</div>
+                <div className="account-menu-role">{roleLabel}</div>
+                {dashboardPath && (
+                  <Link
+                    to={dashboardPath}
+                    className="account-menu-item"
+                    onClick={() => setIsAccountMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                )}
                 <button
                   type="button"
                   className="account-menu-item account-menu-logout"
-                  role="menuitem"
                   onClick={handleLogout}
                 >
-                  Logout
+                  Çıkış Yap
                 </button>
               </div>
             )}
