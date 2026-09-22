@@ -6,11 +6,10 @@
   
     background: linear-gradient(
       135deg,
-      #eef2ff,
-      #f9fafb
+      var(--legacy-primary-light),
+      var(--legacy-page-bg)
     );
   }
-  
   .hero-content {
     max-width: 900px;
     text-align: center;
@@ -20,7 +19,7 @@
   .hero-title {
     font-size: 48px;
     font-weight: 800;
-    color: #111827;
+    color: var(--text-color);
     line-height: 1.1;
   }
   
@@ -41,4 +40,3 @@
     justify-content: center;
     gap: 16px;
   }
-  

@@ -46,3 +46,14 @@ test("guest and mobile navigation remain keyboard accessible", () => {
   assert.match(styles, /max-height: min\(60vh, 420px\)/);
   assert.match(styles, /\.nav-link:focus-visible/);
 });
+
+test("theme control is outside role and mobile-only sections and uses shared preference API", () => {
+  assert.match(navbar, /useSyncExternalStore\(subscribeToTheme, getTheme/);
+  assert.match(navbar, /setThemePreference\(theme === "dark" \? "light" : "dark"\)/);
+  assert.match(navbar, /aria-label=\{theme === "dark" \? "Açık temaya geç" : "Koyu temaya geç"\}/);
+  assert.match(navbar, /aria-pressed=\{theme === "dark"\}/);
+  assert.ok(navbar.indexOf('className="nav-theme-toggle"') > navbar.indexOf('className="nav-right"'));
+  assert.ok(navbar.indexOf('className="nav-theme-toggle"') < navbar.indexOf('{!user && (', navbar.indexOf('className="nav-right"')));
+  assert.match(styles, /\.nav-theme-toggle:focus-visible/);
+  assert.doesNotMatch(styles, /\.nav-right > button\s*\{\s*display: none/);
+});

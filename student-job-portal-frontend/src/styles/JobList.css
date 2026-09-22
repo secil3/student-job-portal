@@ -2,7 +2,7 @@
   max-width: 1080px;
   margin: 0 auto;
   padding: clamp(28px, 5vw, 52px) clamp(16px, 3vw, 28px);
-  color: #2c0735;
+  color: var(--text-primary);
   font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
@@ -12,7 +12,7 @@
 }
 
 .student-jobs-header > span {
-  color: #613dc1;
+  color: var(--accent-color);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.09em;
@@ -21,7 +21,7 @@
 
 .student-jobs-header h1 {
   margin: 6px 0 0;
-  color: #2c0735;
+  color: var(--text-primary);
   font-size: clamp(27px, 4vw, 38px);
   font-weight: 800;
   letter-spacing: -0.045em;
@@ -29,7 +29,7 @@
 
 .student-jobs-header p {
   margin: 8px 0 0;
-  color: rgba(44, 7, 53, 0.62);
+  color: var(--ink-62);
   font-size: 13px;
   line-height: 1.6;
 }
@@ -41,14 +41,14 @@
   gap: 16px;
   margin-bottom: 18px;
   padding: 12px 14px;
-  border: 1px solid rgba(44, 7, 53, 0.1);
+  border: 1px solid rgba(var(--ink-rgb), 0.1);
   border-radius: 11px;
-  background: #ffffff;
+  background: var(--surface-bg);
 }
 
 .student-jobs-page .resume-select label {
   flex: 0 0 auto;
-  color: #2c0735;
+  color: var(--text-primary);
   font-size: 11px;
   font-weight: 750;
 }
@@ -61,18 +61,18 @@
   width: 100%;
   margin: 0;
   padding: 8px 10px;
-  border: 1px solid rgba(44, 7, 53, 0.2);
+  border: 1px solid rgba(var(--ink-rgb), 0.2);
   border-radius: 8px;
-  background: #ffffff;
-  color: #2c0735;
+  background: var(--input-bg);
+  color: var(--text-primary);
   font-family: inherit;
   font-size: 12px;
 }
 
 .student-jobs-page .resume-select select:focus-visible {
-  outline: 3px solid rgba(133, 138, 227, 0.32);
+  outline: 3px solid rgba(var(--support-rgb), 0.32);
   outline-offset: 1px;
-  border-color: #613dc1;
+  border-color: var(--accent-color);
 }
 
 .student-jobs-grid {
@@ -88,15 +88,15 @@
   min-width: 0;
   min-height: 230px;
   padding: 18px;
-  border: 1px solid rgba(44, 7, 53, 0.1);
+  border: 1px solid rgba(var(--ink-rgb), 0.1);
   border-radius: 13px;
-  background: #ffffff;
-  box-shadow: 0 4px 14px rgba(44, 7, 53, 0.04);
+  background: var(--surface-bg);
+  box-shadow: 0 4px 14px rgba(var(--shadow-rgb), 0.04);
 }
 
 .student-job-card h2 {
   margin: 0;
-  color: #2c0735;
+  color: var(--text-primary);
   font-size: 17px;
   font-weight: 800;
   letter-spacing: -0.025em;
@@ -115,8 +115,8 @@
   max-width: 100%;
   padding: 4px 8px;
   border-radius: 999px;
-  background: #d9ffe2;
-  color: #2c0735;
+  background: var(--success-badge-bg);
+  color: var(--text-primary);
   font-size: 10px;
   font-weight: 700;
   overflow-wrap: anywhere;
@@ -126,7 +126,7 @@
   display: -webkit-box;
   overflow: hidden;
   margin: 13px 0 16px;
-  color: rgba(44, 7, 53, 0.62);
+  color: var(--ink-62);
   font-size: 12px;
   line-height: 1.65;
   -webkit-box-orient: vertical;
@@ -140,17 +140,17 @@
   flex-wrap: wrap;
   gap: 8px;
   padding-top: 12px;
-  border-top: 1px solid rgba(44, 7, 53, 0.07);
+  border-top: 1px solid rgba(var(--ink-rgb), 0.07);
 }
 
 .student-ai-assistant-link,
 .student-interview-prep-link {
   min-height: 34px;
   padding: 7px 13px;
-  border: 1px solid rgba(97, 61, 193, 0.24);
+  border: 1px solid rgba(var(--accent-rgb), 0.24);
   border-radius: 8px;
-  background: #f5f1fa;
-  color: #613dc1;
+  background: var(--soft-bg);
+  color: var(--accent-color);
   font-size: 11px;
   font-weight: 750;
   line-height: 18px;
@@ -159,22 +159,22 @@
 
 .student-ai-assistant-link:hover,
 .student-interview-prep-link:hover {
-  border-color: #613dc1;
-  background: #ffffff;
+  border-color: var(--accent-color);
+  background: var(--surface-bg);
 }
 
 .student-ai-assistant-link:focus-visible,
 .student-interview-prep-link:focus-visible {
-  outline: 3px solid rgba(133, 138, 227, 0.38);
+  outline: 3px solid rgba(var(--support-rgb), 0.38);
   outline-offset: 2px;
 }
 
 .student-apply-btn {
   min-height: 34px;
   padding: 7px 15px;
-  border: 1px solid #613dc1;
+  border: 1px solid var(--accent-color);
   border-radius: 8px;
-  background: #613dc1;
+  background: var(--accent-solid);
   color: #ffffff;
   font-family: inherit;
   font-size: 11px;
@@ -183,19 +183,19 @@
 }
 
 .student-apply-btn:hover {
-  border-color: #2c0735;
-  background: #2c0735;
+  border-color: var(--primary-hover-bg);
+  background: var(--primary-hover-bg);
 }
 
 .student-apply-btn:focus-visible {
-  outline: 3px solid rgba(133, 138, 227, 0.38);
+  outline: 3px solid rgba(var(--support-rgb), 0.38);
   outline-offset: 2px;
 }
 
 .student-apply-btn.applied {
-  border-color: #82c9aa;
-  background: #d9ffe2;
-  color: #166534;
+  border-color: var(--positive-solid);
+  background: var(--success-badge-bg);
+  color: var(--status-success-text);
 }
 
 .student-apply-btn:disabled {
@@ -205,16 +205,16 @@
 
 .student-jobs-message {
   padding: 17px;
-  border: 1px dashed rgba(97, 61, 193, 0.22);
+  border: 1px dashed rgba(var(--accent-rgb), 0.22);
   border-radius: 11px;
-  background: #ffffff;
-  color: rgba(44, 7, 53, 0.62);
+  background: var(--surface-bg);
+  color: var(--ink-62);
   font-size: 12px;
 }
 
 .student-jobs-error {
-  border-color: rgba(185, 28, 28, 0.2);
-  color: #b91c1c;
+  border-color: rgba(var(--danger-rgb), 0.2);
+  color: var(--status-error-text);
 }
 
 .student-jobs-cv-empty,
@@ -229,10 +229,10 @@
 .student-jobs-retry button {
   flex: 0 0 auto;
   padding: 7px 11px;
-  border: 1px solid #613dc1;
+  border: 1px solid var(--accent-color);
   border-radius: 8px;
-  background: #ffffff;
-  color: #613dc1;
+  background: var(--surface-bg);
+  color: var(--accent-color);
   font: inherit;
   font-size: 11px;
   font-weight: 750;
@@ -242,7 +242,7 @@
 
 .student-jobs-cv-empty a:focus-visible,
 .student-jobs-retry button:focus-visible {
-  outline: 3px solid rgba(133, 138, 227, 0.38);
+  outline: 3px solid rgba(var(--support-rgb), 0.38);
   outline-offset: 2px;
 }
 

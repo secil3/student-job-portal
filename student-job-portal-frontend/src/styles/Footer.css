@@ -1,6 +1,6 @@
 .footer {
-  background-color: #0f172a;
-  color: #c7d2fe;
+  background-color: var(--footer-bg);
+  color: var(--footer-text);
   margin-top: 0;
 }
 
@@ -21,7 +21,7 @@
   .footer-brand p {
     font-size: 14px;
     line-height: 1.6;
-    color: #a5b4fc;
+    color: var(--footer-muted);
   }
   
   .footer-links h4 {
@@ -34,7 +34,7 @@
   .footer-links span {
     display: block;
     font-size: 14px;
-    color: #c7d2fe;
+    color: var(--footer-text);
     margin-bottom: 8px;
   }
   
@@ -47,5 +47,5 @@
     text-align: center;
     padding: 16px;
     font-size: 13px;
-    color: #a5b4fc;
+    color: var(--footer-muted);
   }

@@ -2,7 +2,7 @@
   max-width: 900px;
   margin: 0 auto;
   padding: clamp(28px, 5vw, 52px) clamp(16px, 3vw, 28px);
-  color: #2c0735;
+  color: var(--text-primary);
   font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
@@ -12,7 +12,7 @@
 }
 
 .resumes-header > span {
-  color: #613dc1;
+  color: var(--accent-color);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.09em;
@@ -21,7 +21,7 @@
 
 .resumes-header h2 {
   margin: 6px 0 0;
-  color: #2c0735;
+  color: var(--text-primary);
   font-size: clamp(27px, 4vw, 38px);
   font-weight: 800;
   letter-spacing: -0.045em;
@@ -29,7 +29,7 @@
 
 .resumes-header p {
   margin: 8px 0 0;
-  color: rgba(44, 7, 53, 0.62);
+  color: var(--ink-62);
   font-size: 13px;
   line-height: 1.6;
 }
@@ -43,10 +43,10 @@
 .resumes-container .resume-card {
   min-width: 0;
   padding: 16px;
-  border: 1px solid rgba(44, 7, 53, 0.1);
+  border: 1px solid rgba(var(--ink-rgb), 0.1);
   border-radius: 13px;
-  background: #ffffff;
-  box-shadow: 0 4px 14px rgba(44, 7, 53, 0.035);
+  background: var(--surface-bg);
+  box-shadow: 0 4px 14px rgba(var(--shadow-rgb), 0.035);
 }
 
 .resume-row {
@@ -70,7 +70,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: #2c0735;
+  color: var(--text-primary);
   font-family: inherit;
   font-weight: 800;
   text-align: left;
@@ -89,7 +89,7 @@
   height: 31px;
   margin-right: 9px;
   border-radius: 8px;
-  background: rgba(133, 138, 227, 0.12);
+  background: rgba(var(--support-rgb), 0.12);
   font-size: 14px;
 }
 
@@ -102,20 +102,20 @@
 
 .resume-hint {
   margin-top: 7px;
-  color: rgba(44, 7, 53, 0.48);
+  color: var(--ink-48);
   font-size: 10px;
 }
 
 .resume-rename {
   margin-top: 12px;
   padding-top: 11px;
-  border-top: 1px solid rgba(44, 7, 53, 0.07);
+  border-top: 1px solid rgba(var(--ink-rgb), 0.07);
 }
 
 .resume-rename > label {
   display: block;
   margin-bottom: 5px;
-  color: rgba(44, 7, 53, 0.58);
+  color: var(--ink-58);
   font-size: 10px;
   font-weight: 750;
 }
@@ -130,17 +130,17 @@
   min-width: 0;
   margin: 0;
   padding: 8px 10px;
-  border: 1px solid rgba(44, 7, 53, 0.18);
+  border: 1px solid rgba(var(--ink-rgb), 0.18);
   border-radius: 8px;
-  color: #2c0735;
+  color: var(--text-primary);
   font-family: inherit;
   font-size: 11px;
 }
 
 .resumes-container .rename-input:focus-visible {
-  outline: 3px solid rgba(133, 138, 227, 0.28);
+  outline: 3px solid rgba(var(--support-rgb), 0.28);
   outline-offset: 1px;
-  border-color: #613dc1;
+  border-color: var(--accent-color);
 }
 
 .resumes-container .btn {
@@ -153,63 +153,63 @@
 }
 
 .resumes-container .btn-primary-soft {
-  border-color: rgba(97, 61, 193, 0.25);
-  background: rgba(133, 138, 227, 0.1);
-  color: #613dc1;
+  border-color: rgba(var(--accent-rgb), 0.25);
+  background: rgba(var(--support-rgb), 0.1);
+  color: var(--accent-color);
 }
 
 .resumes-container .btn-primary-soft:hover:not(:disabled) {
-  border-color: #858ae3;
-  background: rgba(133, 138, 227, 0.16);
+  border-color: var(--support-color);
+  background: rgba(var(--support-rgb), 0.16);
 }
 
 .resumes-container .btn-secondary-soft {
-  border-color: rgba(97, 61, 193, 0.22);
-  background: #ffffff;
-  color: #613dc1;
+  border-color: rgba(var(--accent-rgb), 0.22);
+  background: var(--surface-bg);
+  color: var(--accent-color);
 }
 
 .resumes-container .btn-secondary-soft:hover:not(:disabled) {
-  background: rgba(133, 138, 227, 0.08);
+  background: rgba(var(--support-rgb), 0.08);
 }
 
 .resumes-container .btn-danger-outline {
-  border-color: rgba(185, 28, 28, 0.24);
+  border-color: rgba(var(--danger-rgb), 0.24);
   background: transparent;
-  color: #b91c1c;
+  color: var(--status-error-text);
 }
 
 .resumes-container .btn-danger-outline:hover:not(:disabled) {
-  background: #fef2f2;
+  background: var(--error-badge-bg);
 }
 
 .resumes-error,
 .resumes-message {
   margin-top: 12px;
   padding: 13px;
-  border: 1px dashed rgba(97, 61, 193, 0.22);
+  border: 1px dashed rgba(var(--accent-rgb), 0.22);
   border-radius: 10px;
-  color: rgba(44, 7, 53, 0.62);
+  color: var(--ink-62);
   font-size: 11px;
 }
 
 .resumes-error {
-  border-color: rgba(185, 28, 28, 0.2);
-  color: #b91c1c;
+  border-color: rgba(var(--danger-rgb), 0.2);
+  color: var(--status-error-text);
 }
 
 .resumes-empty {
   margin-top: 14px;
   padding: 16px;
-  border: 1px dashed rgba(97, 61, 193, 0.22);
+  border: 1px dashed rgba(var(--accent-rgb), 0.22);
   border-radius: 11px;
-  background: #ffffff;
+  background: var(--surface-bg);
   font-size: 12px;
 }
 
 .resumes-empty .muted {
   margin-top: 4px;
-  color: rgba(44, 7, 53, 0.52);
+  color: var(--ink-52);
   font-size: 10px;
 }
 

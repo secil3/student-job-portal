@@ -14,7 +14,7 @@
 ========================= */
 body {
   font-family: var(--font-main);
-  background-color: #f5f1fa;
+  background-color: var(--page-bg);
   color: var(--text-color);
 }
 
@@ -33,7 +33,7 @@ body,
 .app-content {
   flex: 1 0 auto;
   min-width: 0;
-  background: #f5f1fa;
+  background: var(--page-bg);
 }
 
 /* =========================
@@ -48,6 +48,11 @@ a:hover {
   text-decoration: underline;
 }
 
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
 /* =========================
    FORMS (BASE ONLY)
 ========================= */
@@ -59,6 +64,8 @@ textarea {
   margin-bottom: 12px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-color);
+  background: var(--input-bg);
+  color: var(--text-color);
   font-size: 14px;
   font-family: inherit;
 }
@@ -67,7 +74,7 @@ textarea {
    CARD BASE (OPTIONAL)
 ========================= */
 .card {
-  background-color: var(--card-bg);
+  background-color: var(--surface-bg);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 15px;
@@ -109,4 +116,15 @@ h3 {
 }
 .section {
   margin-bottom: 40px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }

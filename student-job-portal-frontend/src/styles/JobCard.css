@@ -5,15 +5,15 @@
   min-width: 0;
   min-height: 230px;
   padding: 18px;
-  border: 1px solid rgba(44, 7, 53, 0.1);
+  border: 1px solid rgba(var(--ink-rgb), 0.1);
   border-radius: 13px;
-  background: #ffffff;
-  box-shadow: 0 4px 14px rgba(44, 7, 53, 0.04);
+  background: var(--surface-bg);
+  box-shadow: 0 4px 14px rgba(var(--shadow-rgb), 0.04);
 }
 
 .student-job-preview-header h3 {
   margin: 0;
-  color: #2c0735;
+  color: var(--text-primary);
   font-size: 16px;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -23,7 +23,7 @@
 
 .student-job-company {
   margin-top: 4px;
-  color: rgba(44, 7, 53, 0.5);
+  color: var(--ink-50);
   font-size: 11px;
 }
 
@@ -38,8 +38,8 @@
   max-width: 100%;
   padding: 4px 8px;
   border-radius: 999px;
-  background: #d9ffe2;
-  color: #2c0735;
+  background: var(--success-badge-bg);
+  color: var(--text-primary);
   font-size: 10px;
   font-weight: 700;
   overflow-wrap: anywhere;
@@ -49,7 +49,7 @@
   display: -webkit-box;
   overflow: hidden;
   margin: 13px 0 16px;
-  color: rgba(44, 7, 53, 0.62);
+  color: var(--ink-62);
   font-size: 12px;
   line-height: 1.65;
   -webkit-box-orient: vertical;
@@ -62,11 +62,11 @@
   justify-content: space-between;
   gap: 12px;
   padding-top: 12px;
-  border-top: 1px solid rgba(44, 7, 53, 0.07);
+  border-top: 1px solid rgba(var(--ink-rgb), 0.07);
 }
 
 .student-job-salary {
-  color: #2c0735;
+  color: var(--text-primary);
   font-size: 11px;
   font-weight: 750;
 }
@@ -75,9 +75,9 @@
   flex: 0 0 auto;
   min-height: 33px;
   padding: 7px 11px;
-  border: 1px solid #613dc1;
+  border: 1px solid var(--accent-color);
   border-radius: 8px;
-  background: #613dc1;
+  background: var(--accent-solid);
   color: #ffffff;
   font-family: inherit;
   font-size: 10px;
@@ -86,21 +86,21 @@
 }
 
 .student-preview-apply-btn:hover:not(:disabled) {
-  border-color: #2c0735;
-  background: #2c0735;
+  border-color: var(--primary-hover-bg);
+  background: var(--primary-hover-bg);
 }
 
 .student-preview-apply-btn.applied {
-  border-color: #82c9aa;
-  background: #d9ffe2;
-  color: #166534;
+  border-color: var(--positive-solid);
+  background: var(--success-badge-bg);
+  color: var(--status-success-text);
   cursor: not-allowed;
 }
 
 .student-preview-apply-btn.unavailable {
-  border-color: rgba(44, 7, 53, 0.12);
-  background: #ededed;
-  color: rgba(44, 7, 53, 0.55);
+  border-color: rgba(var(--ink-rgb), 0.12);
+  background: var(--disabled-bg);
+  color: var(--ink-55);
 }
 
 @media (max-width: 520px) {

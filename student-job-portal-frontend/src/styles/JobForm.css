@@ -55,20 +55,20 @@
   }
   
   .jobform-btn:hover {
-    background-color: #2563eb;
+    background-color: var(--legacy-blue-hover);
   }
   
   .jobform-success {
     margin-top: 12px;
     font-size: 13px;
-    color: #16a34a;
+    color: var(--success-bright-text);
     text-align: center;
   }
   
   .jobform-error {
     margin-top: 12px;
     font-size: 13px;
-    color: #dc2626;
+    color: var(--error-bright-text);
     text-align: center;
   }
 
@@ -76,21 +76,21 @@
 .jobpost-page {
   max-width: 640px;
   padding: clamp(24px, 4vw, 42px) 18px;
-  color: #2c0735;
+  color: var(--text-primary);
   font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 .jobpost-page .jobform-card {
   padding: clamp(20px, 3vw, 26px);
-  border: 1px solid rgba(44, 7, 53, 0.16);
+  border: 1px solid rgba(var(--ink-rgb), 0.16);
   border-radius: 14px;
-  background: #ffffff;
-  box-shadow: 0 5px 18px rgba(44, 7, 53, 0.045);
+  background: var(--surface-bg);
+  box-shadow: 0 5px 18px rgba(var(--shadow-rgb), 0.045);
 }
 
 .jobpost-page .jobform-title {
   margin: 0;
-  color: #2c0735;
+  color: var(--text-primary);
   font-size: 22px;
   font-weight: 800;
   letter-spacing: -0.03em;
@@ -98,7 +98,7 @@
 
 .jobform-intro {
   margin: 6px 0 17px;
-  color: rgba(44, 7, 53, 0.6);
+  color: var(--ink-60);
   font-size: 13px;
   line-height: 1.55;
 }
@@ -115,7 +115,7 @@
 }
 
 .jobform-field > span {
-  color: #2c0735;
+  color: var(--text-primary);
   font-size: 12px;
   font-weight: 750;
 }
@@ -123,23 +123,23 @@
 .jobpost-page .jobform-input,
 .jobpost-page .jobform-textarea {
   margin: 0;
-  border: 1px solid rgba(44, 7, 53, 0.28);
+  border: 1px solid rgba(var(--ink-rgb), 0.28);
   border-radius: 9px;
-  background: #ffffff;
-  color: #2c0735;
+  background: var(--input-bg);
+  color: var(--text-primary);
 }
 
 .jobpost-page .jobform-input:focus,
 .jobpost-page .jobform-textarea:focus {
   outline: none;
-  border-color: #858ae3;
-  box-shadow: 0 0 0 3px rgba(133, 138, 227, 0.12);
+  border-color: var(--support-color);
+  box-shadow: 0 0 0 3px rgba(var(--support-rgb), 0.12);
 }
 
 .jobpost-page .jobform-input:focus-visible,
 .jobpost-page .jobform-textarea:focus-visible {
-  border-color: #613dc1;
-  box-shadow: 0 0 0 3px rgba(97, 61, 193, 0.16);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.16);
 }
 
 .jobpost-page .jobform-textarea {
@@ -161,15 +161,15 @@
 
 .jobpost-page .jobform-actions .btn-primary {
   min-width: 112px;
-  border-color: #613dc1;
-  background: #613dc1;
+  border-color: var(--accent-color);
+  background: var(--accent-solid);
   font-family: inherit;
   font-weight: 750;
 }
 
 .jobpost-page .jobform-actions .btn-primary:hover {
-  border-color: #2c0735;
-  background: #2c0735;
+  border-color: var(--primary-hover-bg);
+  background: var(--primary-hover-bg);
 }
 
 @media (max-width: 560px) {

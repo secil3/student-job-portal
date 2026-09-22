@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
+import { getTheme, setThemePreference, subscribeToTheme } from "../utils/theme";
 import "../styles/Navbar.css";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const theme = useSyncExternalStore(subscribeToTheme, getTheme, () => "light");
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navbarRef = useRef(null);
@@ -171,6 +173,25 @@ export default function Navbar() {
       </div>
 
       <div className="nav-right">
+        <button
+          type="button"
+          className="nav-theme-toggle"
+          aria-label={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
+          aria-pressed={theme === "dark"}
+          title={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
+          onClick={() => setThemePreference(theme === "dark" ? "light" : "dark")}
+        >
+          {theme === "dark" ? (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+              <path d="M20.5 15.4A8.5 8.5 0 0 1 8.6 3.5 8.5 8.5 0 1 0 20.5 15.4Z" />
+            </svg>
+          )}
+        </button>
         {!user && (
           <>
             <Link to="/login" className="btn btn-outline">Login</Link>

@@ -13,13 +13,12 @@
   }
   
   .btn-primary {
-    background-color: var(--primary-color);
+    background-color: var(--primary-button-bg);
     color: white;
-    border-color: var(--primary-color);
+    border-color: var(--primary-button-bg);
   }
-  
   .btn-primary:hover {
-    background-color: #4338ca; /* indigo darker */
+    background-color: var(--legacy-primary-hover); /* indigo darker */
   }
   
   .btn-outline {
@@ -35,13 +34,13 @@
   
   /* DANGER */
   .btn-danger {
-    background-color: #ef4444;
+    background-color: var(--danger-bright-solid);
     color: white;
-    border-color: #ef4444;
+    border-color: var(--danger-bright-solid);
   }
   
   .btn-danger:hover {
-    background-color: #dc2626;
+    background-color: var(--danger-bright-hover);
   }
   
   /* DISABLED */
@@ -51,21 +50,20 @@
   }
   /* ===== NAVBAR BUTTON OVERRIDE ===== */
 .navbar .btn-outline {
-    border-color: #c7d2fe;
-    color: #c7d2fe;
+    border-color: var(--footer-text);
+    color: var(--footer-text);
   }
   
   .navbar .btn-outline:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(var(--surface-rgb), 0.1);
   }
   
   .navbar .btn-primary {
-    background-color: #ffffff;
-    color: #1e1b4b;
-    border-color: #ffffff;
+    background-color: var(--surface-bg);
+    color: var(--legacy-button-text);
+    border-color: var(--surface-bg);
   }
   
   .navbar .btn-primary:hover {
-    background-color: #e0e7ff;
+    background-color: var(--legacy-button-hover);
   }
-  

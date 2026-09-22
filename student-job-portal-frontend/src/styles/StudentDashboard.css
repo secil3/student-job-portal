@@ -1,6 +1,6 @@
 .student-page {
   background: transparent;
-  color: #2c0735;
+  color: var(--text-primary);
   font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
@@ -17,7 +17,7 @@
 
 .student-dashboard-header > span,
 .student-section-heading > div > span {
-  color: #613dc1;
+  color: var(--accent-color);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.09em;
@@ -26,7 +26,7 @@
 
 .student-dashboard-header h1 {
   margin: 7px 0 0;
-  color: #2c0735;
+  color: var(--text-primary);
   font-size: clamp(27px, 4vw, 38px);
   font-weight: 800;
   letter-spacing: -0.045em;
@@ -34,7 +34,7 @@
 
 .student-dashboard-header p {
   margin: 9px 0 0;
-  color: rgba(44, 7, 53, 0.62);
+  color: var(--ink-62);
   font-size: 14px;
   line-height: 1.6;
 }
@@ -48,14 +48,14 @@
 
 .student-summary-card {
   padding: 13px 15px;
-  border: 1px solid rgba(44, 7, 53, 0.1);
+  border: 1px solid rgba(var(--ink-rgb), 0.1);
   border-radius: 11px;
-  background: #ffffff;
+  background: var(--surface-bg);
 }
 
 .student-summary-card h4 {
   margin: 0;
-  color: rgba(44, 7, 53, 0.52);
+  color: var(--ink-52);
   font-size: 10px;
   font-weight: 750;
   text-transform: uppercase;
@@ -63,7 +63,7 @@
 
 .student-summary-card p {
   margin: 4px 0 0;
-  color: #613dc1;
+  color: var(--accent-color);
   font-size: 22px;
   font-weight: 800;
 }
@@ -82,7 +82,7 @@
 
 .student-section-heading h2 {
   margin: 4px 0 0;
-  color: #2c0735;
+  color: var(--text-primary);
   font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.025em;
@@ -101,10 +101,10 @@
   gap: 16px;
   min-width: 0;
   padding: 14px 15px;
-  border: 1px solid rgba(44, 7, 53, 0.1);
+  border: 1px solid rgba(var(--ink-rgb), 0.1);
   border-radius: 12px;
-  background: #ffffff;
-  box-shadow: 0 3px 12px rgba(44, 7, 53, 0.035);
+  background: var(--surface-bg);
+  box-shadow: 0 3px 12px rgba(var(--shadow-rgb), 0.035);
 }
 
 .student-application-main {
@@ -112,7 +112,7 @@
 }
 
 .student-application-main > span {
-  color: rgba(44, 7, 53, 0.48);
+  color: var(--ink-48);
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.06em;
@@ -122,7 +122,7 @@
 .student-application-main h3 {
   overflow: hidden;
   margin: 4px 0 0;
-  color: #2c0735;
+  color: var(--text-primary);
   font-size: 13px;
   font-weight: 750;
   text-overflow: ellipsis;
@@ -138,7 +138,7 @@
 }
 
 .student-application-meta time {
-  color: rgba(44, 7, 53, 0.48);
+  color: var(--ink-48);
   font-size: 9px;
 }
 
@@ -150,34 +150,34 @@
 }
 
 .student-status-badge.status-pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--warning-badge-bg);
+  color: var(--status-warning-text-alt);
 }
 
 .student-status-badge.status-accepted {
-  background: #d9ffe2;
-  color: #166534;
+  background: var(--success-badge-bg);
+  color: var(--status-success-text);
 }
 
 .student-status-badge.status-rejected {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--error-badge-bg-strong);
+  color: var(--status-error-text-strong);
 }
 
 .browse-jobs-link {
   flex: 0 0 auto;
   padding: 8px 12px;
-  border: 1px solid #613dc1;
+  border: 1px solid var(--accent-color);
   border-radius: 9px;
-  background: #613dc1;
+  background: var(--accent-solid);
   color: #ffffff;
   font-size: 11px;
   font-weight: 750;
 }
 
 .browse-jobs-link:hover {
-  background: #2c0735;
-  border-color: #2c0735;
+  background: var(--primary-hover-bg);
+  border-color: var(--primary-hover-bg);
   text-decoration: none;
 }
 
@@ -190,26 +190,26 @@
 .student-empty-state,
 .student-container .error-text {
   padding: 16px;
-  border: 1px dashed rgba(97, 61, 193, 0.22);
+  border: 1px dashed rgba(var(--accent-rgb), 0.22);
   border-radius: 11px;
-  background: #ffffff;
-  color: rgba(44, 7, 53, 0.6);
+  background: var(--surface-bg);
+  color: var(--ink-60);
   font-size: 12px;
 }
 
 .student-application-warning {
   margin-bottom: 12px;
   padding: 12px 14px;
-  border: 1px solid rgba(185, 28, 28, 0.18);
+  border: 1px solid rgba(var(--danger-rgb), 0.18);
   border-radius: 10px;
-  background: #fffafa;
-  color: #b91c1c;
+  background: var(--status-error-bg);
+  color: var(--status-error-text);
   font-size: 11px;
   line-height: 1.5;
 }
 
 .student-container .error-text {
-  color: #b91c1c;
+  color: var(--status-error-text);
 }
 
 @media (max-width: 520px) {

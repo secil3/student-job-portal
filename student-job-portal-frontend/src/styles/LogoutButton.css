@@ -1,14 +1,12 @@
 .logout-btn {
     padding: 8px 14px;
     border-radius: 8px;
-    border: 1px solid #ef4444;
+    border: 1px solid var(--danger-bright-solid);
     background: transparent;
-    color: #ef4444;
+    color: var(--danger-text);
     font-size: 14px;
     cursor: pointer;
   }
-  
   .logout-btn:hover {
-    background-color: #fee2e2;
+    background-color: var(--error-badge-bg-strong);
   }
-  
