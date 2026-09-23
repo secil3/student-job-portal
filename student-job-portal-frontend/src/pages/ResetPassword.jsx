@@ -18,20 +18,20 @@ export default function ResetPassword() {
     setMessage("");
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match ❌");
+      setError("Parolalar eşleşmiyor ❌");
       return;
     }
 
     try {
       await api.post(`/auth/reset-password/${token}`, { password });
-      setMessage("Password reset successful ✅");
+      setMessage("Parola başarıyla sıfırlandı ✅");
 
       setTimeout(() => {
         navigate("/login");
       }, 2000);
     } catch (err) {
       setError(
-        err.response?.data?.message || "Failed to reset password ❌"
+        err.response?.data?.message || "Parola sıfırlanamadı ❌"
       );
     }
   };
@@ -39,13 +39,13 @@ export default function ResetPassword() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2 className="auth-title">Reset Password</h2>
+        <h2 className="auth-title">Parolayı Sıfırla</h2>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <input
             className="auth-input"
             type="password"
-            placeholder="New password"
+            placeholder="Yeni parola"
             value={password}
             required
             onChange={(e) => setPassword(e.target.value)}
@@ -54,14 +54,14 @@ export default function ResetPassword() {
           <input
             className="auth-input"
             type="password"
-            placeholder="Confirm new password"
+            placeholder="Yeni parolayı doğrulayın"
             value={confirmPassword}
             required
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
 
           <button className="auth-button" type="submit">
-            Reset Password
+            Parolayı Sıfırla
           </button>
         </form>
 

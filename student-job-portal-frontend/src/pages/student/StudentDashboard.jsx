@@ -7,6 +7,7 @@ import {
   getAppliedJobIds,
   getJobApplicationState,
 } from "../../utils/applicationStatus";
+import { getUiLabel } from "../../utils/uiLabels";
 
 import "../../styles/StudentDashboard.css";
 
@@ -25,7 +26,7 @@ const StudentDashboard = () => {
         const res = await getAllJobs();
         setJobs(res.data);
       } catch {
-        setError("Failed to load jobs");
+        setError("İlanlar yüklenemedi");
       } finally {
         setLoadingJobs(false);
       }
@@ -40,7 +41,7 @@ const StudentDashboard = () => {
       setApplications(res.data);
     } catch (err) {
       setApplicationsError(
-        err.response?.data?.message || "Application history could not be loaded"
+        err.response?.data?.message || "Başvuru geçmişi yüklenemedi"
       );
     } finally {
       setLoadingApps(false);
@@ -58,7 +59,7 @@ const StudentDashboard = () => {
     return (
       <div className="student-page">
         <div className="student-container">
-          <p>Loading...</p>
+          <p>Yükleniyor...</p>
         </div>
       </div>
     );
@@ -78,19 +79,19 @@ const StudentDashboard = () => {
     <div className="student-page">
       <div className="student-container">
         <header className="student-dashboard-header">
-          <span>Student workspace</span>
-          <h1>Student Dashboard</h1>
-          <p>Track your applications and discover available opportunities.</p>
+          <span>Öğrenci çalışma alanı</span>
+          <h1>Öğrenci Paneli</h1>
+          <p>Başvurularınızı takip edin ve mevcut fırsatları keşfedin.</p>
         </header>
 
         <div className="student-summary-grid">
           <div className="student-summary-card">
-            <h4>Total Applications</h4>
+            <h4>Toplam Başvuru</h4>
             <p>{applicationsLoaded ? applications.length : "—"}</p>
           </div>
 
           <div className="student-summary-card">
-            <h4>Available Jobs</h4>
+            <h4>Mevcut İlanlar</h4>
             <p>{jobs.length}</p>
           </div>
         </div>
@@ -98,30 +99,30 @@ const StudentDashboard = () => {
         <section className="student-dashboard-section">
           <div className="student-section-heading">
             <div>
-              <span>Progress</span>
-              <h2>My Applications</h2>
+              <span>İlerleme</span>
+              <h2>Başvurularım</h2>
             </div>
           </div>
 
           {applicationsError ? (
             <p className="student-application-warning">{applicationsError}</p>
           ) : applications.length === 0 ? (
-            <p className="student-empty-state">You haven’t applied to any jobs yet.</p>
+            <p className="student-empty-state">Henüz hiçbir ilana başvurmadınız.</p>
           ) : (
             <div className="student-applications-grid">
               {applications.map((app) => (
                 <article key={app.application_id} className="student-application-card">
                   <div className="student-application-main">
-                    <span>Job</span>
+                    <span>İlan</span>
                     <h3>{app.job_title}</h3>
                   </div>
 
                   <div className="student-application-meta">
                     <span className={`student-status-badge status-${app.status}`}>
-                      {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
+                      {getUiLabel(app.status)}
                     </span>
                     <time dateTime={app.applied_at}>
-                      {new Date(app.applied_at).toLocaleDateString()}
+                      {new Date(app.applied_at).toLocaleDateString("tr-TR")}
                     </time>
                   </div>
                 </article>
@@ -133,23 +134,23 @@ const StudentDashboard = () => {
         <section className="student-dashboard-section">
           <div className="student-section-heading student-jobs-heading">
             <div>
-              <span>Explore</span>
-              <h2>Available Jobs</h2>
+              <span>Keşfet</span>
+              <h2>Mevcut İlanlar</h2>
             </div>
 
             <Link to="/student/jobs" className="browse-jobs-link">
-              Browse Jobs
+              İlanları İncele
             </Link>
           </div>
 
           {applicationsError && (
             <p className="student-application-warning">
-              Application history is unavailable. Applying is temporarily disabled.
+              Başvuru geçmişine ulaşılamıyor. Yeni başvuru geçici olarak devre dışı.
             </p>
           )}
 
           {jobs.length === 0 ? (
-            <p className="student-empty-state">No jobs available.</p>
+            <p className="student-empty-state">Mevcut ilan bulunmuyor.</p>
           ) : (
             <div className="student-dashboard-jobs-grid">
               {jobs.map((job) => (

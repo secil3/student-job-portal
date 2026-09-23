@@ -23,7 +23,7 @@ export default function EditJob() {
         const job = response.data.find((item) => String(item.id) === String(jobId));
 
         if (!job) {
-          setError("Job not found or you do not have permission to edit it.");
+          setError("İlan bulunamadı veya düzenleme yetkiniz yok.");
           return;
         }
 
@@ -34,7 +34,7 @@ export default function EditJob() {
           salary: job.salary ?? "",
         });
       } catch (err) {
-        setError(err.response?.data?.message || "Failed to load job ❌");
+        setError(err.response?.data?.message || "İlan yüklenemedi ❌");
       } finally {
         setLoading(false);
       }
@@ -57,26 +57,26 @@ export default function EditJob() {
       await api.put(`/jobs/${jobId}`, form);
       navigate("/employer", { replace: true });
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to update job ❌");
+      setError(err.response?.data?.message || "İlan güncellenemedi ❌");
     } finally {
       setSaving(false);
     }
   };
 
   if (loading) {
-    return <div className="jobform-container"><p>Loading...</p></div>;
+    return <div className="jobform-container"><p>Yükleniyor...</p></div>;
   }
 
   return (
     <div className="jobform-container">
       <div className="jobform-card">
-        <h2 className="jobform-title">Edit Job</h2>
+        <h2 className="jobform-title">İlanı Düzenle</h2>
 
         <form className="jobform" onSubmit={handleSubmit}>
           <input
             className="jobform-input"
             name="title"
-            placeholder="Job Title"
+            placeholder="İlan başlığı"
             value={form.title}
             required
             maxLength={255}
@@ -86,7 +86,7 @@ export default function EditJob() {
           <textarea
             className="jobform-textarea"
             name="description"
-            placeholder="Job Description"
+            placeholder="İlan açıklaması"
             value={form.description}
             required
             maxLength={65535}
@@ -96,7 +96,7 @@ export default function EditJob() {
           <input
             className="jobform-input"
             name="location"
-            placeholder="Location"
+            placeholder="Konum"
             value={form.location}
             required
             maxLength={100}
@@ -106,14 +106,14 @@ export default function EditJob() {
           <input
             className="jobform-input"
             name="salary"
-            placeholder="Salary"
+            placeholder="Maaş"
             value={form.salary}
             maxLength={50}
             onChange={handleChange}
           />
 
           <button className="btn btn-primary" type="submit" disabled={saving || Boolean(error && !form.title)}>
-            {saving ? "Saving..." : "Save Changes"}
+            {saving ? "Kaydediliyor..." : "Değişiklikleri Kaydet"}
           </button>
         </form>
 

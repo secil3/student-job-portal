@@ -34,7 +34,7 @@ export default function Login() {
         navigate("/student");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      setError(err.response?.data?.message || "Giriş başarısız");
     } finally {
       setSubmitting(false);
     }
@@ -44,18 +44,18 @@ export default function Login() {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-heading">
-          <span>Welcome back</span>
-          <h1 className="auth-title">Login to StudentJob</h1>
-          <p>Access your dashboard and continue where you left off.</p>
+          <span>Tekrar hoş geldiniz</span>
+          <h1 className="auth-title">StudentJob’a Giriş Yapın</h1>
+          <p>Panelinize erişin ve kaldığınız yerden devam edin.</p>
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <label className="auth-field">
-            <span>Email</span>
+            <span>E-posta</span>
             <input
               className="auth-input"
               type="email"
-              placeholder="you@example.com"
+              placeholder="eposta@example.com"
               value={email}
               required
               autoComplete="email"
@@ -64,11 +64,11 @@ export default function Login() {
           </label>
 
           <label className="auth-field">
-            <span>Password</span>
+            <span>Parola</span>
             <input
               className="auth-input"
               type="password"
-              placeholder="Enter your password"
+              placeholder="Parolanızı girin"
               value={password}
               required
               autoComplete="current-password"
@@ -84,7 +84,7 @@ export default function Login() {
           </div>
 
           <button className="auth-button" type="submit" disabled={submitting}>
-            {submitting ? "Logging in..." : "Login"}
+            {submitting ? "Giriş yapılıyor..." : "Giriş Yap"}
           </button>
         </form>
 

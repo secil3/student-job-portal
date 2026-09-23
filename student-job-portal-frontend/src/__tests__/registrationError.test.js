@@ -40,7 +40,7 @@ test("shows the ADU address rule only for student registration", () => {
 
   assert.equal(student.placeholder, "ogrenci.no@stu.adu.edu.tr");
   assert.match(student.hint, /@stu\.adu\.edu\.tr/);
-  assert.equal(employer.placeholder, "company@example.com");
+  assert.equal(employer.placeholder, "sirket@example.com");
   assert.equal(employer.hint, "");
 });
 

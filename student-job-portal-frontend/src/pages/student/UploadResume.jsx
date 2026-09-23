@@ -14,17 +14,17 @@ export default function UploadResume({ onUploadSuccess, className = "" }) {
     setError("");
 
     if (!file) {
-      setError("Please select a PDF file.");
+      setError("Lütfen bir PDF dosyası seçin.");
       return;
     }
 
     if (file.type !== "application/pdf" || !file.name.toLowerCase().endsWith(".pdf")) {
-      setError("Only PDF files are allowed.");
+      setError("Yalnızca PDF dosyaları kabul edilir.");
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      setError("PDF file must be 5 MB or smaller.");
+      setError("PDF dosyası en fazla 5 MB olmalıdır.");
       return;
     }
 
@@ -34,7 +34,7 @@ export default function UploadResume({ onUploadSuccess, className = "" }) {
     try {
       setLoading(true);
       await api.post("/resumes/upload", formData);
-      setMessage("Resume uploaded successfully ✅");
+      setMessage("CV başarıyla yüklendi ✅");
       setFile(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
 
@@ -42,7 +42,7 @@ export default function UploadResume({ onUploadSuccess, className = "" }) {
         await onUploadSuccess();
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Resume upload failed ❌");
+      setError(err.response?.data?.message || "CV yüklenemedi ❌");
     } finally {
       setLoading(false);
     }
@@ -51,8 +51,8 @@ export default function UploadResume({ onUploadSuccess, className = "" }) {
   return (
     <div className="upload-container">
       <div className="upload-heading">
-        <div className="upload-title">Upload a PDF CV</div>
-        <div className="upload-help">PDF only · Maximum 5 MB</div>
+        <div className="upload-title">PDF CV Yükle</div>
+        <div className="upload-help">Yalnızca PDF · En fazla 5 MB</div>
       </div>
 
       <div className="upload-controls">
@@ -62,7 +62,7 @@ export default function UploadResume({ onUploadSuccess, className = "" }) {
           accept="application/pdf,.pdf"
           ref={fileInputRef}
           disabled={loading}
-          aria-label="Choose a PDF CV to upload"
+          aria-label="Yüklenecek PDF CV’yi seçin"
           onChange={(e) => setFile(e.target.files[0])}
         />
 
@@ -72,7 +72,7 @@ export default function UploadResume({ onUploadSuccess, className = "" }) {
           onClick={handleUpload}
           disabled={loading}
         >
-          {loading ? "Uploading..." : "Upload Resume"}
+          {loading ? "Yükleniyor..." : "CV Yükle"}
         </button>
       </div>
 

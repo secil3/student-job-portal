@@ -19,7 +19,7 @@ export default function AdminJobs() {
       const res = await api.get("/jobs");
       setJobs(res.data);
     } catch {
-      setError("Failed to load jobs.");
+      setError("İlanlar yüklenemedi.");
     } finally {
       setLoading(false);
     }
@@ -36,11 +36,11 @@ export default function AdminJobs() {
     try {
       const response = await updateJobActivation(jobId, isActive);
       setJobs((current) => updateRecordActivation(current, jobId, isActive));
-      setMessage(response.data?.message || "Job status updated.");
+      setMessage(response.data?.message || "İlan durumu güncellendi.");
     } catch (requestError) {
       setError(
         requestError.response?.data?.message ||
-          "Job status could not be updated."
+          "İlan durumu güncellenemedi."
       );
     } finally {
       setUpdatingJobId(null);
@@ -50,17 +50,17 @@ export default function AdminJobs() {
   return (
     <div className="adminjobs-container">
       <header className="adminjobs-header">
-        <span>Content oversight</span>
-        <h1 className="adminjobs-title">Manage Jobs</h1>
-        <p>Review job postings and control whether they are visible to students.</p>
+        <span>İçerik denetimi</span>
+        <h1 className="adminjobs-title">İlanları Yönet</h1>
+        <p>İlanları inceleyin ve öğrencilere görünürlüklerini yönetin.</p>
       </header>
 
-      {loading && <p>Loading...</p>}
+      {loading && <p>Yükleniyor...</p>}
       {error && <p className="adminjobs-message is-error">{error}</p>}
       {message && <p className="adminjobs-message is-success">{message}</p>}
 
       {!loading && !error && jobs.length === 0 && (
-        <p className="empty-text">No jobs found.</p>
+        <p className="empty-text">İlan bulunamadı.</p>
       )}
 
       {!loading && jobs.length > 0 && (
@@ -73,11 +73,11 @@ export default function AdminJobs() {
                     isRecordActive(job) ? "is-active" : "is-inactive"
                   }`}
                 >
-                  {isRecordActive(job) ? "Active" : "Inactive"}
+                  {isRecordActive(job) ? "Aktif" : "Pasif"}
                 </span>
                 <h2 className="adminjob-title">{job.title}</h2>
                 <p className="adminjob-location">
-                  {job.location || "Location not provided"}
+                  {job.location || "Konum belirtilmedi"}
                 </p>
               </div>
 
@@ -89,7 +89,7 @@ export default function AdminJobs() {
                 disabled={updatingJobId === job.id}
               >
                 {updatingJobId === job.id
-                  ? "Updating..."
+                  ? "Güncelleniyor..."
                   : isRecordActive(job)
                     ? "Pasife al"
                     : "Yeniden etkinleştir"}

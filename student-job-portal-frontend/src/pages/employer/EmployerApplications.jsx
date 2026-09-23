@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import api from "../../services/api";
 import ProtectedResumeButton from "../../components/ProtectedResumeButton";
+import { getUiLabel } from "../../utils/uiLabels";
 import "../../styles/EmployerApplications.css";
 
 const FILTERS = ["all", "pending", "accepted", "rejected"];
@@ -20,7 +21,7 @@ const EmployerApplications = () => {
   useEffect(() => {
     const fetchApplications = async () => {
       if (!hasValidJobId) {
-        setError("Please select a valid job from the employer dashboard");
+        setError("Lütfen işveren panelinden geçerli bir ilan seçin");
         setLoading(false);
         return;
       }
@@ -30,7 +31,7 @@ const EmployerApplications = () => {
         setApplications(res.data);
       } catch (requestError) {
         setError(
-          requestError.response?.data?.message || "Failed to load applications"
+          requestError.response?.data?.message || "Başvurular yüklenemedi"
         );
       } finally {
         setLoading(false);
@@ -54,7 +55,7 @@ const EmployerApplications = () => {
       );
     } catch (requestError) {
       setActionError(
-        requestError.response?.data?.message || "Failed to update status"
+        requestError.response?.data?.message || "Başvuru durumu güncellenemedi"
       );
     } finally {
       setUpdatingApplicationIds((prev) =>
@@ -70,7 +71,7 @@ const EmployerApplications = () => {
   if (loading) {
     return (
       <div className="applications-container">
-        <p className="applications-message">Loading applications...</p>
+        <p className="applications-message">Başvurular yükleniyor...</p>
       </div>
     );
   }
@@ -78,7 +79,7 @@ const EmployerApplications = () => {
     return (
       <div className="applications-container">
         <p className="applications-error">{error}</p>
-        <Link to="/employer">Return to Dashboard</Link>
+        <Link to="/employer">Panele Dön</Link>
       </div>
     );
   }
@@ -86,10 +87,10 @@ const EmployerApplications = () => {
   return (
     <div className="applications-container">
       <h2 className="applications-title">
-        Applications for Job #{jobId}
+        İlan #{jobId} Başvuruları
       </h2>
 
-      <div className="application-filters" aria-label="Filter applications by status">
+      <div className="application-filters" aria-label="Başvuruları duruma göre filtrele">
         {FILTERS.map((filter) => (
           <button
             key={filter}
@@ -97,7 +98,7 @@ const EmployerApplications = () => {
             className={`filter-btn${activeFilter === filter ? " active" : ""}`}
             onClick={() => setActiveFilter(filter)}
           >
-            {filter.charAt(0).toUpperCase() + filter.slice(1)}
+            {getUiLabel(filter)}
           </button>
         ))}
       </div>
@@ -105,11 +106,11 @@ const EmployerApplications = () => {
       {actionError && <p className="applications-error">{actionError}</p>}
 
       {applications.length === 0 && (
-        <p className="applications-message">No applications for this job yet.</p>
+        <p className="applications-message">Bu ilan için henüz başvuru yok.</p>
       )}
 
       {applications.length > 0 && filteredApplications.length === 0 && (
-        <p className="applications-message">No {activeFilter} applications found.</p>
+        <p className="applications-message">{getUiLabel(activeFilter)} filtresinde başvuru bulunamadı.</p>
       )}
 
       <div className="applications-grid">
@@ -119,31 +120,31 @@ const EmployerApplications = () => {
           return (
             <article key={app.id} className="application-card">
               <div className="application-profile">
-                <div className="section-title">Student Profile</div>
+                <div className="section-title">Öğrenci Profili</div>
                 <div className="profile-details">
-                  <div className="info-row"><b>Email</b><span>{app.student_email}</span></div>
-                  <div className="info-row"><b>University</b><span>{app.university || "N/A"}</span></div>
-                  <div className="info-row"><b>Major</b><span>{app.major || "N/A"}</span></div>
-                  <div className="info-row"><b>GPA</b><span>{app.gpa || "N/A"}</span></div>
+                  <div className="info-row"><b>E-posta</b><span>{app.student_email}</span></div>
+                  <div className="info-row"><b>Üniversite</b><span>{app.university || "Belirtilmedi"}</span></div>
+                  <div className="info-row"><b>Bölüm</b><span>{app.major || "Belirtilmedi"}</span></div>
+                  <div className="info-row"><b>GPA</b><span>{app.gpa || "Belirtilmedi"}</span></div>
                 </div>
               </div>
 
               <div className="application-meta">
                 <div className="application-detail">
-                  <span className="detail-label">Resume</span>
+                  <span className="detail-label">CV</span>
                   {app.resume_id ? (
                     <ProtectedResumeButton resumeId={app.resume_id}>
-                      View CV
+                      CV’yi Görüntüle
                     </ProtectedResumeButton>
                   ) : (
-                    <span className="detail-value">Not provided</span>
+                    <span className="detail-value">Belirtilmedi</span>
                   )}
                 </div>
 
                 <div className="application-detail">
-                  <span className="detail-label">Status</span>
+                  <span className="detail-label">Durum</span>
                   <span className={`status-badge status-${app.status}`}>
-                    {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
+                    {getUiLabel(app.status)}
                   </span>
                 </div>
               </div>
@@ -154,7 +155,7 @@ const EmployerApplications = () => {
                   disabled={isUpdating || app.status === "accepted"}
                   onClick={() => handleStatusChange(app.id, "accepted")}
                 >
-                  Accept
+                  Kabul Et
                 </button>
 
                 <button
@@ -162,7 +163,7 @@ const EmployerApplications = () => {
                   disabled={isUpdating || app.status === "rejected"}
                   onClick={() => handleStatusChange(app.id, "rejected")}
                 >
-                  Reject
+                  Reddet
                 </button>
               </div>
             </article>

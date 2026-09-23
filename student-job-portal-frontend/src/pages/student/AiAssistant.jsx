@@ -97,8 +97,8 @@ export default function AiAssistant() {
   return (
     <div className="ai-assistant-page">
       <header className="ai-assistant-header">
-        <span>Student tools</span>
-        <h1>AI Application Assistant</h1>
+        <span>Öğrenci araçları</span>
+        <h1>AI Başvuru Mesajı</h1>
         <p>İlana özel, düzenleyebileceğiniz kısa bir başvuru mesajı hazırlayın.</p>
       </header>
 
@@ -157,7 +157,7 @@ export default function AiAssistant() {
                   checked={language === "en"}
                   onChange={(event) => setLanguage(event.target.value)}
                 />
-                English
+                İngilizce
               </label>
             </fieldset>
 

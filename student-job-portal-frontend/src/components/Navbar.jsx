@@ -68,9 +68,9 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="navbar" ref={navbarRef} aria-label="Main navigation">
+    <nav className="navbar" ref={navbarRef} aria-label="Ana gezinme">
       <div className="nav-left">
-        <Link to="/" className="nav-brand" aria-label="StudentJob home">
+        <Link to="/" className="nav-brand" aria-label="StudentJob ana sayfa">
           <span className="nav-brand-mark" aria-hidden="true">S</span>
           <span>StudentJob</span>
         </Link>
@@ -94,17 +94,17 @@ export default function Navbar() {
       <div
         id="navbar-links"
         className={`nav-center${isMobileMenuOpen ? " nav-center-open" : ""}`}
-        aria-label="Primary navigation"
+        aria-label="Birincil gezinme"
         onClick={(event) => {
           if (event.target.closest("a")) setIsMobileMenuOpen(false);
         }}
       >
         <div className="nav-public-links">
           <NavLink to="/" end className={navLinkClass}>
-            Home
+            Ana Sayfa
           </NavLink>
           <NavLink to="/about" className={navLinkClass}>
-            About
+            Hakkımızda
           </NavLink>
         </div>
 
@@ -112,23 +112,23 @@ export default function Navbar() {
         {user?.role === "student" && (
           <>
             <NavLink to="/student" end className={navLinkClass}>
-              Dashboard
+              Panel
             </NavLink>
 
             <NavLink to="/student/jobs" className={navLinkClass}>
-              Jobs
+              İlanlar
             </NavLink>
 
             <NavLink to="/student/applications" className={navLinkClass}>
-              My Applications
+              Başvurularım
             </NavLink>
 
             <NavLink to="/student/profile" className={navLinkClass}>
-              Profile
+              Profil
             </NavLink>
 
             <NavLink to="/student/resumes" className={navLinkClass}>
-              My Resumes
+              CV’lerim
             </NavLink>
           </>
         )}
@@ -136,10 +136,10 @@ export default function Navbar() {
         {user?.role === "employer" && (
           <>
             <NavLink to="/employer" end className={navLinkClass}>
-              Dashboard
+              Panel
             </NavLink>
             <NavLink to="/employer/job-post" className={navLinkClass}>
-              Post Job
+              İlan Oluştur
             </NavLink>
           </>
         )}
@@ -147,16 +147,16 @@ export default function Navbar() {
         {user?.role === "admin" && (
           <>
             <NavLink to="/admin/dashboard" className={navLinkClass}>
-              Admin
+              Yönetim
             </NavLink>
             <NavLink to="/admin/users" className={navLinkClass}>
-              Users
+              Kullanıcılar
             </NavLink>
             <NavLink to="/admin/jobs" className={navLinkClass}>
-              Jobs
+              İlanlar
             </NavLink>
             <NavLink to="/admin/employers" className={navLinkClass}>
-              Verify Employers
+              İşveren Onayları
             </NavLink>
           </>
         )}
@@ -191,8 +191,8 @@ export default function Navbar() {
         </button>
         {!user && (
           <>
-            <Link to="/login" className="btn btn-outline">Login</Link>
-            <Link to="/register" className="btn btn-primary">Register</Link>
+            <Link to="/login" className="btn btn-outline">Giriş Yap</Link>
+            <Link to="/register" className="btn btn-primary">Kayıt Ol</Link>
           </>
         )}
 
@@ -232,7 +232,7 @@ export default function Navbar() {
                     className="account-menu-item"
                     onClick={() => setIsAccountMenuOpen(false)}
                   >
-                    Dashboard
+                    Panel
                   </Link>
                 )}
                 <button

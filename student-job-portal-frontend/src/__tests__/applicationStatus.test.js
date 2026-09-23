@@ -51,7 +51,7 @@ test("disables apply when application history is unknown", () => {
   assert.deepEqual(availability, {
     state: "unavailable",
     disabled: true,
-    label: "Apply unavailable",
+    label: "Başvuru kullanılamıyor",
   });
 });
 
@@ -99,6 +99,6 @@ test("requires a selected CV that exists in the loaded list", () => {
   );
   assert.deepEqual(
     getJobApplyAvailability({ ...common, selectedResume: "3" }),
-    { state: "available", disabled: false, label: "Apply" }
+    { state: "available", disabled: false, label: "Başvur" }
   );
 });

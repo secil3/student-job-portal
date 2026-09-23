@@ -6,12 +6,12 @@ export default function NotFound() {
     <div className="not-found-page">
       <section className="not-found-card" aria-labelledby="not-found-title">
         <span className="not-found-code">404</span>
-        <h1 id="not-found-title">Page not found</h1>
+        <h1 id="not-found-title">Sayfa bulunamadı</h1>
         <p>
-          The page you’re looking for doesn’t exist or may have been moved.
+          Aradığınız sayfa mevcut değil veya taşınmış olabilir.
         </p>
         <Link to="/" className="not-found-link">
-          Return to home
+          Ana Sayfaya Dön
         </Link>
       </section>
     </div>

@@ -29,19 +29,19 @@ export const getJobApplyAvailability = ({
   );
 
   if (applicationState === "applied") {
-    return { state: "applied", disabled: true, label: "Already Applied" };
+    return { state: "applied", disabled: true, label: "Başvuruldu" };
   }
 
   if (applicationState === "unknown" || !resumesLoaded || resumesError) {
     return {
       state: "unavailable",
       disabled: true,
-      label: "Apply unavailable",
+      label: "Başvuru kullanılamıyor",
     };
   }
 
   if (resumes.length === 0) {
-    return { state: "resume-required", disabled: true, label: "CV required" };
+    return { state: "resume-required", disabled: true, label: "CV gerekli" };
   }
 
   const hasValidSelection = resumes.some(
@@ -52,9 +52,9 @@ export const getJobApplyAvailability = ({
     return {
       state: "select-resume",
       disabled: true,
-      label: "Select CV to apply",
+      label: "Başvurmak için CV seçin",
     };
   }
 
-  return { state: "available", disabled: false, label: "Apply" };
+  return { state: "available", disabled: false, label: "Başvur" };
 };

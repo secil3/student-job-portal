@@ -39,7 +39,7 @@ export default function Register() {
       if (isVerificationEmailDeliveryFailure(err)) {
         setVerificationRecovery(true);
       } else {
-        setError(err.response?.data?.message || "Register failed");
+        setError(err.response?.data?.message || "Kayıt başarısız");
       }
     } finally {
       setSubmitting(false);
@@ -50,15 +50,15 @@ export default function Register() {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-heading">
-          <span>Join StudentJob</span>
-          <h1 className="auth-title">Create your account</h1>
-          <p>Choose your role and get started with the platform.</p>
+          <span>StudentJob’a katılın</span>
+          <h1 className="auth-title">Hesabınızı Oluşturun</h1>
+          <p>Rolünüzü seçin ve platformu kullanmaya başlayın.</p>
         </div>
 
         {!employerRegistered && (
           <form className="auth-form" onSubmit={handleRegister}>
             <label className="auth-field">
-              <span>Email</span>
+              <span>E-posta</span>
               <input
                 className="auth-input"
                 type="email"
@@ -79,11 +79,11 @@ export default function Register() {
             </label>
 
             <label className="auth-field">
-              <span>Password</span>
+              <span>Parola</span>
               <input
                 className="auth-input"
                 type="password"
-                placeholder="Create a password"
+                placeholder="Bir parola oluşturun"
                 value={password}
                 required
                 autoComplete="new-password"
@@ -92,11 +92,11 @@ export default function Register() {
             </label>
 
             <fieldset className="role-fieldset">
-              <legend>Register as</legend>
+              <legend>Kayıt rolü</legend>
               <div
                 className="role-group role-group--custom"
                 role="radiogroup"
-                aria-label="Select role"
+                aria-label="Rol seçin"
               >
                 <label className="role-pill">
                   <input
@@ -108,7 +108,7 @@ export default function Register() {
                     onChange={(e) => setRole(e.target.value)}
                   />
                   <span className="role-dot" aria-hidden="true" />
-                  <span>Student</span>
+                  <span>Öğrenci</span>
                 </label>
 
                 <label className="role-pill">
@@ -121,13 +121,13 @@ export default function Register() {
                     onChange={(e) => setRole(e.target.value)}
                   />
                   <span className="role-dot" aria-hidden="true" />
-                  <span>Employer</span>
+                  <span>İşveren</span>
                 </label>
               </div>
             </fieldset>
 
             <button className="auth-button" type="submit" disabled={submitting}>
-              {submitting ? "Creating account..." : "Register"}
+              {submitting ? "Hesap oluşturuluyor..." : "Kayıt Ol"}
             </button>
           </form>
         )}

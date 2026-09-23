@@ -21,7 +21,7 @@ const EmployerDashboard = () => {
       const res = await api.get("/jobs/employer");
       setJobs(res.data);
     } catch {
-      setError("Failed to load your job posts.");
+      setError("İlanlarınız yüklenemedi.");
     } finally {
       setLoading(false);
     }
@@ -38,11 +38,11 @@ const EmployerDashboard = () => {
     try {
       const response = await updateJobActivation(jobId, isActive);
       setJobs((current) => updateRecordActivation(current, jobId, isActive));
-      setMessage(response.data?.message || "Job status updated.");
+      setMessage(response.data?.message || "İlan durumu güncellendi.");
     } catch (requestError) {
       setError(
         requestError.response?.data?.message ||
-          "Job status could not be updated."
+          "İlan durumu güncellenemedi."
       );
     } finally {
       setUpdatingJobId(null);
@@ -52,7 +52,7 @@ const EmployerDashboard = () => {
   if (loading) {
     return (
       <div className="dashboard-container">
-        <p>Loading...</p>
+        <p>Yükleniyor...</p>
       </div>
     );
   }
@@ -61,22 +61,22 @@ const EmployerDashboard = () => {
     <div className="dashboard-container">
       <div className="dashboard-header">
         <div>
-          <span className="dashboard-eyebrow">Workspace</span>
-          <h2 className="page-title">Employer Dashboard</h2>
+          <span className="dashboard-eyebrow">Çalışma alanı</span>
+          <h2 className="page-title">İşveren Paneli</h2>
           <p className="dashboard-subtitle">
-            Manage your job posts and review incoming applications.
+            İlanlarınızı yönetin ve gelen başvuruları inceleyin.
           </p>
         </div>
         <div className="dashboard-header-actions">
-          <div className="dashboard-count" aria-label={`${jobs.length} job posts`}>
+          <div className="dashboard-count" aria-label={`${jobs.length} ilan`}>
             <strong>{jobs.length}</strong>
-            <span>{jobs.length === 1 ? "Job post" : "Job posts"}</span>
+            <span>İlan</span>
           </div>
           <button
             className="new-job-btn"
             onClick={() => navigate("/employer/job-post")}
           >
-            New Job
+            Yeni İlan
           </button>
         </div>
       </div>
@@ -86,7 +86,7 @@ const EmployerDashboard = () => {
 
       {!error && jobs.length === 0 ? (
         <p className="empty-text">
-          You haven’t posted any jobs yet.
+          Henüz ilan yayınlamadınız.
         </p>
       ) : (
         <div className="job-list">
@@ -100,7 +100,7 @@ const EmployerDashboard = () => {
                       isRecordActive(job) ? "is-active" : "is-inactive"
                     }`}
                   >
-                    {isRecordActive(job) ? "Active" : "Inactive"}
+                    {isRecordActive(job) ? "Aktif" : "Pasif"}
                   </span>
                 </div>
 
@@ -122,14 +122,14 @@ const EmployerDashboard = () => {
                       navigate(`/employer/applications/${job.id}`)
                     }
                   >
-                    View Applications
+                    Başvuruları Görüntüle
                   </button>
 
                   <button
                     className="btn btn-secondary"
                     onClick={() => navigate(`/employer/jobs/${job.id}/edit`)}
                   >
-                    Edit
+                    Düzenle
                   </button>
                 </div>
 
@@ -141,7 +141,7 @@ const EmployerDashboard = () => {
                   disabled={updatingJobId === job.id}
                 >
                   {updatingJobId === job.id
-                    ? "Updating..."
+                    ? "Güncelleniyor..."
                     : isRecordActive(job)
                       ? "Pasife al"
                       : "Yeniden etkinleştir"}

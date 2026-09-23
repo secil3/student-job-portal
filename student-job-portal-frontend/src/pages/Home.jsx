@@ -15,81 +15,81 @@ export default function Home() {
       <section className="hero">
         <div className="hero-layout">
           <div className="hero-content">
-            <span className="hero-eyebrow">Student opportunities, made simpler</span>
+            <span className="hero-eyebrow">Öğrenci fırsatları artık daha sade</span>
             <h1 className="hero-title">
-              Build your next step with <span>StudentJob.</span>
+              Geleceğinize <span>StudentJob</span> ile yön verin.
             </h1>
             <p className="hero-subtitle">
-              A focused space for students to apply with their CV and for employers
-              to manage opportunities and applicants.
+              Öğrencilerin CV’leriyle başvurduğu, işverenlerin ilanları ve
+              adayları yönettiği odaklı bir platform.
             </p>
 
             <div className="hero-actions">
               {!user ? (
                 <>
                   <Link to="/register" className="home-btn home-btn-primary">
-                    Register
+                    Kayıt Ol
                   </Link>
                   <Link to="/login" className="home-btn home-btn-secondary">
-                    Login
+                    Giriş Yap
                   </Link>
                 </>
               ) : (
                 dashboardPath && (
                   <Link to={dashboardPath} className="home-btn home-btn-primary">
-                    Go to Dashboard
+                    Panele Git
                   </Link>
                 )
               )}
             </div>
           </div>
 
-          <aside className="product-preview" aria-label="Illustrative StudentJob dashboard preview">
+          <aside className="product-preview" aria-label="Temsili StudentJob panel önizlemesi">
             <div className="preview-toolbar">
               <div className="preview-dots" aria-hidden="true">
                 <span></span><span></span><span></span>
               </div>
-              <span className="preview-note">Illustrative preview · No real data</span>
+              <span className="preview-note">Temsili önizleme · Gerçek veri içermez</span>
             </div>
 
             <div className="preview-content">
               <div className="preview-heading">
                 <div>
-                  <span className="preview-kicker">Example opportunity</span>
-                  <h2>Product Design Intern</h2>
+                  <span className="preview-kicker">Örnek fırsat</span>
+                  <h2>Ürün Tasarımı Stajyeri</h2>
                 </div>
-                <span className="preview-location">Remote</span>
+                <span className="preview-location">Uzaktan</span>
               </div>
 
               <p className="preview-description">
-                Support a product team with research, interface design and clear
-                documentation.
+                Bir ürün ekibine araştırma, arayüz tasarımı ve anlaşılır
+                dokümantasyon süreçlerinde destek olun.
               </p>
 
               <div className="preview-grid">
                 <div className="preview-mini-card">
                   <span className="mini-icon mini-icon-cv" aria-hidden="true">PDF</span>
                   <div>
-                    <span className="mini-label">Selected CV</span>
-                    <strong>Student-CV.pdf</strong>
+                    <span className="mini-label">Seçilen CV</span>
+                    <strong>Ogrenci-CV.pdf</strong>
                   </div>
                 </div>
 
                 <div className="preview-mini-card">
                   <span className="mini-icon mini-icon-status" aria-hidden="true">✓</span>
                   <div>
-                    <span className="mini-label">Application status</span>
-                    <strong>Accepted</strong>
+                    <span className="mini-label">Başvuru durumu</span>
+                    <strong>Kabul Edildi</strong>
                   </div>
                 </div>
               </div>
 
               <div className="preview-footer">
-                <span>Job post</span>
+                <span>İş ilanı</span>
                 <span className="preview-divider"></span>
-                <span>CV attached</span>
+                <span>CV eklendi</span>
                 <span className="preview-divider"></span>
-                <span>Decision tracked</span>
+                <span>Karar takip edildi</span>
               </div>
             </div>
           </aside>
@@ -98,19 +98,19 @@ export default function Home() {
 
       <section className="home-roles" aria-labelledby="roles-title">
         <div className="home-section-heading">
-          <span>One platform, two clear paths</span>
-          <h2 id="roles-title">Designed around how you work</h2>
+          <span>Tek platform, iki açık yol</span>
+          <h2 id="roles-title">İhtiyacınıza göre tasarlandı</h2>
         </div>
 
         <div className="role-grid">
           <article className="role-card">
             <div className="role-icon" aria-hidden="true">S</div>
             <div>
-              <span className="role-label">For students</span>
-              <h3>Find a role and apply with your CV</h3>
+              <span className="role-label">Öğrenciler için</span>
+              <h3>İlanları bulun ve CV’nizle başvurun</h3>
               <p>
-                Browse available jobs, choose an uploaded PDF CV and track each
-                application from your dashboard.
+                İlanları inceleyin, yüklediğiniz PDF CV’lerden birini seçin ve
+                başvurularınızı panelinizden takip edin.
               </p>
             </div>
           </article>
@@ -118,11 +118,11 @@ export default function Home() {
           <article className="role-card">
             <div className="role-icon role-icon-employer" aria-hidden="true">E</div>
             <div>
-              <span className="role-label">For employers</span>
-              <h3>Manage job posts and applicants</h3>
+              <span className="role-label">İşverenler için</span>
+              <h3>İlanları ve adayları yönetin</h3>
               <p>
-                Publish and edit job listings, review submitted CVs and manage
-                application decisions in one place.
+                İlan yayınlayıp düzenleyin, gönderilen CV’leri inceleyin ve
+                başvuru kararlarını tek yerden yönetin.
               </p>
             </div>
           </article>

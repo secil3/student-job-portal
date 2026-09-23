@@ -4,14 +4,14 @@ import {
   APPLICATION_FILTERS,
   filterApplicationsByStatus,
 } from "../../utils/applicationFilters";
+import { getUiLabel } from "../../utils/uiLabels";
 import "../../styles/StudentApplications.css";
 
-const formatStatus = (status) =>
-  status ? status.charAt(0).toUpperCase() + status.slice(1) : "Unknown";
+const formatStatus = (status) => status ? getUiLabel(status) : "Bilinmiyor";
 
 const formatApplicationDate = (value) => {
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "Date unavailable" : date.toLocaleDateString();
+  return Number.isNaN(date.getTime()) ? "Tarih bilgisi yok" : date.toLocaleDateString("tr-TR");
 };
 
 export default function StudentApplications() {
@@ -31,7 +31,7 @@ export default function StudentApplications() {
         if (isActive) {
           setError(
             requestError.response?.data?.message ||
-              "Your applications could not be loaded. Please try again."
+              "Başvurularınız yüklenemedi. Lütfen tekrar deneyin."
           );
         }
       } finally {
@@ -54,15 +54,15 @@ export default function StudentApplications() {
     <div className="student-applications-page">
       <div className="student-applications-container">
         <header className="student-applications-header">
-          <span>Application history</span>
-          <h1>My Applications</h1>
-          <p>Review every role you have applied for and track its current status.</p>
+          <span>Başvuru geçmişi</span>
+          <h1>Başvurularım</h1>
+          <p>Başvurduğunuz ilanları inceleyin ve güncel durumlarını takip edin.</p>
         </header>
 
         {!loading && !error && applications.length > 0 && (
           <div
             className="student-application-filters"
-            aria-label="Filter applications by status"
+            aria-label="Başvuruları duruma göre filtrele"
           >
             {APPLICATION_FILTERS.map((filter) => (
               <button
@@ -82,7 +82,7 @@ export default function StudentApplications() {
 
         {loading && (
           <p className="student-applications-message" role="status">
-            Loading your applications...
+            Başvurularınız yükleniyor...
           </p>
         )}
 
@@ -94,7 +94,7 @@ export default function StudentApplications() {
 
         {!loading && !error && applications.length === 0 && (
           <p className="student-applications-message">
-            You haven’t applied to any jobs yet.
+            Henüz hiçbir ilana başvurmadınız.
           </p>
         )}
 
@@ -103,7 +103,7 @@ export default function StudentApplications() {
           applications.length > 0 &&
           filteredApplications.length === 0 && (
             <p className="student-applications-message">
-              No {activeFilter} applications found.
+              {formatStatus(activeFilter)} filtresinde başvuru bulunamadı.
             </p>
           )}
 
@@ -115,12 +115,12 @@ export default function StudentApplications() {
                 className="student-application-history-card"
               >
                 <div>
-                  <span className="student-application-card-label">Job</span>
+                  <span className="student-application-card-label">İlan</span>
                   <h2>{application.job_title}</h2>
                 </div>
                 <div className="student-application-card-meta">
                   <time dateTime={application.applied_at}>
-                    Applied {formatApplicationDate(application.applied_at)}
+                    Başvuru tarihi: {formatApplicationDate(application.applied_at)}
                   </time>
                   <span
                     className={`student-application-status status-${application.status}`}

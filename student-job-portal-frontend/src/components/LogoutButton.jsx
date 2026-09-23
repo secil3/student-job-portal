@@ -13,7 +13,7 @@ export default function LogoutButton() {
 
   return (
     <button className="logout-btn" onClick={handleLogout}>
-      Logout
+      Çıkış Yap
     </button>
   );
 }

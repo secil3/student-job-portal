@@ -24,25 +24,25 @@ function JobForm() {
         employer_id: 1 // şimdilik sabit
       });
 
-      setMessage("Job created successfully ✅");
+      setMessage("İlan başarıyla oluşturuldu ✅");
       setTitle("");
       setDescription("");
       setLocation("");
       setSalary("");
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to create job ❌");
+      setError(err.response?.data?.message || "İlan oluşturulamadı ❌");
     }
   };
 
   return (
     <div className="jobform-container">
       <div className="jobform-card">
-        <h2 className="jobform-title">Create Job</h2>
+        <h2 className="jobform-title">İlan Oluştur</h2>
 
         <form className="jobform" onSubmit={handleSubmit}>
           <input
             className="jobform-input"
-            placeholder="Job Title"
+            placeholder="İlan başlığı"
             value={title}
             required
             onChange={(e) => setTitle(e.target.value)}
@@ -50,7 +50,7 @@ function JobForm() {
 
           <textarea
             className="jobform-textarea"
-            placeholder="Job Description"
+            placeholder="İlan açıklaması"
             value={description}
             required
             onChange={(e) => setDescription(e.target.value)}
@@ -58,7 +58,7 @@ function JobForm() {
 
           <input
             className="jobform-input"
-            placeholder="Location"
+            placeholder="Konum"
             value={location}
             required
             onChange={(e) => setLocation(e.target.value)}
@@ -66,13 +66,13 @@ function JobForm() {
 
           <input
             className="jobform-input"
-            placeholder="Salary"
+            placeholder="Maaş"
             value={salary}
             onChange={(e) => setSalary(e.target.value)}
           />
 
           <button className="jobform-btn" type="submit">
-            Create Job
+            İlan Oluştur
           </button>
         </form>
 

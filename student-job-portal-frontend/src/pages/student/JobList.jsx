@@ -32,7 +32,7 @@ export default function JobList() {
     } catch (requestError) {
       setJobsError(
         requestError.response?.data?.message ||
-          "Job listings could not be loaded. Please try again."
+          "İlanlar yüklenemedi. Lütfen tekrar deneyin."
       );
     } finally {
       setJobsLoading(false);
@@ -50,7 +50,7 @@ export default function JobList() {
     } catch (requestError) {
       setResumesError(
         requestError.response?.data?.message ||
-          "Your CV list could not be loaded. Applying is disabled."
+          "CV listeniz yüklenemedi. Başvuru geçici olarak devre dışı."
       );
     } finally {
       setResumesLoading(false);
@@ -68,7 +68,7 @@ export default function JobList() {
     } catch (requestError) {
       setApplicationsError(
         requestError.response?.data?.message ||
-          "Application history could not be loaded. Applying is disabled to prevent duplicate applications."
+          "Başvuru geçmişi yüklenemedi. Mükerrer başvuruyu önlemek için başvuru devre dışı."
       );
     } finally {
       setApplicationsLoading(false);
@@ -98,15 +98,15 @@ export default function JobList() {
     try {
       await applyToJob(jobId, selectedResume);
       setAppliedJobIds((current) => new Set(current).add(Number(jobId)));
-      alert("Applied successfully ✅");
+      alert("Başvuru başarıyla gönderildi ✅");
     } catch (requestError) {
       if (requestError?.response?.status === 409) {
         setAppliedJobIds((current) => new Set(current).add(Number(jobId)));
-        setApplyError("You have already applied to this job.");
+        setApplyError("Bu ilana daha önce başvurdunuz.");
       } else {
         setApplyError(
           requestError?.response?.data?.message ||
-            "Your application could not be submitted. Please try again."
+            "Başvurunuz gönderilemedi. Lütfen tekrar deneyin."
         );
       }
     }
@@ -115,13 +115,13 @@ export default function JobList() {
   return (
     <div className="student-jobs-page">
       <header className="student-jobs-header">
-        <span>Opportunities</span>
-        <h1>Available Jobs</h1>
-        <p>Select one of your uploaded CVs, then apply to a role that fits.</p>
+        <span>Fırsatlar</span>
+        <h1>Mevcut İlanlar</h1>
+        <p>Yüklediğiniz CV’lerden birini seçin ve size uygun ilana başvurun.</p>
       </header>
 
       {resumesLoading && (
-        <p className="student-jobs-message">Loading your CVs...</p>
+        <p className="student-jobs-message">CV’leriniz yükleniyor...</p>
       )}
       {!resumesLoading && resumesError && (
         <p className="student-jobs-message student-jobs-error">
@@ -131,19 +131,19 @@ export default function JobList() {
       {!resumesLoading && resumesLoaded && resumes.length === 0 && (
         <div className="student-jobs-message student-jobs-cv-empty">
           <span>Başvuru yapmak için önce CV yükleyin.</span>
-          <Link to="/student/resumes">My Resumes sayfasına git</Link>
+          <Link to="/student/resumes">CV’lerim sayfasına git</Link>
         </div>
       )}
       {!resumesLoading && resumesLoaded && resumes.length > 0 && (
         <div className="resume-select">
-          <label htmlFor="job-resume-select">CV for your application</label>
+          <label htmlFor="job-resume-select">Başvurunuz için CV</label>
           <div className="resume-select-control">
             <select
               id="job-resume-select"
               value={selectedResume}
               onChange={(event) => setSelectedResume(event.target.value)}
             >
-              <option value="">Select a CV</option>
+              <option value="">Bir CV seçin</option>
               {resumes.map((resume) => (
                 <option key={resume.id} value={resume.id}>
                   {resume.name}
@@ -156,7 +156,7 @@ export default function JobList() {
 
       {applicationsLoading && (
         <p className="student-jobs-message">
-          Checking your application history...
+          Başvuru geçmişiniz kontrol ediliyor...
         </p>
       )}
       {!applicationsLoading && applicationsError && (
@@ -168,17 +168,17 @@ export default function JobList() {
         <p className="student-jobs-message student-jobs-error">{applyError}</p>
       )}
 
-      {jobsLoading && <p className="student-jobs-message">Loading jobs...</p>}
+      {jobsLoading && <p className="student-jobs-message">İlanlar yükleniyor...</p>}
       {!jobsLoading && jobsError && (
         <div className="student-jobs-message student-jobs-error student-jobs-retry">
           <span>{jobsError}</span>
           <button type="button" onClick={loadJobs}>
-            Retry
+            Tekrar Dene
           </button>
         </div>
       )}
       {!jobsLoading && !jobsError && jobs.length === 0 && (
-        <p className="student-jobs-message">No jobs are available right now.</p>
+        <p className="student-jobs-message">Şu anda mevcut ilan bulunmuyor.</p>
       )}
 
       {!jobsLoading && !jobsError && jobs.length > 0 && (
@@ -210,7 +210,7 @@ export default function JobList() {
                     to={`/student/jobs/${job.id}/assistant`}
                     className="student-ai-assistant-link"
                   >
-                    AI Assistant
+                    AI Başvuru Mesajı
                   </Link>
                   <Link
                     to={`/student/jobs/${job.id}/interview-prep`}

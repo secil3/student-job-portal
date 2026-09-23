@@ -84,7 +84,7 @@ export default function InterviewPrep() {
   return (
     <div className="interview-prep-page">
       <header className="interview-prep-header">
-        <span>Student tools</span>
+        <span>Öğrenci araçları</span>
         <h1>AI Mülakat Hazırlığı</h1>
         <p>Seçtiğiniz ilana göre üç örnek soru ve kısa hazırlık ipuçları oluşturun.</p>
       </header>
@@ -128,7 +128,7 @@ export default function InterviewPrep() {
                   checked={language === "en"}
                   onChange={(event) => setLanguage(event.target.value)}
                 />
-                English
+                İngilizce
               </label>
             </fieldset>
 

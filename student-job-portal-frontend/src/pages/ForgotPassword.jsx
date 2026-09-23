@@ -19,10 +19,10 @@ export default function ForgotPassword() {
 
     try {
       const res = await api.post("/auth/forgot-password", { email });
-      setMessage("Password reset link generated successfully ✅");
+      setMessage("Parola sıfırlama bağlantısı oluşturuldu ✅");
       setResetLink(res.data.resetLink);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to generate reset link ❌");
+      setError(err.response?.data?.message || "Sıfırlama bağlantısı oluşturulamadı ❌");
     } finally {
       setLoading(false);
     }
@@ -31,24 +31,24 @@ export default function ForgotPassword() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2 className="auth-title">Forgot Password</h2>
+        <h2 className="auth-title">Parolamı Unuttum</h2>
 
         <p className="auth-subtitle">
-          Enter your email and we’ll generate a reset link.
+          E-posta adresinizi girin; sizin için bir sıfırlama bağlantısı oluşturalım.
         </p>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <input
             className="auth-input"
             type="email"
-            placeholder="Enter your email"
+            placeholder="E-posta adresinizi girin"
             value={email}
             required
             onChange={(e) => setEmail(e.target.value)}
           />
 
           <button className="auth-button" type="submit" disabled={loading}>
-            {loading ? "Sending..." : "Send Reset Link"}
+            {loading ? "Gönderiliyor..." : "Sıfırlama Bağlantısı Oluştur"}
           </button>
         </form>
 
@@ -58,14 +58,14 @@ export default function ForgotPassword() {
         {resetLink && (
           <p style={{ textAlign: "center", marginTop: "10px" }}>
             <a href={resetLink} target="_blank" rel="noreferrer">
-              Click here to reset your password
+              Parolanızı sıfırlamak için buraya tıklayın
             </a>
           </p>
         )}
 
         <p style={{ textAlign: "center", marginTop: "16px" }}>
           <Link to="/login" className="auth-link">
-            Back to Login
+            Giriş Sayfasına Dön
           </Link>
         </p>
       </div>

@@ -27,7 +27,7 @@ export default function EditProfile() {
           GPA: profileRes.data?.GPA ?? "",
         });
       } catch (e) {
-        setProfileError(e.response?.data?.message || "Failed to load profile ❌");
+        setProfileError(e.response?.data?.message || "Profil yüklenemedi ❌");
       }
     };
 
@@ -36,7 +36,7 @@ export default function EditProfile() {
         const resumesRes = await api.get("/resumes");
         setHasResume((resumesRes.data || []).length > 0);
       } catch (e) {
-        setResumeError(e.response?.data?.message || "Failed to load resume summary ❌");
+        setResumeError(e.response?.data?.message || "CV özeti yüklenemedi ❌");
       }
     };
 
@@ -56,16 +56,16 @@ export default function EditProfile() {
     const gpa = String(form.GPA ?? "").trim();
     const validGPA = gpa === "" || /^(?:[0-3](?:\.\d{1,2})?|4(?:\.0{1,2})?)$/.test(gpa);
     if (!validGPA) {
-      setSaveError("GPA must be between 0.00 and 4.00 and use at most two decimal places.");
+      setSaveError("GPA 0.00–4.00 arasında ve en fazla iki ondalık basamaklı olmalıdır.");
       return;
     }
 
     setIsSaving(true);
     try {
       await api.put("/student/profile", form);
-      setSuccess("Profile updated successfully ✅");
+      setSuccess("Profil başarıyla güncellendi ✅");
     } catch (e) {
-      setSaveError(e.response?.data?.message || "Failed to save profile ❌");
+      setSaveError(e.response?.data?.message || "Profil kaydedilemedi ❌");
     } finally {
       setIsSaving(false);
     }
@@ -74,20 +74,20 @@ export default function EditProfile() {
   return (
     <div className="profile-container">
       <header className="profile-header">
-        <span>Student profile</span>
-        <h1>Edit Profile</h1>
-        <p>Keep your academic information current for your applications.</p>
+        <span>Öğrenci profili</span>
+        <h1>Profili Düzenle</h1>
+        <p>Başvurularınız için akademik bilgilerinizi güncel tutun.</p>
       </header>
 
       <div className="profile-layout">
         <div className="profile-card">
           <div className="profile-fields">
             <label className="profile-field">
-              <span>University</span>
+              <span>Üniversite</span>
               <input
                 className="profile-input"
                 name="university"
-                placeholder="Enter your university"
+                placeholder="Üniversitenizi girin"
                 value={form.university || ""}
                 onChange={handleChange}
                 maxLength={255}
@@ -95,11 +95,11 @@ export default function EditProfile() {
             </label>
 
             <label className="profile-field">
-              <span>Major</span>
+              <span>Bölüm</span>
               <input
                 className="profile-input"
                 name="major"
-                placeholder="Enter your major"
+                placeholder="Bölümünüzü girin"
                 value={form.major || ""}
                 onChange={handleChange}
                 maxLength={255}
@@ -119,7 +119,7 @@ export default function EditProfile() {
                 max="4"
                 step="0.01"
               />
-              <small>Use a value between 0.00 and 4.00, with up to two decimal places.</small>
+              <small>0.00–4.00 arasında, en fazla iki ondalık basamaklı bir değer kullanın.</small>
             </label>
           </div>
 
@@ -129,7 +129,7 @@ export default function EditProfile() {
 
           <div className="profile-actions">
             <button className="profile-save-btn" onClick={handleSubmit} disabled={isSaving}>
-              {isSaving ? "Saving..." : "Save Profile"}
+              {isSaving ? "Kaydediliyor..." : "Profili Kaydet"}
             </button>
           </div>
         </div>
@@ -137,16 +137,16 @@ export default function EditProfile() {
         <aside className="resume-summary">
           <div className="resume-summary-icon" aria-hidden="true">PDF</div>
           <div className="resume-summary-content">
-            <span>CV status</span>
-            <h2>Resume</h2>
+            <span>CV durumu</span>
+            <h2>CV</h2>
             <p className={hasResume ? "resume-ok" : "resume-warn"}>
-              {hasResume ? "Resume uploaded" : "No resume uploaded yet"}
+              {hasResume ? "CV yüklendi" : "Henüz CV yüklenmedi"}
             </p>
             {resumeError && <p className="auth-error">{resumeError}</p>}
           </div>
 
           <Link to="/student/resumes" className="manage-resumes-link">
-            Manage My Resumes
+            CV’lerimi Yönet
           </Link>
         </aside>
       </div>

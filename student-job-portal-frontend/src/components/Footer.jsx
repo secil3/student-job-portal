@@ -10,31 +10,31 @@ export default function Footer() {
         <div className="footer-brand">
           <h3>StudentJob</h3>
           <p>
-            A modern job portal connecting students with employers
-            in a simple and efficient way.
+            Öğrencileri ve işverenleri sade, verimli bir başvuru sürecinde
+            buluşturan modern bir iş platformu.
           </p>
         </div>
 
         {/* CENTER */}
         <div className="footer-links">
           <h4>Platform</h4>
-          <Link to="/">Home</Link>
-          <Link to="/login">Login</Link>
-          <Link to="/register">Register</Link>
+          <Link to="/">Ana Sayfa</Link>
+          <Link to="/login">Giriş Yap</Link>
+          <Link to="/register">Kayıt Ol</Link>
         </div>
 
         {/* RIGHT */}
         <div className="footer-links">
-          <h4>Roles</h4>
-          <span>Students</span>
-          <span>Employers</span>
-          <span>Admin</span>
+          <h4>Roller</h4>
+          <span>Öğrenciler</span>
+          <span>İşverenler</span>
+          <span>Yönetici</span>
         </div>
 
       </div>
 
       <div className="footer-bottom">
-        © {new Date().getFullYear()} StudentJob Portal. All rights reserved.
+        © {new Date().getFullYear()} StudentJob. Tüm hakları saklıdır.
       </div>
     </footer>
   );

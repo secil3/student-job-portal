@@ -15,7 +15,7 @@ export default function AdminDashboard() {
       })
       .catch((err) => {
         console.error("Admin dashboard error:", err);
-        setError("Dashboard data could not be loaded.");
+        setError("Panel verileri yüklenemedi.");
       })
       .finally(() => setLoading(false));
   }, []);
@@ -23,33 +23,33 @@ export default function AdminDashboard() {
   return (
     <div className="admin-container">
       <header className="admin-page-header">
-        <span>Platform overview</span>
-        <h1 className="page-title">Admin Dashboard</h1>
-        <p>Monitor platform activity and access essential management tools.</p>
+        <span>Platform özeti</span>
+        <h1 className="page-title">Yönetici Paneli</h1>
+        <p>Platform etkinliğini izleyin ve temel yönetim araçlarına erişin.</p>
       </header>
 
-      {loading && <p className="admin-state-message">Loading admin dashboard...</p>}
+      {loading && <p className="admin-state-message">Yönetici paneli yükleniyor...</p>}
       {!loading && error && <p className="admin-state-message error">{error}</p>}
 
       {/* === STATS === */}
       {!loading && !error && stats && <div className="stats-grid">
         <div className="stat-card">
-          <span>Total Students</span>
+          <span>Toplam Öğrenci</span>
           <strong>{stats.students}</strong>
         </div>
 
         <div className="stat-card">
-          <span>Total Employers</span>
+          <span>Toplam İşveren</span>
           <strong>{stats.employers}</strong>
         </div>
 
         <div className="stat-card">
-          <span>Total Jobs</span>
+          <span>Toplam İlan</span>
           <strong>{stats.jobs}</strong>
         </div>
 
         <div className="stat-card">
-          <span>Total Applications</span>
+          <span>Toplam Başvuru</span>
           <strong>{stats.applications}</strong>
         </div>
       </div>}
@@ -57,23 +57,23 @@ export default function AdminDashboard() {
       {/* === QUICK ACTIONS === */}
       {!loading && !error && <section className="admin-quick-section">
         <div className="admin-section-heading">
-          <span>Management</span>
-          <h2>Quick actions</h2>
+          <span>Yönetim</span>
+          <h2>Hızlı işlemler</h2>
         </div>
         <div className="admin-actions">
         <Link to="/admin/employers" className="action-card">
-          <strong>Verify Employers</strong>
-          <span>Review pending employer accounts</span>
+          <strong>İşveren Onayları</strong>
+          <span>Bekleyen işveren hesaplarını inceleyin</span>
         </Link>
 
         <Link to="/admin/jobs" className="action-card">
-          <strong>Manage Jobs</strong>
-          <span>Review current job postings</span>
+          <strong>İlanları Yönet</strong>
+          <span>Mevcut ilanları inceleyin</span>
         </Link>
 
         <Link to="/admin/users" className="action-card">
-          <strong>View Users</strong>
-          <span>See registered platform accounts</span>
+          <strong>Kullanıcıları Görüntüle</strong>
+          <span>Kayıtlı platform hesaplarını görün</span>
         </Link>
         </div>
       </section>}

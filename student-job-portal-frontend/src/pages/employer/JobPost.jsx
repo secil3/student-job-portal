@@ -23,28 +23,28 @@ export default function JobPost() {
         salary,
       });
 
-      setMessage("Job posted successfully ✅");
+      setMessage("İlan başarıyla yayınlandı ✅");
       setTitle("");
       setDescription("");
       setLocation("");
       setSalary("");
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to post job ❌");
+      setError(err.response?.data?.message || "İlan yayınlanamadı ❌");
     }
   };
 
   return (
     <div className="jobform-container jobpost-page">
       <div className="jobform-card">
-        <h2 className="jobform-title">Post a New Job</h2>
-        <p className="jobform-intro">Share the role details with prospective students.</p>
+        <h2 className="jobform-title">Yeni İlan Oluştur</h2>
+        <p className="jobform-intro">Pozisyon ayrıntılarını öğrencilerle paylaşın.</p>
 
         <form className="jobform" onSubmit={handleSubmit}>
           <label className="jobform-field">
-            <span>Job title</span>
+            <span>İlan başlığı</span>
             <input
               className="jobform-input"
-              placeholder="e.g. Junior Product Designer"
+              placeholder="Örn. Junior Ürün Tasarımcısı"
               value={title}
               required
               onChange={(e) => setTitle(e.target.value)}
@@ -52,10 +52,10 @@ export default function JobPost() {
           </label>
 
           <label className="jobform-field">
-            <span>Description</span>
+            <span>Açıklama</span>
             <textarea
               className="jobform-textarea"
-              placeholder="Describe the role and key responsibilities"
+              placeholder="Pozisyonu ve temel sorumlulukları açıklayın"
               value={description}
               required
               onChange={(e) => setDescription(e.target.value)}
@@ -64,10 +64,10 @@ export default function JobPost() {
 
           <div className="jobform-row">
             <label className="jobform-field">
-              <span>Location</span>
+              <span>Konum</span>
               <input
                 className="jobform-input"
-                placeholder="e.g. Remote"
+                placeholder="Örn. Uzaktan"
                 value={location}
                 required
                 onChange={(e) => setLocation(e.target.value)}
@@ -75,10 +75,10 @@ export default function JobPost() {
             </label>
 
             <label className="jobform-field">
-              <span>Salary</span>
+              <span>Maaş</span>
               <input
                 className="jobform-input"
-                placeholder="Optional"
+                placeholder="İsteğe bağlı"
                 value={salary}
                 onChange={(e) => setSalary(e.target.value)}
               />
@@ -87,7 +87,7 @@ export default function JobPost() {
 
           <div className="jobform-actions">
             <button className="btn btn-primary" type="submit">
-              Post Job
+              İlanı Yayınla
             </button>
           </div>
         </form>

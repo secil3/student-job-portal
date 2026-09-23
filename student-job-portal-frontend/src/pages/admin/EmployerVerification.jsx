@@ -63,9 +63,9 @@ export default function EmployerVerification() {
   return (
     <div className="verify-container">
       <header className="verify-header">
-        <span>Account review</span>
-        <h1 className="verify-title">Verify Employers</h1>
-        <p>Approve or reject employer accounts waiting for platform access.</p>
+        <span>Hesap inceleme</span>
+        <h1 className="verify-title">İşveren Onayları</h1>
+        <p>Platform erişimi bekleyen işveren hesaplarını onaylayın veya reddedin.</p>
       </header>
 
       {actionError && (
@@ -99,7 +99,7 @@ export default function EmployerVerification() {
           {employers.map((emp) => (
             <div key={emp.id} className="verify-card">
               <div className="verify-info">
-                <span>Employer email</span>
+                <span>İşveren e-postası</span>
                 <strong>{emp.email}</strong>
               </div>
 
@@ -109,7 +109,7 @@ export default function EmployerVerification() {
                   onClick={() => updateStatus(emp.id, "approved")}
                   disabled={updatingEmployerId !== null}
                 >
-                  {updatingEmployerId === emp.id ? "İşleniyor..." : "Approve"}
+                  {updatingEmployerId === emp.id ? "İşleniyor..." : "Onayla"}
                 </button>
 
                 <button
@@ -117,7 +117,7 @@ export default function EmployerVerification() {
                   onClick={() => updateStatus(emp.id, "rejected")}
                   disabled={updatingEmployerId !== null}
                 >
-                  {updatingEmployerId === emp.id ? "İşleniyor..." : "Reject"}
+                  {updatingEmployerId === emp.id ? "İşleniyor..." : "Reddet"}
                 </button>
               </div>
             </div>

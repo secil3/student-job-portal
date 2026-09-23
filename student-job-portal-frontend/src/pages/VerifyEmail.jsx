@@ -13,8 +13,8 @@ export default function VerifyEmail() {
   const [status, setStatus] = useState(readToken() ? "loading" : "waiting");
   const [message, setMessage] = useState(
     new URLSearchParams(location.search).get("sent") === "1"
-      ? "We sent a verification link to your ADU student email."
-      : "Open the verification link from your email, or request a new one."
+      ? "ADÜ öğrenci e-posta adresinize bir doğrulama bağlantısı gönderdik."
+      : "E-postanızdaki doğrulama bağlantısını açın veya yeni bir bağlantı isteyin."
   );
   const [email, setEmail] = useState(location.state?.email || "");
   const [resending, setResending] = useState(false);
@@ -29,14 +29,14 @@ export default function VerifyEmail() {
       .then(() => {
         window.history.replaceState(null, "", "/verify-email");
         setStatus("success");
-        setMessage("Your ADU student email has been verified successfully.");
+        setMessage("ADÜ öğrenci e-posta adresiniz başarıyla doğrulandı.");
       })
       .catch((error) => {
         setStatus(error.response?.status === 400 ? "invalid" : "error");
         setMessage(
           error.response?.status === 400
-            ? "This verification link is invalid, expired, or has already been used."
-            : "We could not verify your email right now. Please try again later."
+            ? "Bu doğrulama bağlantısı geçersiz, süresi dolmuş veya daha önce kullanılmış."
+            : "E-postanız şu anda doğrulanamadı. Lütfen daha sonra tekrar deneyin."
         );
       });
   }, []);
@@ -52,7 +52,7 @@ export default function VerifyEmail() {
     } catch (error) {
       setMessage(
         error.response?.data?.message
-          || "The verification request could not be completed. Please try again later."
+          || "Doğrulama isteği tamamlanamadı. Lütfen daha sonra tekrar deneyin."
       );
       setStatus("error");
     } finally {
@@ -64,30 +64,30 @@ export default function VerifyEmail() {
     <main className="verify-email-page">
       <section className="verify-email-card" aria-live="polite">
         <span className={`verify-email-badge verify-email-badge--${status}`}>
-          {status === "success" ? "Verified" : "Email verification"}
+          {status === "success" ? "Doğrulandı" : "E-posta doğrulaması"}
         </span>
-        <h1>Verify your student email</h1>
-        <p>{status === "loading" ? "Verifying your email..." : message}</p>
+        <h1>Öğrenci e-postanızı doğrulayın</h1>
+        <p>{status === "loading" ? "E-postanız doğrulanıyor..." : message}</p>
 
         {status !== "success" && status !== "loading" && (
           <form className="verify-email-form" onSubmit={handleResend}>
-            <label htmlFor="verification-email">ADÜ student email</label>
+            <label htmlFor="verification-email">ADÜ öğrenci e-postası</label>
             <input
               id="verification-email"
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              placeholder="student@stu.adu.edu.tr"
+              placeholder="ogrenci.no@stu.adu.edu.tr"
               autoComplete="email"
               required
             />
             <button type="submit" disabled={resending}>
-              {resending ? "Sending..." : "Resend verification email"}
+              {resending ? "Gönderiliyor..." : "Doğrulama E-postasını Yeniden Gönder"}
             </button>
           </form>
         )}
 
-        {status === "success" && <Link to="/login">Continue to login</Link>}
+        {status === "success" && <Link to="/login">Giriş Sayfasına Devam Et</Link>}
       </section>
     </main>
   );

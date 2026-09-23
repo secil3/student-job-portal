@@ -11,7 +11,7 @@ export const getRegistrationEmailPresentation = (role) =>
         hint: "Yalnızca @stu.adu.edu.tr uzantılı ADÜ öğrenci e-posta adresleri kabul edilir.",
       }
     : {
-        placeholder: "company@example.com",
+        placeholder: "sirket@example.com",
         hint: "",
       };
 

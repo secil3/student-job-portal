@@ -23,7 +23,7 @@ export default function ProtectedResumeButton({
       link.rel = "noopener noreferrer";
 
       if (download) {
-        link.download = fileName || "resume";
+        link.download = fileName || "cv";
       } else {
         link.target = "_blank";
       }
@@ -33,7 +33,7 @@ export default function ProtectedResumeButton({
       link.remove();
       window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
     } catch (error) {
-      alert(error.response?.data?.message || "Failed to open resume");
+      alert(error.response?.data?.message || "CV açılamadı");
     } finally {
       setLoading(false);
     }
@@ -46,7 +46,7 @@ export default function ProtectedResumeButton({
       onClick={handleClick}
       disabled={loading}
     >
-      {loading ? "Loading..." : children}
+      {loading ? "Yükleniyor..." : children}
     </button>
   );
 }

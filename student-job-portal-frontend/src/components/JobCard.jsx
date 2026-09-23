@@ -32,7 +32,7 @@ const JobCard = ({ job, applicationState }) => {
 
       <div className="student-job-preview-footer">
         <div className="student-job-salary">
-          {job.salary || "Salary not specified"}
+          {job.salary || "Maaş belirtilmedi"}
         </div>
 
         {role === "student" && (
@@ -43,7 +43,7 @@ const JobCard = ({ job, applicationState }) => {
             onClick={() => navigate("/student/jobs")}
             disabled={applied || applicationStateUnknown}
           >
-            {applied ? "Already Applied" : applicationStateUnknown ? "Unavailable" : "Apply"}
+            {applied ? "Başvuruldu" : applicationStateUnknown ? "Kullanılamıyor" : "Başvur"}
           </button>
         )}
       </div>

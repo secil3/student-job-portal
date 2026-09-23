@@ -21,7 +21,7 @@ export const getAssistantRequestError = (error, action = "generate") => {
   if (status === 403) {
     return action === "load"
       ? "Bu ilan bilgilerine erişim yetkiniz bulunmuyor."
-      : "AI Assistant'ı kullanmak için doğrulanmış bir öğrenci hesabı gerekir.";
+      : "AI Başvuru Mesajı aracını kullanmak için doğrulanmış bir öğrenci hesabı gerekir.";
   }
   if (status === 404) return "İlan bulunamadı veya artık erişilebilir değil.";
   if (status === 429) return "Çok fazla mesaj isteği gönderdiniz. Lütfen daha sonra tekrar deneyin.";

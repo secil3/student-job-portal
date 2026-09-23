@@ -17,7 +17,7 @@ export default function MyResumes() {
       const res = await api.get("/resumes");
       setResumes(res.data || []);
     } catch (e) {
-      setError(e.response?.data?.message || "Failed to load resumes ❌");
+      setError(e.response?.data?.message || "CV’ler yüklenemedi ❌");
     } finally {
       setLoading(false);
     }
@@ -28,13 +28,13 @@ export default function MyResumes() {
   }, []);
 
   const deleteResume = async (id) => {
-    if (!confirm("Delete this resume?")) return;
+    if (!confirm("Bu CV silinsin mi?")) return;
     setError("");
     try {
       await api.delete(`/resumes/${id}`);
       await fetchResumes();
     } catch (e) {
-      setError(e.response?.data?.message || "Delete failed ❌");
+      setError(e.response?.data?.message || "Silme işlemi başarısız ❌");
     }
   };
 
@@ -47,7 +47,7 @@ export default function MyResumes() {
       setRenameMap((prev) => ({ ...prev, [id]: "" }));
       fetchResumes();
     } catch (e) {
-      alert(e.response?.data?.message || "Rename failed ❌");
+      alert(e.response?.data?.message || "Yeniden adlandırma başarısız ❌");
     }
   };
 
@@ -56,20 +56,20 @@ export default function MyResumes() {
   return (
     <div className="resumes-container">
       <div className="resumes-header">
-        <span>Documents</span>
-        <h2>My Resumes</h2>
-        <p>Upload and manage the PDF CVs you use for job applications.</p>
+        <span>Belgeler</span>
+        <h2>CV’lerim</h2>
+        <p>İş başvurularınızda kullandığınız PDF CV’leri yükleyin ve yönetin.</p>
       </div>
 
       <UploadResume onUploadSuccess={fetchResumes} />
 
-      {loading && <p className="resumes-message">Loading resumes...</p>}
+      {loading && <p className="resumes-message">CV’ler yükleniyor...</p>}
       {error && <p className="resumes-error">{error}</p>}
 
       {!loading && resumes.length === 0 && (
         <div className="resumes-empty">
-          <p>No resumes uploaded.</p>
-          <p className="muted">Use the PDF upload form above to add your first resume.</p>
+          <p>Henüz CV yüklenmedi.</p>
+          <p className="muted">İlk CV’nizi eklemek için yukarıdaki PDF yükleme formunu kullanın.</p>
         </div>
       )}
 
@@ -98,33 +98,33 @@ export default function MyResumes() {
                     download={!pdf}
                     className="btn btn-secondary-soft btn-link"
                   >
-                    {pdf ? "Open" : "Download"}
+                    {pdf ? "Aç" : "İndir"}
                   </ProtectedResumeButton>
 
                   <button
                     type="button"
                     className="btn btn-danger-outline"
                     onClick={() => deleteResume(r.id)}
-                    title="Delete this resume"
+                    title="Bu CV’yi sil"
                   >
-                    Delete
+                    Sil
                   </button>
                 </div>
               </div>
 
               <div className="resume-hint">
                 {pdf
-                  ? "Tip: This PDF opens in a new tab."
-                  : "Tip: Word files are downloaded to avoid leaving the app."}
+                  ? "İpucu: Bu PDF yeni bir sekmede açılır."
+                  : "İpucu: Uygulamadan ayrılmamanız için Word dosyaları indirilir."}
               </div>
 
               <div className="resume-rename">
-                <label htmlFor={`resume-name-${r.id}`}>Rename CV</label>
+                <label htmlFor={`resume-name-${r.id}`}>CV’yi yeniden adlandır</label>
                 <div className="resume-rename-controls">
                   <input
                     id={`resume-name-${r.id}`}
                     className="rename-input"
-                    placeholder="Enter a new file name"
+                    placeholder="Yeni bir dosya adı girin"
                     value={renameMap[r.id] || ""}
                     onChange={(e) =>
                       setRenameMap((prev) => ({ ...prev, [r.id]: e.target.value }))
@@ -139,9 +139,9 @@ export default function MyResumes() {
                     onClick={() => renameResume(r.id)}
                     className="btn btn-primary-soft"
                     disabled={!canRename}
-                    title="Rename this resume"
+                    title="Bu CV’yi yeniden adlandır"
                   >
-                    Rename
+                    Yeniden Adlandır
                   </button>
                 </div>
               </div>

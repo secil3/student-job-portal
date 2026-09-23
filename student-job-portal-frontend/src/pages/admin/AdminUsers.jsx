@@ -6,6 +6,7 @@ import {
   isRecordActive,
   updateRecordActivation,
 } from "../../utils/activationStatus";
+import { getUiLabel } from "../../utils/uiLabels";
 import "../../styles/AdminUsers.css";
 
 export default function AdminUsers() {
@@ -26,7 +27,7 @@ export default function AdminUsers() {
       const res = await api.get("/admin/users");
       setUsers(res.data);
     } catch {
-      setLoadError("Failed to load users.");
+      setLoadError("Kullanıcılar yüklenemedi.");
     } finally {
       setLoading(false);
     }
@@ -40,10 +41,10 @@ export default function AdminUsers() {
     try {
       const response = await updateUserActivation(userId, isActive);
       setUsers((current) => updateRecordActivation(current, userId, isActive));
-      setActionMessage(response.data?.message || "Account status updated.");
+      setActionMessage(response.data?.message || "Hesap durumu güncellendi.");
     } catch (error) {
       setActionError(
-        error.response?.data?.message || "Account status could not be updated."
+        error.response?.data?.message || "Hesap durumu güncellenemedi."
       );
     } finally {
       setUpdatingUserId(null);
@@ -53,12 +54,12 @@ export default function AdminUsers() {
   return (
     <div className="adminusers-container">
       <header className="adminusers-header">
-        <span>User directory</span>
-        <h1 className="adminusers-title">All Users</h1>
-        <p>Review registered accounts, roles, approval and access status.</p>
+        <span>Kullanıcı dizini</span>
+        <h1 className="adminusers-title">Tüm Kullanıcılar</h1>
+        <p>Kayıtlı hesapları, rolleri, onay ve erişim durumlarını inceleyin.</p>
       </header>
 
-      {loading && <p className="loading-text">Loading...</p>}
+      {loading && <p className="loading-text">Yükleniyor...</p>}
       {loadError && <p className="adminusers-message is-error">{loadError}</p>}
       {actionError && (
         <p className="adminusers-message is-error">{actionError}</p>
@@ -68,47 +69,47 @@ export default function AdminUsers() {
       )}
 
       {!loading && !loadError && users.length === 0 && (
-        <p className="empty-text">No users found.</p>
+        <p className="empty-text">Kullanıcı bulunamadı.</p>
       )}
 
       {!loading && users.length > 0 && (
         <table className="users-table">
           <thead>
             <tr>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Approval</th>
-              <th>Account</th>
-              <th>Action</th>
+              <th>E-posta</th>
+              <th>Rol</th>
+              <th>Onay</th>
+              <th>Hesap</th>
+              <th>İşlem</th>
             </tr>
           </thead>
 
           <tbody>
             {users.map((u) => (
               <tr key={u.id}>
-                <td data-label="Email">{u.email}</td>
-                <td data-label="Role">
+                <td data-label="E-posta">{u.email}</td>
+                <td data-label="Rol">
                   <span className={`role-badge role-${u.role}`}>
-                    {u.role}
+                    {getUiLabel(u.role)}
                   </span>
                 </td>
-                <td data-label="Approval">
+                <td data-label="Onay">
                   <span className={`user-status-badge status-${u.status}`}>
-                    {u.status}
+                    {getUiLabel(u.status)}
                   </span>
                 </td>
-                <td data-label="Account">
+                <td data-label="Hesap">
                   <span
                     className={`account-status-badge ${
                       isRecordActive(u) ? "is-active" : "is-inactive"
                     }`}
                   >
-                    {isRecordActive(u) ? "Active" : "Inactive"}
+                    {isRecordActive(u) ? "Aktif" : "Pasif"}
                   </span>
                 </td>
-                <td data-label="Action">
+                <td data-label="İşlem">
                   {Number(u.id) === Number(currentUser?.id) ? (
-                    <span className="current-account-label">Current account</span>
+                    <span className="current-account-label">Mevcut hesap</span>
                   ) : (
                     <button
                       type="button"
@@ -119,7 +120,7 @@ export default function AdminUsers() {
                       onClick={() => handleActivation(u.id, !isRecordActive(u))}
                     >
                       {updatingUserId === u.id
-                        ? "Updating..."
+                        ? "Güncelleniyor..."
                         : isRecordActive(u)
                           ? "Pasife al"
                           : "Yeniden etkinleştir"}

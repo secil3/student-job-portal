@@ -38,7 +38,7 @@ test("about includes all features, preserves AI limits, and offers no protected 
 });
 
 test("existing illustrative preview and session-aware actions remain", () => {
-  assert.match(home, /Illustrative preview · No real data/);
+  assert.match(home, /Temsili önizleme · Gerçek veri içermez/);
   assert.match(home, /to="\/register"/);
   assert.match(home, /to="\/login"/);
   assert.match(home, /dashboardPath/);
