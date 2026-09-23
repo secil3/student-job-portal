@@ -4,7 +4,6 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import About from "./pages/About";
-import Features from "./pages/Features";
 
 import StudentDashboard from "./pages/student/StudentDashboard";
 import JobList from "./pages/student/JobList";
@@ -45,7 +44,7 @@ export default function App() {
             {/* Public */}
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
-            <Route path="/features" element={<Features />} />
+            <Route path="/features" element={<Navigate to="/about" replace />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />

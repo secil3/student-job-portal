@@ -106,9 +106,6 @@ export default function Navbar() {
           <NavLink to="/about" className={navLinkClass}>
             About
           </NavLink>
-          <NavLink to="/features" className={navLinkClass}>
-            Features
-          </NavLink>
         </div>
 
         {user && <div className="nav-role-links">

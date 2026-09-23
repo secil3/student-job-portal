@@ -140,7 +140,7 @@ export default function Home() {
           <span>Özellikler</span>
           <h2>Başvurularınız için pratik araçlar.</h2>
           <p>CV ile başvurmayı, takibi ve AI hazırlık araçlarını keşfedin.</p>
-          <Link to="/features">Özellikleri keşfet →</Link>
+          <Link to="/about">Özellikleri keşfet →</Link>
         </article>
       </section>
     </div>

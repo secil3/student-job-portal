@@ -7,13 +7,14 @@ const styles = await readFile(new URL("../styles/Navbar.css", import.meta.url), 
 
 test("public and role navigation links remain available", () => {
   for (const route of [
-    "/", "/about", "/features", "/student", "/student/jobs",
+    "/", "/about", "/student", "/student/jobs",
     "/student/applications", "/student/profile", "/student/resumes",
     "/employer", "/employer/job-post", "/admin/dashboard",
     "/admin/users", "/admin/jobs", "/admin/employers",
   ]) {
     assert.ok(navbar.includes(`to="${route}"`), `Missing route: ${route}`);
   }
+  assert.doesNotMatch(navbar, /to="\/features"/);
 });
 
 test("account disclosure shows full role and preserves logout", () => {

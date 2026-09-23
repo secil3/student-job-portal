@@ -11,10 +11,16 @@
 .public-page-card > span { color: var(--accent-color); font-size: 11px; font-weight: 800; }
 .public-page-header h1 { margin: 8px 0 12px; font-size: clamp(30px, 5vw, 46px); line-height: 1.15; }
 .public-page-header p,
+.public-page-section-heading p,
 .public-page-card p,
 .public-page-card li,
 .public-page-note { color: var(--ink-68); font-size: 14px; line-height: 1.7; }
 .public-page h2 { margin: 0 0 18px; font-size: clamp(23px, 3vw, 30px); }
+.public-page-section + .public-page-section { margin-top: clamp(38px, 6vw, 64px); padding-top: clamp(32px, 5vw, 52px); border-top: 1px solid rgba(var(--ink-rgb), 0.11); }
+.public-page-section-heading { max-width: 720px; margin-bottom: 20px; }
+.public-page-section-heading > span { color: var(--accent-color); font-size: 11px; font-weight: 800; }
+.public-page-section-heading h2 { margin: 8px 0 10px; }
+.public-page-section-heading p { margin: 0; }
 .public-page-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 .public-page-card { min-width: 0; padding: clamp(20px, 3vw, 26px); border: 1px solid rgba(var(--ink-rgb), 0.1); border-radius: 14px; background: var(--surface-bg); box-shadow: 0 4px 16px rgba(var(--shadow-rgb), 0.035); }
 .public-page-card h3 { margin: 8px 0 10px; color: var(--text-primary); font-size: 17px; line-height: 1.4; }
