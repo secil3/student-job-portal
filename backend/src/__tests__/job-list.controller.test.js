@@ -39,7 +39,22 @@ describe("Job list visibility", () => {
     expect(dbMock.query.mock.calls[1][0]).toContain("users.status = 'approved'");
     expect(dbMock.query.mock.calls[1][0]).toContain("users.is_active = 1");
     expect(dbMock.query.mock.calls[1][0]).toContain("jobs.is_active = 1");
+    expect(dbMock.query.mock.calls[1][0]).not.toContain("employer_email");
     expect(res.json).toHaveBeenCalledWith(jobs);
+  });
+
+  test("does not expose the general job list or employer email data to employers", async () => {
+    dbMock.query.mockResolvedValueOnce([[{ role: "employer" }]]);
+    const req = { user: { id: 3, role: "employer" } };
+    const res = mockResponse();
+
+    await getAllJobs(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(dbMock.query).toHaveBeenCalledTimes(1);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Employers must use their own job management endpoint",
+    });
   });
 
   test("keeps the admin job list unfiltered by employer approval", async () => {
@@ -54,6 +69,7 @@ describe("Job list visibility", () => {
 
     expect(dbMock.query.mock.calls[1][0]).not.toContain("users.status = 'approved'");
     expect(dbMock.query.mock.calls[1][0]).not.toContain("jobs.is_active = 1");
+    expect(dbMock.query.mock.calls[1][0]).not.toContain("employer_email");
     expect(res.json).toHaveBeenCalledWith(jobs);
   });
 

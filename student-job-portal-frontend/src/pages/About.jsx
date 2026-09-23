@@ -1,7 +1,15 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/useAuth";
 import "../styles/PublicPages.css";
 
 export default function About() {
+  const { user } = useAuth();
+  const authenticatedCta = {
+    student: { to: "/student/jobs", label: "İlanları Gör" },
+    employer: { to: "/employer", label: "İşveren Paneline Git" },
+    admin: { to: "/admin/dashboard", label: "Yönetici Paneline Git" },
+  }[user?.role];
+
   return (
     <div className="public-page">
       <header className="public-page-header">
@@ -80,8 +88,16 @@ export default function About() {
       </section>
 
       <div className="public-page-actions">
-        <Link to="/register">Kayıt Ol</Link>
-        <Link to="/login">Giriş Yap</Link>
+        {!user ? (
+          <>
+            <Link to="/register">Kayıt Ol</Link>
+            <Link to="/login">Giriş Yap</Link>
+          </>
+        ) : (
+          authenticatedCta && (
+            <Link to={authenticatedCta.to}>{authenticatedCta.label}</Link>
+          )
+        )}
       </div>
     </div>
   );

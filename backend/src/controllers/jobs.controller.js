@@ -72,7 +72,19 @@ export const getAllJobs = async (req, res) => {
       return res.status(401).json({ message: "User account not found" });
     }
 
-    const studentVisibility = requesters[0].role === "student"
+    const requesterRole = requesters[0].role;
+
+    if (requesterRole === "employer") {
+      return res.status(403).json({
+        message: "Employers must use their own job management endpoint",
+      });
+    }
+
+    if (!['student', 'admin'].includes(requesterRole)) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    const studentVisibility = requesterRole === "student"
       ? `WHERE jobs.is_active = 1
            AND users.role = 'employer'
            AND users.status = 'approved'
@@ -80,7 +92,9 @@ export const getAllJobs = async (req, res) => {
       : "";
 
     const [rows] = await db.query(`
-      SELECT jobs.*, users.email AS employer_email
+      SELECT jobs.id, jobs.employer_id, jobs.title, jobs.description,
+             jobs.created_at, jobs.location, jobs.salary,
+             jobs.is_active, jobs.deactivated_at
       FROM jobs
       JOIN users ON jobs.employer_id = users.id
       ${studentVisibility}

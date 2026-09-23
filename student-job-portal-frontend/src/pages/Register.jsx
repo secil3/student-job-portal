@@ -147,16 +147,16 @@ export default function Register() {
           <div className="auth-success" role="status">
             <p>{EMPLOYER_PENDING_APPROVAL_MESSAGE}</p>
             <Link to="/login" className="auth-link">
-              Login sayfasına geç
+              Giriş sayfasına geç
             </Link>
           </div>
         )}
 
         {!employerRegistered && (
           <p className="auth-switch">
-            Already have an account?{" "}
+            Zaten hesabınız var mı?{" "}
             <Link to="/login" className="forgot-link">
-              Login
+              Giriş Yap
             </Link>
           </p>
         )}

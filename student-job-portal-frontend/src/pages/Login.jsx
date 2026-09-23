@@ -76,10 +76,9 @@ export default function Login() {
             />
           </label>
 
-          {/* Forgot password link */}
           <div className="login-extra">
             <Link to="/forgot-password" className="forgot-link">
-              Forgot password?
+              Parolanızı mı unuttunuz?
             </Link>
           </div>
 
@@ -90,11 +89,10 @@ export default function Login() {
 
         {error && <p className="auth-error">{error}</p>}
 
-        {/* Register link */}
         <p className="auth-switch">
-          Don&apos;t have an account?{" "}
+          Hesabınız yok mu?{" "}
           <Link to="/register" className="forgot-link">
-            Register
+            Kayıt Ol
           </Link>
         </p>
       </div>

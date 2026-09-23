@@ -7,7 +7,6 @@ import jobRoutes from "./routes/jobs.routes.js";
 import resumeRoutes from "./routes/resume.routes.js";
 
 import applicationRoutes from "./routes/application.routes.js";
-import testRoutes from "./routes/test.routes.js";
 
 import auth from "./middleware/auth.middleware.js";
 import adminRoutes from "./routes/admin.routes.js";
@@ -38,9 +37,6 @@ app.use("/api/student", studentRoutes);
 app.use("/api/ai", aiRoutes);
 
 app.use("/api/admin", adminRoutes);
-// optional
-app.use("/api/test", testRoutes);
-
 const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
