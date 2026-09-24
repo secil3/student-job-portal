@@ -3,7 +3,10 @@ import db from "../config/db.js";
 // GET pending employers
 export const getPendingEmployers = async (req, res) => {
   const [rows] = await db.query(
-    "SELECT id, email FROM users WHERE role='employer' AND status='pending'"
+    `SELECT u.id, u.email, u.full_name, cp.company_name
+     FROM users u
+     LEFT JOIN company_profiles cp ON cp.user_id = u.id
+     WHERE u.role = 'employer' AND u.status = 'pending'`
   );
 
   res.json(rows);

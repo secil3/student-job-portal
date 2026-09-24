@@ -32,4 +32,17 @@ describe("isolated demo seed safety", () => {
     expect(seedSource).toContain("INSERT INTO company_profiles");
     expect(seedSource).not.toContain("INSERT INTO demo_company_profiles");
   });
+
+  test("seeds demo representatives, Elif's GPA and one pending employer", () => {
+    expect(seedSource).toContain('fullName: "Merve Kaya"');
+    expect(seedSource).toContain('fullName: "Burak Yıldız"');
+    expect(seedSource).toContain('fullName: "Selin Erdem"');
+    expect(seedSource).toContain('fullName: "Onur Acar"');
+    expect(seedSource).toContain('fullName: "Deniz Karaca"');
+    expect(seedSource).toContain('name: "Kare Eğitim & Danışmanlık"');
+    expect(seedSource).toContain('status: "pending"');
+    expect(seedSource).toContain("gpa: 3.24");
+    expect(seedSource).toContain("status = VALUES(status)");
+    expect(seedSource).toContain("GPA = VALUES(GPA)");
+  });
 });

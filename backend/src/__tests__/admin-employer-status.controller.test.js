@@ -22,15 +22,20 @@ describe("Admin employer approval", () => {
     jest.clearAllMocks();
   });
 
-  test("returns pending employers without changing the query or response", async () => {
-    const employers = [{ id: 12, email: "employer@example.test" }];
+  test("returns pending employers with their authoritative company profile", async () => {
+    const employers = [{
+      id: 12,
+      email: "employer@example.test",
+      full_name: "Demo Employer",
+      company_name: "Demo Company",
+    }];
     dbMock.query.mockResolvedValueOnce([employers]);
     const res = mockResponse();
 
     await getPendingEmployers({}, res);
 
     expect(dbMock.query).toHaveBeenCalledWith(
-      "SELECT id, email FROM users WHERE role='employer' AND status='pending'"
+      expect.stringMatching(/LEFT JOIN company_profiles cp ON cp\.user_id = u\.id/)
     );
     expect(res.json).toHaveBeenCalledWith(employers);
   });

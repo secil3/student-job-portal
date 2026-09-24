@@ -99,6 +99,12 @@ export default function EmployerVerification() {
           {employers.map((emp) => (
             <div key={emp.id} className="verify-card">
               <div className="verify-info">
+                {emp.company_name && (
+                  <>
+                    <span>Şirket</span>
+                    <strong>{emp.company_name}</strong>
+                  </>
+                )}
                 <span>İşveren e-postası</span>
                 <strong>{emp.email}</strong>
               </div>

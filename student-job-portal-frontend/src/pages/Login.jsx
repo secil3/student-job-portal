@@ -111,8 +111,8 @@ export default function Login() {
         {isDemoMode && (
           <section className="demo-login" aria-labelledby="demo-login-title">
             <div className="demo-login-heading">
-              <h2 id="demo-login-title">Demoyu hızlıca keşfedin</h2>
-              <p>Parola girmeden kurgusal demo hesaplarından biriyle devam edin.</p>
+              <h2 id="demo-login-title">StudentJob’ı keşfedin</h2>
+              <p>Rol seçerek platformu inceleyebilirsiniz.</p>
             </div>
 
             <div className="demo-login-actions">
@@ -122,7 +122,7 @@ export default function Login() {
                 disabled={Boolean(demoSubmitting)}
                 onClick={() => handleDemoLogin("student")}
               >
-                {demoSubmitting === "student" ? "Açılıyor..." : "Demo Öğrenci Olarak Gir"}
+                {demoSubmitting === "student" ? "Açılıyor..." : "Öğrenci Olarak Keşfet"}
               </button>
               <button
                 type="button"
@@ -130,7 +130,7 @@ export default function Login() {
                 disabled={Boolean(demoSubmitting)}
                 onClick={() => handleDemoLogin("employer")}
               >
-                {demoSubmitting === "employer" ? "Açılıyor..." : "Demo İşveren Olarak Gir"}
+                {demoSubmitting === "employer" ? "Açılıyor..." : "İşveren Olarak Keşfet"}
               </button>
               <button
                 type="button"
@@ -138,7 +138,7 @@ export default function Login() {
                 disabled={Boolean(demoSubmitting)}
                 onClick={() => handleDemoLogin("admin")}
               >
-                {demoSubmitting === "admin" ? "Açılıyor..." : "Yönetici demosu"}
+                {demoSubmitting === "admin" ? "Açılıyor..." : "Yönetici Görünümü"}
               </button>
             </div>
           </section>

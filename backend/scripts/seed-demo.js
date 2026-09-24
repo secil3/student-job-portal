@@ -18,6 +18,7 @@ const students = [
     classYear: "4. sınıf",
     city: "Aydın",
     skills: ["React", "JavaScript", "HTML/CSS", "Git", "temel Node.js"],
+    gpa: 3.24,
     description: "Frontend geliştirme alanında kendini geliştiren, staj ve junior pozisyonlara başvuran son sınıf öğrencisi.",
   },
   { key: "mert", email: "mert.kaya@demo.studentjob.invalid", name: "Mert Kaya", major: "İşletme", classYear: "3. sınıf" },
@@ -28,10 +29,11 @@ const students = [
 ];
 
 const employers = [
-  { key: "novabyte", email: "demo@novabyte.com", name: "NovaByte Teknoloji", description: "Web ve yazılım çözümleri geliştiren küçük ölçekli teknoloji şirketi." },
-  { key: "aydinplus", email: "demo@aydinplus.invalid", name: "AydınPlus Danışmanlık", description: "İnsan kaynakları, operasyon ve işletme süreçlerinde danışmanlık hizmeti veren yerel firma." },
-  { key: "mavikare", email: "demo@mavikare.invalid", name: "MaviKare Medya", description: "Sosyal medya yönetimi, içerik üretimi ve grafik tasarım hizmetleri sunan dijital ajans." },
-  { key: "eksen", email: "demo@eksenlojistik.invalid", name: "Eksen Lojistik", description: "Bölgesel taşımacılık, operasyon ve raporlama süreçlerinde hizmet veren lojistik firması." },
+  { key: "novabyte", email: "demo@novabyte.com", fullName: "Merve Kaya", name: "NovaByte Teknoloji", description: "Web ve yazılım çözümleri geliştiren küçük ölçekli teknoloji şirketi." },
+  { key: "aydinplus", email: "demo@aydinplus.invalid", fullName: "Burak Yıldız", name: "AydınPlus Danışmanlık", description: "İnsan kaynakları, operasyon ve işletme süreçlerinde danışmanlık hizmeti veren yerel firma." },
+  { key: "mavikare", email: "demo@mavikare.invalid", fullName: "Selin Erdem", name: "MaviKare Medya", description: "Sosyal medya yönetimi, içerik üretimi ve grafik tasarım hizmetleri sunan dijital ajans." },
+  { key: "eksen", email: "demo@eksenlojistik.invalid", fullName: "Onur Acar", name: "Eksen Lojistik", description: "Bölgesel taşımacılık, operasyon ve raporlama süreçlerinde hizmet veren lojistik firması." },
+  { key: "kare", email: "demo@kareegitim.invalid", fullName: "Deniz Karaca", name: "Kare Eğitim & Danışmanlık", description: null, status: "pending" },
 ];
 
 const jobs = [
@@ -99,20 +101,22 @@ const requirePasswords = () => {
 const upsertUser = async (connection, user, passwordHash, role) => {
   await connection.query(
     `INSERT INTO users
-       (email, full_name, password, role, is_verified, status, is_active, university, major)
-     VALUES (?, ?, ?, ?, 1, 'approved', 1, ?, ?)
+       (email, full_name, password, role, is_verified, status, is_active, university, major, GPA)
+     VALUES (?, ?, ?, ?, 1, ?, 1, ?, ?, ?)
      ON DUPLICATE KEY UPDATE
        full_name = VALUES(full_name), password = VALUES(password),
        role = VALUES(role), is_verified = 1,
-       status = 'approved', is_active = 1, deactivated_at = NULL,
-       university = VALUES(university), major = VALUES(major)`,
+       status = VALUES(status), is_active = 1, deactivated_at = NULL,
+       university = VALUES(university), major = VALUES(major), GPA = VALUES(GPA)`,
     [
       user.email,
-      role === "student" ? user.name : null,
+      role === "student" ? user.name : user.fullName ?? null,
       passwordHash,
       role,
+      user.status ?? "approved",
       role === "student" ? "Aydın Adnan Menderes Üniversitesi" : null,
       role === "student" ? `${user.major} - ${user.classYear}` : null,
+      role === "student" ? user.gpa ?? null : null,
     ]
   );
   const [rows] = await connection.query("SELECT id FROM users WHERE email = ?", [user.email]);

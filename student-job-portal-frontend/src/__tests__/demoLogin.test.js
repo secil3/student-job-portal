@@ -14,9 +14,11 @@ test("demo login UI is gated by the explicit demo flag", () => {
 test("demo login sends only a fixed account alias and reuses the normal session", () => {
   assert.match(login, /api\.post\("\/auth\/demo-login", \{ account \}\)/);
   assert.match(login, /openSession\(res\.data\)/);
-  assert.match(login, /Demo Öğrenci Olarak Gir/);
-  assert.match(login, /Demo İşveren Olarak Gir/);
-  assert.match(login, /Yönetici demosu/);
+  assert.match(login, /StudentJob’ı keşfedin/);
+  assert.match(login, /Rol seçerek platformu inceleyebilirsiniz./);
+  assert.match(login, /Öğrenci Olarak Keşfet/);
+  assert.match(login, /İşveren Olarak Keşfet/);
+  assert.match(login, /Yönetici Görünümü/);
   assert.doesNotMatch(login, /elif\.yilmaz@|demo@novabyte|admin@digipath/);
 });
 
