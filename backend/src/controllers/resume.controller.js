@@ -2,8 +2,9 @@ import db, { getDB } from "../config/db.js";
 import path from "path";
 import fs from "node:fs/promises";
 import { removeUploadedFile } from "../middleware/upload.middleware.js";
+import { resumeStorageDirectory } from "../config/resumeStorage.js";
 
-const uploadsDirectory = path.resolve(process.cwd(), "uploads");
+const uploadsDirectory = resumeStorageDirectory;
 const MAX_RESUME_NAME_LENGTH = 255;
 
 const resolveStoredResumePath = (storedPath) => {

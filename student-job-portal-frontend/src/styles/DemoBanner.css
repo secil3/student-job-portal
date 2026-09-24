@@ -1,0 +1,31 @@
+.demo-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px clamp(16px, 4vw, 48px);
+  border-bottom: 1px solid rgba(var(--accent-rgb), 0.2);
+  background: var(--soft-bg);
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.demo-banner strong {
+  color: var(--accent-color);
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .demo-banner {
+    align-items: flex-start;
+    gap: 4px;
+    flex-direction: column;
+    text-align: left;
+  }
+
+  .demo-banner > span[aria-hidden="true"] {
+    display: none;
+  }
+}

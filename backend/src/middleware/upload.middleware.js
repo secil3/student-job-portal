@@ -2,9 +2,10 @@ import multer from "multer";
 import path from "path";
 import crypto from "crypto";
 import fs from "node:fs/promises";
+import { resumeStorageDirectory } from "../config/resumeStorage.js";
 
 export const MAX_RESUME_SIZE = 5 * 1024 * 1024;
-const uploadsDirectory = path.resolve(process.cwd(), "uploads");
+const uploadsDirectory = resumeStorageDirectory;
 
 export const hasPdfSignature = (buffer) =>
   buffer.subarray(0, 5).toString("ascii") === "%PDF-";

@@ -8,6 +8,8 @@
     "dev": "nodemon src/app.js",
     "migrate:email-verification": "node scripts/migrate-email-verification.js",
     "migrate:activation-status": "node scripts/migrate-activation-status.js",
+    "demo:seed": "node --env-file=../.env.demo scripts/seed-demo.js",
+    "demo:start": "node --env-file=../.env.demo src/app.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand",
     "test:cov": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --runInBand"
   },

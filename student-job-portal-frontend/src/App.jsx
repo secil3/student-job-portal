@@ -27,6 +27,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import DemoBanner from "./components/DemoBanner";
 
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
@@ -38,6 +39,7 @@ export default function App() {
     <BrowserRouter>
       <div className="app-layout">
         <Navbar />
+        <DemoBanner />
 
         <main className="app-content">
           <Routes>
