@@ -57,14 +57,27 @@ export default function UploadResume({ onUploadSuccess, className = "" }) {
 
       <div className="upload-controls">
         <input
+          id="resume-upload-input"
           className="upload-input"
           type="file"
           accept="application/pdf,.pdf"
           ref={fileInputRef}
           disabled={loading}
           aria-label="Yüklenecek PDF CV’yi seçin"
-          onChange={(e) => setFile(e.target.files[0])}
+          onChange={(e) => setFile(e.target.files?.[0] ?? null)}
         />
+
+        <label
+          htmlFor="resume-upload-input"
+          className={`upload-file-button ${loading ? "is-disabled" : ""}`}
+          aria-disabled={loading}
+        >
+          Dosya Seç
+        </label>
+
+        <span className="upload-file-name" aria-live="polite">
+          {file?.name || "Dosya seçilmedi"}
+        </span>
 
         <button
           type="button"

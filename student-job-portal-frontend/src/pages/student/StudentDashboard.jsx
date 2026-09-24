@@ -8,10 +8,13 @@ import {
   getJobApplicationState,
 } from "../../utils/applicationStatus";
 import { getUiLabel } from "../../utils/uiLabels";
+import { useAuth } from "../../context/useAuth";
+import { getStudentGreeting } from "../../utils/userDisplay";
 
 import "../../styles/StudentDashboard.css";
 
 const StudentDashboard = () => {
+  const { user } = useAuth();
   const [jobs, setJobs] = useState([]);
   const [applications, setApplications] = useState([]);
   const [loadingJobs, setLoadingJobs] = useState(true);
@@ -80,8 +83,8 @@ const StudentDashboard = () => {
       <div className="student-container">
         <header className="student-dashboard-header">
           <span>Öğrenci çalışma alanı</span>
-          <h1>Öğrenci Paneli</h1>
-          <p>Başvurularınızı takip edin ve mevcut fırsatları keşfedin.</p>
+          <h1>{getStudentGreeting(user)}</h1>
+          <p>Başvurularını takip et ve yeni fırsatları keşfet.</p>
         </header>
 
         <div className="student-summary-grid">

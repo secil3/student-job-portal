@@ -1,4 +1,4 @@
-import db from "../config/db.js";
+import db, { getDB } from "../config/db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
@@ -11,13 +11,35 @@ import {
 } from "../services/emailVerification.service.js";
 import { sendStudentVerificationEmail } from "../services/email.service.js";
 import { consumeVerificationRequest } from "../services/verificationRateLimit.service.js";
+
+const MAX_FULL_NAME_LENGTH = 150;
+const MAX_COMPANY_NAME_LENGTH = 255;
+
+const normalizeRequiredText = (value, label, maxLength) => {
+  if (typeof value !== "string" || value.trim().length === 0) {
+    return { error: `${label} is required` };
+  }
+
+  const normalized = value.trim();
+  if (normalized.length > maxLength) {
+    return { error: `${label} must be at most ${maxLength} characters` };
+  }
+
+  return { value: normalized };
+};
 // ================= LOGIN =================
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const normalizedEmail = normalizeEmail(email);
 
-    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [normalizedEmail]);
+    const [rows] = await db.query(
+      `SELECT users.*, company_profiles.company_name
+       FROM users
+       LEFT JOIN company_profiles ON company_profiles.user_id = users.id
+       WHERE users.email = ?`,
+      [normalizedEmail]
+    );
 
     if (rows.length === 0) {
       return res.status(401).json({ message: "Invalid credentials" });
@@ -46,7 +68,9 @@ export const login = async (req, res) => {
       user: {
         id: user.id,
         email: user.email,
-        role: user.role
+        role: user.role,
+        full_name: user.full_name ?? null,
+        company_name: user.company_name ?? null,
       }
     });
   } catch (err) {
@@ -131,7 +155,7 @@ export const resetPassword = async (req, res) => {
 
 export const register = async (req, res) => {
   try {
-    const { email, password, role } = req.body;
+    const { email, password, role, fullName, companyName } = req.body;
     const normalizedEmail = normalizeEmail(email);
 
     if (!normalizedEmail || !password || !role) {
@@ -142,6 +166,28 @@ export const register = async (req, res) => {
 
     if (!["student", "employer"].includes(role)) {
       return res.status(400).json({ message: "Invalid role" });
+    }
+
+    const normalizedFullName = normalizeRequiredText(
+      fullName,
+      "Full name",
+      MAX_FULL_NAME_LENGTH
+    );
+    if (normalizedFullName.error) {
+      return res.status(400).json({ message: normalizedFullName.error });
+    }
+
+    let normalizedCompanyName = null;
+    if (role === "employer") {
+      const company = normalizeRequiredText(
+        companyName,
+        "Company name",
+        MAX_COMPANY_NAME_LENGTH
+      );
+      if (company.error) {
+        return res.status(400).json({ message: company.error });
+      }
+      normalizedCompanyName = company.value;
     }
 
     if (role === "student" && !isAduStudentEmail(normalizedEmail)) {
@@ -169,10 +215,18 @@ export const register = async (req, res) => {
 
       await db.query(
         `INSERT INTO users
-         (email, password, role, status, is_verified,
+         (email, full_name, password, role, status, is_verified,
           email_verification_token_hash, email_verification_token_expires)
-         VALUES (?, ?, ?, ?, 0, ?, ?)`,
-        [normalizedEmail, hashedPassword, role, status, tokenHash, expiresAt]
+         VALUES (?, ?, ?, ?, ?, 0, ?, ?)`,
+        [
+          normalizedEmail,
+          normalizedFullName.value,
+          hashedPassword,
+          role,
+          status,
+          tokenHash,
+          expiresAt,
+        ]
       );
 
       try {
@@ -185,10 +239,31 @@ export const register = async (req, res) => {
         });
       }
     } else {
-      await db.query(
-        "INSERT INTO users (email, password, role, status) VALUES (?, ?, ?, ?)",
-        [normalizedEmail, hashedPassword, role, status]
-      );
+      const connection = await getDB();
+      await connection.beginTransaction();
+      try {
+        const [result] = await connection.query(
+          `INSERT INTO users
+           (email, full_name, password, role, status)
+           VALUES (?, ?, ?, ?, ?)`,
+          [
+            normalizedEmail,
+            normalizedFullName.value,
+            hashedPassword,
+            role,
+            status,
+          ]
+        );
+        await connection.query(
+          `INSERT INTO company_profiles (user_id, company_name)
+           VALUES (?, ?)`,
+          [result.insertId, normalizedCompanyName]
+        );
+        await connection.commit();
+      } catch (error) {
+        await connection.rollback();
+        throw error;
+      }
     }
 
     res.status(201).json({

@@ -29,35 +29,53 @@
 }
 
 .upload-container .upload-input {
-  flex: 1;
-  min-width: 0;
-  margin: 0;
-  padding: 5px;
-  border: 1px solid rgba(var(--ink-rgb), 0.18);
-  border-radius: 9px;
-  background: var(--input-bg);
-  color: var(--ink-68);
-  font-family: inherit;
-  font-size: 11px;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
-.upload-container .upload-input::file-selector-button {
-  margin-right: 9px;
-  padding: 7px 10px;
-  border: 0;
-  border-radius: 7px;
-  background: rgba(var(--support-rgb), 0.12);
+.upload-container .upload-input:focus-visible + .upload-file-button {
+  outline: 3px solid rgba(var(--support-rgb), 0.28);
+  outline-offset: 2px;
+  border-color: var(--accent-color);
+}
+
+.upload-file-button {
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 8px 12px;
+  border: 1px solid rgba(var(--accent-rgb), 0.28);
+  border-radius: 8px;
+  background: var(--soft-accent-bg);
   color: var(--accent-color);
-  font-family: inherit;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 750;
   cursor: pointer;
 }
 
-.upload-container .upload-input:focus-visible {
-  outline: 3px solid rgba(var(--support-rgb), 0.28);
-  outline-offset: 1px;
+.upload-file-button:hover:not(.is-disabled) {
   border-color: var(--accent-color);
+}
+
+.upload-file-button.is-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.upload-file-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .upload-btn {
@@ -106,5 +124,14 @@
 
   .upload-btn {
     width: 100%;
+  }
+
+  .upload-file-button {
+    text-align: center;
+  }
+
+  .upload-file-name {
+    width: 100%;
+    text-align: center;
   }
 }

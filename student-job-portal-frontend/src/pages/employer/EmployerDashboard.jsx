@@ -6,9 +6,15 @@ import {
   isRecordActive,
   updateRecordActivation,
 } from "../../utils/activationStatus";
+import { useAuth } from "../../context/useAuth";
+import {
+  getEmployerCompanyName,
+  getEmployerGreeting,
+} from "../../utils/userDisplay";
 import "../../styles/EmployerDashboard.css";
 
 const EmployerDashboard = () => {
+  const { user } = useAuth();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingJobId, setUpdatingJobId] = useState(null);
@@ -62,7 +68,10 @@ const EmployerDashboard = () => {
       <div className="dashboard-header">
         <div>
           <span className="dashboard-eyebrow">Çalışma alanı</span>
-          <h2 className="page-title">İşveren Paneli</h2>
+          <h2 className="page-title">{getEmployerGreeting(user)}</h2>
+          <div className="dashboard-company-name">
+            {getEmployerCompanyName(user)}
+          </div>
           <p className="dashboard-subtitle">
             İlanlarınızı yönetin ve gelen başvuruları inceleyin.
           </p>

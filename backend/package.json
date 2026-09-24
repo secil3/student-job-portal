@@ -8,6 +8,7 @@
     "dev": "nodemon src/app.js",
     "migrate:email-verification": "node scripts/migrate-email-verification.js",
     "migrate:activation-status": "node scripts/migrate-activation-status.js",
+    "migrate:user-profile-names": "node scripts/migrate-user-profile-names.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand",
     "test:cov": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --runInBand"
   },
