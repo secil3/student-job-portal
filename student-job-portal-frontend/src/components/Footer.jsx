@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import digiPathLogo from "../assets/brand/LOGO-DigiPath.svg";
 import "../styles/Footer.css";
 
 export default function Footer() {
@@ -8,10 +9,19 @@ export default function Footer() {
 
         {/* LEFT */}
         <div className="footer-brand">
-          <h3>StudentJob</h3>
+          <div className="footer-brand-lockup">
+            <h3>StudentJob</h3>
+            <span>by</span>
+            <span className="footer-digipath-mark">
+              <img src={digiPathLogo} alt="DigiPath" />
+            </span>
+          </div>
           <p>
             Öğrencileri ve işverenleri sade, verimli bir başvuru sürecinde
             buluşturan modern bir iş platformu.
+          </p>
+          <p className="footer-brand-relation">
+            StudentJob, DigiPath tarafından geliştirilen bir üründür.
           </p>
         </div>
 
@@ -34,7 +44,7 @@ export default function Footer() {
       </div>
 
       <div className="footer-bottom">
-        © {new Date().getFullYear()} StudentJob. Tüm hakları saklıdır.
+        © {new Date().getFullYear()} DigiPath. Tüm hakları saklıdır.
       </div>
     </footer>
   );

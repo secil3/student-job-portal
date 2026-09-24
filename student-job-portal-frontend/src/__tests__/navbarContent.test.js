@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const navbar = await readFile(new URL("../components/Navbar.jsx", import.meta.url), "utf8");
+const footer = await readFile(new URL("../components/Footer.jsx", import.meta.url), "utf8");
 const styles = await readFile(new URL("../styles/Navbar.css", import.meta.url), "utf8");
 
 test("public and role navigation links remain available", () => {
@@ -57,4 +58,14 @@ test("theme control is outside role and mobile-only sections and uses shared pre
   assert.ok(navbar.indexOf('className="nav-theme-toggle"') < navbar.indexOf('{!user && (', navbar.indexOf('className="nav-right"')));
   assert.match(styles, /\.nav-theme-toggle:focus-visible/);
   assert.doesNotMatch(styles, /\.nav-right > button\s*\{\s*display: none/);
+});
+
+test("DigiPath branding identifies StudentJob as a product and follows the theme", () => {
+  assert.match(navbar, /DigiPath-App\.svg/);
+  assert.match(navbar, /DigiPath-App-White\.svg/);
+  assert.match(navbar, /theme === "dark" \? digiPathAppWhite : digiPathApp/);
+  assert.match(navbar, /StudentJob/);
+  assert.match(navbar, /by DigiPath/);
+  assert.match(footer, /LOGO-DigiPath\.svg/);
+  assert.match(footer, /StudentJob, DigiPath tarafından geliştirilen bir üründür\./);
 });

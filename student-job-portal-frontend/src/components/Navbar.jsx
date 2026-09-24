@@ -2,6 +2,8 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import { getTheme, setThemePreference, subscribeToTheme } from "../utils/theme";
+import digiPathApp from "../assets/brand/DigiPath-App.svg";
+import digiPathAppWhite from "../assets/brand/DigiPath-App-White.svg";
 import "../styles/Navbar.css";
 
 export default function Navbar() {
@@ -71,8 +73,16 @@ export default function Navbar() {
     <nav className="navbar" ref={navbarRef} aria-label="Ana gezinme">
       <div className="nav-left">
         <Link to="/" className="nav-brand" aria-label="StudentJob ana sayfa">
-          <span className="nav-brand-mark" aria-hidden="true">S</span>
-          <span>StudentJob</span>
+          <img
+            className="nav-brand-mark"
+            src={theme === "dark" ? digiPathAppWhite : digiPathApp}
+            alt=""
+            aria-hidden="true"
+          />
+          <span className="nav-brand-copy">
+            <span className="nav-brand-product">StudentJob</span>
+            <span className="nav-brand-by">by DigiPath</span>
+          </span>
         </Link>
       </div>
 

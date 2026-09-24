@@ -15,13 +15,46 @@
   
   .footer-brand h3 {
     color: white;
+    margin: 0;
+  }
+
+  .footer-brand-lockup {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     margin-bottom: 12px;
+  }
+
+  .footer-brand-lockup > span {
+    color: var(--footer-muted);
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .footer-digipath-mark {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 7px;
+    border-radius: 7px;
+    background: #ffffff;
+  }
+
+  .footer-digipath-mark img {
+    display: block;
+    width: auto;
+    height: 20px;
+    object-fit: contain;
   }
   
   .footer-brand p {
     font-size: 14px;
     line-height: 1.6;
     color: var(--footer-muted);
+  }
+
+  .footer-brand .footer-brand-relation {
+    margin-top: 10px;
+    font-size: 12px;
   }
   
   .footer-links h4 {
