@@ -5,6 +5,7 @@ const sendVerificationEmailMock = jest.fn();
 
 await jest.unstable_mockModule("../config/db.js", () => ({
   default: dbMock,
+  getDB: jest.fn(),
 }));
 
 await jest.unstable_mockModule("bcrypt", () => ({

@@ -3,12 +3,20 @@ import { jest } from "@jest/globals";
 
 // ---- ESM-compatible mocks (must be BEFORE importing the module under test) ----
 const dbMock = { query: jest.fn() };
+const connectionMock = {
+  query: jest.fn(),
+  beginTransaction: jest.fn(),
+  commit: jest.fn(),
+  rollback: jest.fn(),
+};
+const getDBMock = jest.fn();
 const bcryptMock = { compare: jest.fn(), hash: jest.fn() };
 const jwtMock = { sign: jest.fn() };
 const sendVerificationEmailMock = jest.fn();
 
 await jest.unstable_mockModule("../config/db.js", () => ({
-  default: dbMock
+  default: dbMock,
+  getDB: getDBMock,
 }));
 
 await jest.unstable_mockModule("bcrypt", () => ({
@@ -38,6 +46,7 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
     jest.clearAllMocks();
     process.env.JWT_SECRET = "test-secret";
     delete process.env.DEMO_MODE;
+    getDBMock.mockResolvedValue(connectionMock);
   });
 
   // ================= LOGIN =================
@@ -52,6 +61,8 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
       password: "hashedPassword",
       role: "student",
       is_active: 1,
+      full_name: "Test Student",
+      company_name: null,
     }]]);
 
     bcryptMock.compare.mockResolvedValueOnce(true);
@@ -64,10 +75,19 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
       "test-secret",
       { expiresIn: "1h" }
     );
+    expect(dbMock.query.mock.calls[0][0]).toContain(
+      "LEFT JOIN company_profiles ON company_profiles.user_id = users.id"
+    );
 
     expect(res.json).toHaveBeenCalledWith({
       token: "fake-token",
-      user: { id: 1, email: "student@stu.adu.edu.tr", role: "student" }
+      user: {
+        id: 1,
+        email: "student@stu.adu.edu.tr",
+        role: "student",
+        full_name: "Test Student",
+        company_name: null,
+      }
     });
   });
 
@@ -141,14 +161,23 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
       const res = mockRes();
 
       dbMock.query.mockResolvedValueOnce([[
-        { id: 20, email, role, status, is_verified: isVerified, is_active: 1 },
+        {
+          id: 20,
+          email,
+          role,
+          status,
+          is_verified: isVerified,
+          is_active: 1,
+          full_name: role === "student" ? "Demo Student" : null,
+          company_name: role === "employer" ? "Demo Company" : null,
+        },
       ]]);
       jwtMock.sign.mockReturnValueOnce("demo-token");
 
       await demoLogin(req, res);
 
       expect(dbMock.query).toHaveBeenCalledWith(
-        expect.stringContaining("WHERE email = ?"),
+        expect.stringContaining("WHERE users.email = ?"),
         [email]
       );
       expect(jwtMock.sign).toHaveBeenCalledWith(
@@ -158,7 +187,13 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
       );
       expect(res.json).toHaveBeenCalledWith({
         token: "demo-token",
-        user: { id: 20, email, role },
+        user: {
+          id: 20,
+          email,
+          role,
+          full_name: role === "student" ? "Demo Student" : null,
+          company_name: role === "employer" ? "Demo Company" : null,
+        },
       });
     });
 
@@ -208,6 +243,38 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
     });
   });
 
+  test("login keeps a legacy employer without a company profile usable", async () => {
+    const req = { body: { email: "legacy@example.com", password: "123456" } };
+    const res = mockRes();
+
+    dbMock.query.mockResolvedValueOnce([[
+      {
+        id: 8,
+        email: "legacy@example.com",
+        password: "hashedPassword",
+        role: "employer",
+        is_active: 1,
+        full_name: null,
+        company_name: null,
+      },
+    ]]);
+    bcryptMock.compare.mockResolvedValueOnce(true);
+    jwtMock.sign.mockReturnValueOnce("legacy-token");
+
+    await login(req, res);
+
+    expect(res.json).toHaveBeenCalledWith({
+      token: "legacy-token",
+      user: {
+        id: 8,
+        email: "legacy@example.com",
+        role: "employer",
+        full_name: null,
+        company_name: null,
+      },
+    });
+  });
+
   // ================= REGISTER =================
 
   test("UT-R1: missing fields -> returns 400", async () => {
@@ -233,7 +300,14 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
   });
 
   test("UT-R3: email already exists -> returns 409", async () => {
-    const req = { body: { email: "exists@stu.adu.edu.tr", password: "123456", role: "student" } };
+    const req = {
+      body: {
+        email: "exists@stu.adu.edu.tr",
+        password: "123456",
+        role: "student",
+        fullName: "Existing Student",
+      },
+    };
     const res = mockRes();
 
     dbMock.query.mockResolvedValueOnce([[{ id: 7 }]]);
@@ -245,22 +319,76 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
   });
 
   test("UT-R4: register success (employer) -> inserts pending user and returns 201", async () => {
-    const req = { body: { email: "new@test.com", password: "123456", role: "employer" } };
+    const req = {
+      body: {
+        email: "new@test.com",
+        password: "123456",
+        role: "employer",
+        fullName: "  Employer Person  ",
+        companyName: "  Example Company  ",
+      },
+    };
     const res = mockRes();
 
     dbMock.query.mockResolvedValueOnce([[]]); // email check: not found
     bcryptMock.hash.mockResolvedValueOnce("hashed-pass");
-    dbMock.query.mockResolvedValueOnce([{ insertId: 100 }]); // insert
+    connectionMock.query
+      .mockResolvedValueOnce([{ insertId: 100 }])
+      .mockResolvedValueOnce([{ affectedRows: 1 }]);
 
     await register(req, res);
 
-    expect(dbMock.query).toHaveBeenCalledWith(
-      "INSERT INTO users (email, password, role, status) VALUES (?, ?, ?, ?)",
-      ["new@test.com", "hashed-pass", "employer", "pending"]
+    expect(connectionMock.beginTransaction).toHaveBeenCalledTimes(1);
+    expect(connectionMock.query).toHaveBeenNthCalledWith(
+      1,
+      expect.stringContaining("(email, full_name, password, role, status)"),
+      [
+        "new@test.com",
+        "Employer Person",
+        "hashed-pass",
+        "employer",
+        "pending",
+      ]
     );
+    expect(connectionMock.query).toHaveBeenNthCalledWith(
+      2,
+      expect.stringContaining("INSERT INTO company_profiles"),
+      [100, "Example Company"]
+    );
+    expect(connectionMock.commit).toHaveBeenCalledTimes(1);
+    expect(connectionMock.rollback).not.toHaveBeenCalled();
 
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({ message: "User registered successfully" });
+  });
+
+  test("rolls back employer registration when company profile creation fails", async () => {
+    const req = {
+      body: {
+        email: "new@test.com",
+        password: "123456",
+        role: "employer",
+        fullName: "Employer Person",
+        companyName: "Example Company",
+      },
+    };
+    const res = mockRes();
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+    dbMock.query.mockResolvedValueOnce([[]]);
+    bcryptMock.hash.mockResolvedValueOnce("hashed-pass");
+    connectionMock.query
+      .mockResolvedValueOnce([{ insertId: 100 }])
+      .mockRejectedValueOnce({ code: "ER_TEST_FAILURE" });
+
+    await register(req, res);
+
+    expect(connectionMock.beginTransaction).toHaveBeenCalledTimes(1);
+    expect(connectionMock.rollback).toHaveBeenCalledTimes(1);
+    expect(connectionMock.commit).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ message: "Register failed" });
+    consoleErrorSpy.mockRestore();
   });
 
   test.each([
@@ -269,7 +397,9 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
     "student@sub.stu.adu.edu.tr",
     "student@example.com",
   ])("rejects a non-ADU student address: %s", async (email) => {
-    const req = { body: { email, password: "123456", role: "student" } };
+    const req = {
+      body: { email, password: "123456", role: "student", fullName: "Test Student" },
+    };
     const res = mockRes();
 
     await register(req, res);
@@ -287,6 +417,7 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
         email: "  Student.Number@STU.ADU.EDU.TR  ",
         password: "123456",
         role: "student",
+        fullName: "  Student Name  ",
       },
     };
     const res = mockRes();
@@ -308,6 +439,7 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
       expect.stringContaining("email_verification_token_hash"),
       [
         "student.number@stu.adu.edu.tr",
+        "Student Name",
         "hashed-pass",
         "student",
         "approved",
@@ -328,6 +460,7 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
         email: "student@stu.adu.edu.tr",
         password: "123456",
         role: "student",
+        fullName: "Test Student",
       },
     };
     const res = mockRes();
@@ -357,6 +490,7 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
         email: "student@stu.adu.edu.tr",
         password: "123456",
         role: "student",
+        fullName: "Test Student",
       },
     };
     const res = mockRes();
@@ -372,5 +506,36 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
     expect(res.json).toHaveBeenCalledWith({ message: "Register failed" });
     expect(sendVerificationEmailMock).not.toHaveBeenCalled();
     consoleErrorSpy.mockRestore();
+  });
+
+  test.each([
+    ["student", "", undefined, "Full name is required"],
+    ["student", " ", undefined, "Full name is required"],
+    ["student", "x".repeat(151), undefined, "Full name must be at most 150 characters"],
+    ["employer", "Employer Person", "", "Company name is required"],
+    ["employer", "Employer Person", " ", "Company name is required"],
+    ["employer", "Employer Person", "x".repeat(256), "Company name must be at most 255 characters"],
+  ])("validates registration identity fields for %s", async (
+    role,
+    fullName,
+    companyName,
+    expectedMessage
+  ) => {
+    const req = {
+      body: {
+        email: role === "student" ? "student@stu.adu.edu.tr" : "employer@example.com",
+        password: "123456",
+        role,
+        fullName,
+        companyName,
+      },
+    };
+    const res = mockRes();
+
+    await register(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ message: expectedMessage });
+    expect(dbMock.query).not.toHaveBeenCalled();
   });
 });

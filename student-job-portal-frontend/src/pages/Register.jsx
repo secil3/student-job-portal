@@ -10,6 +10,8 @@ import {
 import "../styles/Auth.css";
 
 export default function Register() {
+  const [fullName, setFullName] = useState("");
+  const [companyName, setCompanyName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("student");
@@ -28,7 +30,13 @@ export default function Register() {
     setSubmitting(true);
 
     try {
-      await api.post("/auth/register", { email, password, role });
+      await api.post("/auth/register", {
+        email,
+        password,
+        role,
+        fullName,
+        companyName: role === "employer" ? companyName : undefined,
+      });
       if (role === "student") {
         navigate("/verify-email?sent=1", { state: { email: email.trim() } });
       } else {
@@ -57,6 +65,36 @@ export default function Register() {
 
         {!employerRegistered && (
           <form className="auth-form" onSubmit={handleRegister}>
+            <label className="auth-field">
+              <span>{role === "employer" ? "Yetkili Ad Soyad" : "Ad Soyad"}</span>
+              <input
+                className="auth-input"
+                type="text"
+                placeholder={role === "employer" ? "Yetkili kişinin adı ve soyadı" : "Adınız ve soyadınız"}
+                value={fullName}
+                required
+                maxLength={150}
+                autoComplete="name"
+                onChange={(e) => setFullName(e.target.value)}
+              />
+            </label>
+
+            {role === "employer" && (
+              <label className="auth-field">
+                <span>Şirket Adı</span>
+                <input
+                  className="auth-input"
+                  type="text"
+                  placeholder="Şirketinizin adı"
+                  value={companyName}
+                  required
+                  maxLength={255}
+                  autoComplete="organization"
+                  onChange={(e) => setCompanyName(e.target.value)}
+                />
+              </label>
+            )}
+
             <label className="auth-field">
               <span>E-posta</span>
               <input

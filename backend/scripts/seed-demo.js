@@ -99,14 +99,16 @@ const requirePasswords = () => {
 const upsertUser = async (connection, user, passwordHash, role) => {
   await connection.query(
     `INSERT INTO users
-       (email, password, role, is_verified, status, is_active, university, major)
-     VALUES (?, ?, ?, 1, 'approved', 1, ?, ?)
+       (email, full_name, password, role, is_verified, status, is_active, university, major)
+     VALUES (?, ?, ?, ?, 1, 'approved', 1, ?, ?)
      ON DUPLICATE KEY UPDATE
-       password = VALUES(password), role = VALUES(role), is_verified = 1,
+       full_name = VALUES(full_name), password = VALUES(password),
+       role = VALUES(role), is_verified = 1,
        status = 'approved', is_active = 1, deactivated_at = NULL,
        university = VALUES(university), major = VALUES(major)`,
     [
       user.email,
+      role === "student" ? user.name : null,
       passwordHash,
       role,
       role === "student" ? "Aydın Adnan Menderes Üniversitesi" : null,
@@ -178,7 +180,7 @@ export const seedDemoData = async (connection) => {
     for (const employer of employers) {
       employerIds[employer.key] = await upsertUser(connection, employer, passwordHashes.employer, "employer");
       await connection.query(
-        `INSERT INTO demo_company_profiles (user_id, company_name, description)
+        `INSERT INTO company_profiles (user_id, company_name, description)
          VALUES (?, ?, ?)
          ON DUPLICATE KEY UPDATE company_name = VALUES(company_name), description = VALUES(description)`,
         [employerIds[employer.key], employer.name, employer.description]

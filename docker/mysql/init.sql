@@ -1,6 +1,7 @@
 CREATE TABLE `users` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `email` VARCHAR(255) NOT NULL,
+    `full_name` VARCHAR(150) DEFAULT NULL,
     `password` VARCHAR(255) NOT NULL,
     `role` ENUM('student', 'employer', 'admin') NOT NULL,
     `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
@@ -18,6 +19,15 @@ CREATE TABLE `users` (
     `reset_token_expires` DATETIME DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `company_profiles` (
+    `user_id` INT NOT NULL,
+    `company_name` VARCHAR(255) NOT NULL,
+    `description` TEXT DEFAULT NULL,
+    PRIMARY KEY (`user_id`),
+    CONSTRAINT `company_profiles_user_fk`
+        FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `jobs` (
