@@ -5,6 +5,12 @@ import {
   getAssistantRequestError,
   normalizeAssistantJobId,
 } from "../utils/aiAssistant.js";
+import { readFile } from "node:fs/promises";
+
+const assistantPage = await readFile(
+  new URL("../pages/student/AiAssistant.jsx", import.meta.url),
+  "utf8"
+);
 
 test("normalizes only positive integer job ids", () => {
   assert.equal(normalizeAssistantJobId("42"), 42);
@@ -28,4 +34,9 @@ test("maps supported API and network failures to safe messages", () => {
   assert.match(getAssistantRequestError({ response: { status: 429 } }), /Çok fazla/);
   assert.match(getAssistantRequestError({ response: { status: 502 } }), /geçerli bir mesaj/);
   assert.match(getAssistantRequestError({ response: { status: 503 } }), /kullanılamıyor/);
+});
+
+test("shows the demo label only when the backend marks the response as demo AI", () => {
+  assert.match(assistantPage, /setIsDemoAi\(response\.data\?\.isDemoAi === true\)/);
+  assert.match(assistantPage, /isDemoAi && <p className="ai-demo-label">Demo AI çıktısıdır\.<\/p>/);
 });

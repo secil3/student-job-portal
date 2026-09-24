@@ -19,6 +19,7 @@ export default function AiAssistant() {
   const [notes, setNotes] = useState("");
   const [language, setLanguage] = useState("tr");
   const [draft, setDraft] = useState("");
+  const [isDemoAi, setIsDemoAi] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [generationError, setGenerationError] = useState("");
   const [copyStatus, setCopyStatus] = useState("");
@@ -76,6 +77,7 @@ export default function AiAssistant() {
       }
 
       setDraft(message.trim());
+      setIsDemoAi(response.data?.isDemoAi === true);
     } catch (error) {
       setGenerationError(getAssistantRequestError(error));
     } finally {
@@ -182,6 +184,7 @@ export default function AiAssistant() {
             {draft && (
               <div className="ai-assistant-result">
                 <label htmlFor="assistant-draft">Oluşturulan mesaj</label>
+                {isDemoAi && <p className="ai-demo-label">Demo AI çıktısıdır.</p>}
                 <textarea
                   id="assistant-draft"
                   value={draft}

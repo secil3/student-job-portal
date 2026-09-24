@@ -20,6 +20,7 @@ export default function InterviewPrep() {
   const [loadError, setLoadError] = useState("");
   const [language, setLanguage] = useState("tr");
   const [questions, setQuestions] = useState([]);
+  const [isDemoAi, setIsDemoAi] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [generationError, setGenerationError] = useState("");
 
@@ -74,6 +75,7 @@ export default function InterviewPrep() {
       }
 
       setQuestions(nextQuestions);
+      setIsDemoAi(response.data?.isDemoAi === true);
     } catch (error) {
       setGenerationError(getInterviewPreparationError(error));
     } finally {
@@ -159,17 +161,20 @@ export default function InterviewPrep() {
             )}
 
             {questions.length === 3 && (
-              <div className="interview-question-list" aria-live="polite">
-                {questions.map((item, index) => (
-                  <article className="interview-question-card" key={`${index}-${item.question}`}>
-                    <span>Soru {index + 1}</span>
-                    <h2>{item.question}</h2>
-                    <div className="interview-question-tip">
-                      <strong>Hazırlık ipucu</strong>
-                      <p>{item.tip}</p>
-                    </div>
-                  </article>
-                ))}
+              <div aria-live="polite">
+                {isDemoAi && <p className="ai-demo-label">Demo AI çıktısıdır.</p>}
+                <div className="interview-question-list">
+                  {questions.map((item, index) => (
+                    <article className="interview-question-card" key={`${index}-${item.question}`}>
+                      <span>Soru {index + 1}</span>
+                      <h2>{item.question}</h2>
+                      <div className="interview-question-tip">
+                        <strong>Hazırlık ipucu</strong>
+                        <p>{item.tip}</p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
               </div>
             )}
           </section>

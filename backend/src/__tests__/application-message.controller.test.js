@@ -204,6 +204,37 @@ describe("AI application message controller", () => {
     });
   });
 
+  test("marks a demo fallback response without exposing the provider error", async () => {
+    const previousDemoMode = process.env.DEMO_MODE;
+    const previousDemoAiMode = process.env.DEMO_AI_MODE;
+    process.env.DEMO_MODE = "true";
+    process.env.DEMO_AI_MODE = "fallback";
+
+    try {
+      mockVerifiedStudent();
+      mockJob();
+      generateApplicationMessageMock.mockRejectedValueOnce(
+        Object.assign(new Error("provider details"), {
+          code: "AI_PROVIDER_REQUEST_FAILED",
+        })
+      );
+      const res = mockResponse();
+
+      await createApplicationMessage(request({ jobId: 4 }), res);
+
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).toHaveBeenCalledWith({
+        message: expect.any(String),
+        isDemoAi: true,
+      });
+    } finally {
+      if (previousDemoMode === undefined) delete process.env.DEMO_MODE;
+      else process.env.DEMO_MODE = previousDemoMode;
+      if (previousDemoAiMode === undefined) delete process.env.DEMO_AI_MODE;
+      else process.env.DEMO_AI_MODE = previousDemoAiMode;
+    }
+  });
+
   test.each(["", "   ", null])("rejects an empty provider response", async (message) => {
     mockVerifiedStudent();
     mockJob();

@@ -205,6 +205,18 @@
   border-top: 1px solid rgba(var(--ink-rgb), 0.09);
 }
 
+.ai-demo-label {
+  display: inline-flex;
+  margin: 8px 0 0;
+  padding: 4px 8px;
+  border: 1px solid rgba(var(--accent-rgb), 0.2);
+  border-radius: 999px;
+  background: var(--soft-bg);
+  color: var(--accent-color);
+  font-size: 10px;
+  font-weight: 750;
+}
+
 .ai-assistant-result-actions {
   display: flex;
   flex-wrap: wrap;

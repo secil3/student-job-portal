@@ -204,4 +204,36 @@ describe("AI interview preparation controller", () => {
       message: "AI service is temporarily unavailable",
     });
   });
+
+  test("returns marked deterministic questions in demo mock mode without calling the provider", async () => {
+    const previousDemoMode = process.env.DEMO_MODE;
+    const previousDemoAiMode = process.env.DEMO_AI_MODE;
+    process.env.DEMO_MODE = "true";
+    process.env.DEMO_AI_MODE = "mock";
+
+    try {
+      mockVerifiedStudent();
+      mockJob();
+      const res = mockResponse();
+
+      await createInterviewPreparation(request({ jobId: 4 }), res);
+
+      expect(generateInterviewPreparationMock).not.toHaveBeenCalled();
+      expect(res.json).toHaveBeenCalledWith({
+        questions: expect.arrayContaining([
+          expect.objectContaining({
+            question: expect.any(String),
+            tip: expect.any(String),
+          }),
+        ]),
+        isDemoAi: true,
+      });
+      expect(res.json.mock.calls[0][0].questions).toHaveLength(3);
+    } finally {
+      if (previousDemoMode === undefined) delete process.env.DEMO_MODE;
+      else process.env.DEMO_MODE = previousDemoMode;
+      if (previousDemoAiMode === undefined) delete process.env.DEMO_AI_MODE;
+      else process.env.DEMO_AI_MODE = previousDemoAiMode;
+    }
+  });
 });

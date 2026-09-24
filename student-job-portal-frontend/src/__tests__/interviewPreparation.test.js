@@ -4,6 +4,12 @@ import {
   getInterviewPreparationError,
   normalizeInterviewQuestions,
 } from "../utils/interviewPreparation.js";
+import { readFile } from "node:fs/promises";
+
+const interviewPage = await readFile(
+  new URL("../pages/student/InterviewPrep.jsx", import.meta.url),
+  "utf8"
+);
 
 const questions = [
   { question: "Soru bir?", tip: "İpucu bir" },
@@ -42,4 +48,9 @@ test("maps interview API and connection failures to safe messages", () => {
   assert.match(getInterviewPreparationError({ response: { status: 429 } }), /Ortak AI/);
   assert.match(getInterviewPreparationError({ response: { status: 502 } }), /geçerli/);
   assert.match(getInterviewPreparationError({ response: { status: 503 } }), /kullanılamıyor/);
+});
+
+test("shows the demo label only for a backend-marked fallback or mock response", () => {
+  assert.match(interviewPage, /setIsDemoAi\(response\.data\?\.isDemoAi === true\)/);
+  assert.match(interviewPage, /isDemoAi && <p className="ai-demo-label">Demo AI çıktısıdır\.<\/p>/);
 });

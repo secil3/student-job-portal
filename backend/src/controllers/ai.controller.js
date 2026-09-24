@@ -5,6 +5,10 @@ import {
 } from "../services/applicationMessage.service.js";
 import { generateInterviewPreparation } from "../services/interviewPreparation.service.js";
 import { consumeApplicationMessageRequest } from "../services/applicationMessageRateLimit.service.js";
+import {
+  runApplicationMessageProvider,
+  runInterviewPreparationProvider,
+} from "../services/demoAi.service.js";
 
 const MAX_NOTES_LENGTH = 1000;
 const MAX_MESSAGE_LENGTH = 4000;
@@ -95,12 +99,17 @@ export const createApplicationMessage = async (req, res) => {
     }
 
     let message;
+    let isDemoAi = false;
     try {
-      message = await generateApplicationMessage({
-        job: jobs[0],
-        notes,
-        language,
-      });
+      const result = await runApplicationMessageProvider(() => (
+        generateApplicationMessage({
+          job: jobs[0],
+          notes,
+          language,
+        })
+      ));
+      message = result.value;
+      isDemoAi = result.isDemoAi;
     } catch (error) {
       if (error?.code === AI_PROVIDER_NOT_CONFIGURED) {
         return res.status(503).json({
@@ -123,7 +132,10 @@ export const createApplicationMessage = async (req, res) => {
       });
     }
 
-    return res.json({ message: message.trim() });
+    return res.json({
+      message: message.trim(),
+      ...(isDemoAi ? { isDemoAi: true } : {}),
+    });
   } catch (error) {
     console.error("createApplicationMessage error:", error.code || error.name);
     return res.status(500).json({ message: "AI message could not be generated" });
@@ -225,11 +237,16 @@ export const createInterviewPreparation = async (req, res) => {
     }
 
     let preparation;
+    let isDemoAi = false;
     try {
-      preparation = await generateInterviewPreparation({
-        job: jobs[0],
-        language,
-      });
+      const result = await runInterviewPreparationProvider(() => (
+        generateInterviewPreparation({
+          job: jobs[0],
+          language,
+        })
+      ));
+      preparation = result.value;
+      isDemoAi = result.isDemoAi;
     } catch (error) {
       if (error?.code === AI_PROVIDER_NOT_CONFIGURED) {
         return res.status(503).json({
@@ -252,6 +269,7 @@ export const createInterviewPreparation = async (req, res) => {
         question: item.question.trim(),
         tip: item.tip.trim(),
       })),
+      ...(isDemoAi ? { isDemoAi: true } : {}),
     });
   } catch (error) {
     console.error("createInterviewPreparation error:", error.code || error.name);
