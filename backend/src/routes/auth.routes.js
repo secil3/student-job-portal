@@ -1,6 +1,7 @@
 import express from "express";
 import {
   login,
+  demoLogin,
   register,
   resendStudentVerification,
   verifyStudentEmail
@@ -10,6 +11,7 @@ import { forgotPassword, resetPassword } from "../controllers/auth.controller.js
 const router = express.Router();
 
 router.post("/login", login);
+router.post("/demo-login", demoLogin);
 router.post("/register", register);
 router.post("/verify-email", verifyStudentEmail);
 router.post("/resend-verification", resendStudentVerification);

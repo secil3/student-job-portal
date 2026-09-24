@@ -13,7 +13,9 @@ import adminRoutes from "./routes/admin.routes.js";
 import studentRoutes from "./routes/student.routes.js";
 import aiRoutes from "./routes/ai.routes.js";
 
-dotenv.config();
+if (process.env.DEMO_MODE !== "true") {
+  dotenv.config();
+}
 
 const app = express();
 

@@ -11,6 +11,26 @@ import {
 } from "../services/emailVerification.service.js";
 import { sendStudentVerificationEmail } from "../services/email.service.js";
 import { consumeVerificationRequest } from "../services/verificationRateLimit.service.js";
+
+const DEMO_ACCOUNTS = Object.freeze({
+  student: { email: "elif.yilmaz@stu.adu.edu.tr", role: "student" },
+  employer: { email: "demo@novabyte.com", role: "employer" },
+  admin: { email: "admin@digipath.demo", role: "admin" },
+});
+
+const createAuthResponse = (user) => ({
+  token: jwt.sign(
+    { id: user.id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: "1h" }
+  ),
+  user: {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+  },
+});
+
 // ================= LOGIN =================
 export const login = async (req, res) => {
   try {
@@ -35,23 +55,52 @@ export const login = async (req, res) => {
       return res.status(403).json({ message: "Account is inactive" });
     }
 
-    const token = jwt.sign(
-      { id: user.id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-
-    res.json({
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        role: user.role
-      }
-    });
+    res.json(createAuthResponse(user));
   } catch (err) {
     console.error("🔥 LOGIN ERROR:", err);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const demoLogin = async (req, res) => {
+  if (process.env.DEMO_MODE !== "true") {
+    return res.status(404).json({ message: "Not found" });
+  }
+
+  const account = typeof req.body?.account === "string"
+    ? req.body.account.trim().toLowerCase()
+    : "";
+  const expected = DEMO_ACCOUNTS[account];
+
+  if (!expected) {
+    return res.status(404).json({ message: "Demo account is not available" });
+  }
+
+  try {
+    const [rows] = await db.query(
+      `SELECT id, email, role, status, is_verified, is_active
+       FROM users
+       WHERE email = ?
+       LIMIT 1`,
+      [expected.email]
+    );
+    const user = rows[0];
+
+    const isEligible = user
+      && user.email === expected.email
+      && user.role === expected.role
+      && Number(user.is_active) === 1
+      && (user.role !== "student" || Number(user.is_verified) === 1)
+      && (user.role !== "employer" || user.status === "approved");
+
+    if (!isEligible) {
+      return res.status(404).json({ message: "Demo account is not available" });
+    }
+
+    return res.json(createAuthResponse(user));
+  } catch (error) {
+    console.error("DEMO LOGIN ERROR:", error.code || error.name);
+    return res.status(500).json({ message: "Demo login could not be completed" });
   }
 };
 // forgot password

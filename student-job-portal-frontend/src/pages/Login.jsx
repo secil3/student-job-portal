@@ -4,14 +4,27 @@ import api from "../services/api";
 import { useAuth } from "../context/useAuth";
 import "../styles/Auth.css";
 
+const isDemoMode = import.meta.env.VITE_DEMO_MODE === "true";
+
+const dashboardByRole = {
+  admin: "/admin",
+  employer: "/employer",
+  student: "/student",
+};
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [demoSubmitting, setDemoSubmitting] = useState("");
   const navigate = useNavigate();
   const { login } = useAuth();
+
+  const openSession = (data) => {
+    login(data.user, data.token);
+    navigate(dashboardByRole[data.user.role] || "/");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,19 +37,25 @@ export default function Login() {
         password,
       });
 
-      login(res.data.user, res.data.token);
-
-      if (res.data.user.role === "admin") {
-        navigate("/admin");
-      } else if (res.data.user.role === "employer") {
-        navigate("/employer");
-      } else {
-        navigate("/student");
-      }
+      openSession(res.data);
     } catch (err) {
       setError(err.response?.data?.message || "Giriş başarısız");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleDemoLogin = async (account) => {
+    setError("");
+    setDemoSubmitting(account);
+
+    try {
+      const res = await api.post("/auth/demo-login", { account });
+      openSession(res.data);
+    } catch (err) {
+      setError(err.response?.data?.message || "Demo oturumu açılamadı");
+    } finally {
+      setDemoSubmitting("");
     }
   };
 
@@ -88,6 +107,42 @@ export default function Login() {
         </form>
 
         {error && <p className="auth-error">{error}</p>}
+
+        {isDemoMode && (
+          <section className="demo-login" aria-labelledby="demo-login-title">
+            <div className="demo-login-heading">
+              <h2 id="demo-login-title">Demoyu hızlıca keşfedin</h2>
+              <p>Parola girmeden kurgusal demo hesaplarından biriyle devam edin.</p>
+            </div>
+
+            <div className="demo-login-actions">
+              <button
+                type="button"
+                className="demo-login-button"
+                disabled={Boolean(demoSubmitting)}
+                onClick={() => handleDemoLogin("student")}
+              >
+                {demoSubmitting === "student" ? "Açılıyor..." : "Demo Öğrenci Olarak Gir"}
+              </button>
+              <button
+                type="button"
+                className="demo-login-button demo-login-button-secondary"
+                disabled={Boolean(demoSubmitting)}
+                onClick={() => handleDemoLogin("employer")}
+              >
+                {demoSubmitting === "employer" ? "Açılıyor..." : "Demo İşveren Olarak Gir"}
+              </button>
+              <button
+                type="button"
+                className="demo-admin-link"
+                disabled={Boolean(demoSubmitting)}
+                onClick={() => handleDemoLogin("admin")}
+              >
+                {demoSubmitting === "admin" ? "Açılıyor..." : "Yönetici demosu"}
+              </button>
+            </div>
+          </section>
+        )}
 
         <p className="auth-switch">
           Hesabınız yok mu?{" "}

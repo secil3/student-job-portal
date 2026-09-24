@@ -24,7 +24,7 @@ await jest.unstable_mockModule("../services/email.service.js", () => ({
 }));
 
 // Import controller AFTER mocks
-const { login, register } = await import("../controllers/auth.controller.js");
+const { demoLogin, login, register } = await import("../controllers/auth.controller.js");
 
 const mockRes = () => {
   const res = {};
@@ -37,6 +37,7 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     process.env.JWT_SECRET = "test-secret";
+    delete process.env.DEMO_MODE;
   });
 
   // ================= LOGIN =================
@@ -121,6 +122,90 @@ describe("UC-01 Authentication (MVP) - Unit Tests", () => {
     expect(res.status).toHaveBeenCalledWith(403);
     expect(res.json).toHaveBeenCalledWith({ message: "Account is inactive" });
     expect(jwtMock.sign).not.toHaveBeenCalled();
+  });
+
+  describe("demo login", () => {
+    test.each([
+      ["student", "elif.yilmaz@stu.adu.edu.tr", "student", "approved", 1],
+      ["employer", "demo@novabyte.com", "employer", "approved", 0],
+      ["admin", "admin@digipath.demo", "admin", "approved", 0],
+    ])("creates a normal JWT session for the seeded %s account", async (
+      account,
+      email,
+      role,
+      status,
+      isVerified
+    ) => {
+      process.env.DEMO_MODE = "true";
+      const req = { body: { account } };
+      const res = mockRes();
+
+      dbMock.query.mockResolvedValueOnce([[
+        { id: 20, email, role, status, is_verified: isVerified, is_active: 1 },
+      ]]);
+      jwtMock.sign.mockReturnValueOnce("demo-token");
+
+      await demoLogin(req, res);
+
+      expect(dbMock.query).toHaveBeenCalledWith(
+        expect.stringContaining("WHERE email = ?"),
+        [email]
+      );
+      expect(jwtMock.sign).toHaveBeenCalledWith(
+        { id: 20, role },
+        "test-secret",
+        { expiresIn: "1h" }
+      );
+      expect(res.json).toHaveBeenCalledWith({
+        token: "demo-token",
+        user: { id: 20, email, role },
+      });
+    });
+
+    test("is unavailable when demo mode is disabled", async () => {
+      const req = { body: { account: "student" } };
+      const res = mockRes();
+
+      await demoLogin(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(jwtMock.sign).not.toHaveBeenCalled();
+      expect(dbMock.query).not.toHaveBeenCalled();
+    });
+
+    test("does not accept an arbitrary account identifier", async () => {
+      process.env.DEMO_MODE = "true";
+      const req = { body: { account: "random-user" } };
+      const res = mockRes();
+
+      await demoLogin(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(jwtMock.sign).not.toHaveBeenCalled();
+      expect(dbMock.query).not.toHaveBeenCalled();
+    });
+
+    test("does not create a token when the seeded account is ineligible", async () => {
+      process.env.DEMO_MODE = "true";
+      const req = { body: { account: "employer" } };
+      const res = mockRes();
+
+      dbMock.query.mockResolvedValueOnce([[
+        {
+          id: 21,
+          email: "demo@novabyte.com",
+          role: "employer",
+          status: "rejected",
+          is_verified: 0,
+          is_active: 1,
+        },
+      ]]);
+
+      await demoLogin(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(jwtMock.sign).not.toHaveBeenCalled();
+    });
   });
 
   // ================= REGISTER =================
