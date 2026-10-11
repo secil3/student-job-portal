@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import { getFrontendUrl } from "./config/frontend.js";
 
 import authRoutes from "./routes/auth.routes.js";
 import jobRoutes from "./routes/jobs.routes.js";
@@ -20,7 +21,7 @@ if (process.env.DEMO_MODE !== "true") {
 const app = express();
 
 
-app.use(cors());
+app.use(cors({ origin: getFrontendUrl() }));
 app.use(express.json());
 
 app.get("/", (req, res) => {

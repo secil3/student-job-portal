@@ -1,3 +1,4 @@
+import { getFrontendUrl } from "../config/frontend.js";
 import nodemailer from "nodemailer";
 
 let transporter;
@@ -7,7 +8,7 @@ const requiredEnvironment = () => {
     user: process.env.SMTP_USER,
     password: process.env.SMTP_APP_PASSWORD,
     from: process.env.EMAIL_FROM,
-    frontendUrl: process.env.FRONTEND_URL,
+    frontendUrl: getFrontendUrl(),
   };
 
   if (Object.values(values).some((value) => !value)) {
