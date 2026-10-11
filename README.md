@@ -202,7 +202,7 @@ The current frontend unit tests use Node's built-in test runner:
 
 ```bash
 cd student-job-portal-frontend
-node --test src/__tests__/*.test.js
+npm test
 ```
 
 ### Frontend lint
@@ -247,7 +247,7 @@ The script adds the missing token-hash and expiry columns and changes the `is_ve
 
 - Forgot Password returns a local reset link instead of sending email.
 - Admin provisioning is manual and is not automated by the repository.
-- The frontend API base URL is currently configured for the local backend at `http://localhost:5050/api`.
+- The frontend API base URL uses `VITE_API_URL`; development defaults to `http://localhost:5050/api`, and production defaults to same-origin `/api`. Separate frontend/API deployments must set `VITE_API_URL` before building.
 - The project has not been hardened or configured for public production deployment.
 - No general migration framework is included. The repository currently provides only the targeted `migrate:email-verification` script for the verification schema change.
 - Verification-email resend limiting is process-local and resets when the backend restarts.
@@ -257,3 +257,61 @@ The script adds the missing token-hash and expiry columns and changes the `is_ve
 
 - Seçil Keser
 
+
+## Render deployment preparation
+
+Deploy the two folders as separate services. No Render YAML is required; configure
+these settings in the dashboard. Use Node 22.14.0 or a compatible supported version
+for both services (the local checks use 22.14.0).
+
+| Setting | Frontend Static Site | Backend Web Service |
+| --- | --- | --- |
+| Root directory | `student-job-portal-frontend` | `backend` |
+| Build command | `npm ci && npm run build` | `npm ci` |
+| Publish directory | `dist` | N/A |
+| Start command | N/A | `npm start` |
+
+Frontend environment: set `VITE_API_URL` to the backend HTTPS URL **including `/api`**.
+Vite embeds this public value at build time; rebuild after changing it. Never put
+secrets in `VITE_*`. Without the variable, production uses same-origin `/api`, which
+requires an API reverse proxy and will not work on the separate static site by itself.
+
+Backend environment:
+
+- `NODE_ENV=production`
+- `FRONTEND_URL`: frontend HTTPS origin, without a path (used for CORS, verification
+  email links, and password reset links). Required in production.
+- `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`: target MySQL credentials.
+- `DB_SSL=true` when the MySQL provider requires TLS; optionally `DB_SSL_CA` with the
+  provider CA in PEM format (actual or escaped newlines). Certificate verification
+  stays enabled. Local development defaults to no TLS.
+- `JWT_SECRET`: strong private signing secret.
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_APP_PASSWORD`, `EMAIL_FROM`.
+- `GROQ_API_KEY`, optionally `GROQ_MODEL`, for the AI features.
+
+Render supplies `PORT`; the backend already listens on `process.env.PORT` and
+falls back to 5050 locally. The `/` endpoint checks process availability only,
+not database readiness.
+
+In the static site's Redirects/Rewrites panel, add `/*` → `/index.html` with
+**Rewrite** action for BrowserRouter deep links.
+
+### Remaining deployment blockers
+
+- CVs are stored under `process.cwd()/uploads` (`backend/uploads` with the root
+  directory above). Render's default filesystem is ephemeral. Arrange a persistent
+  disk at the actual uploads path or a future object-storage implementation before
+  accepting real CVs. The existing storage architecture is unchanged.
+- Gmail SMTP currently defaults to `smtp.gmail.com:465`. Free Render web services
+  block outbound ports 25, 465 and 587. This setup needs an SMTP-capable deployment
+  plan or a future email integration change. No provider has been changed.
+- Password reset still returns the reset link in the API response, as in the local
+  educational MVP. Changing its origin does not make that flow safe for public use:
+  implement email delivery and stop returning the token before a public launch.
+- Provision a reachable production MySQL instance, back up any source data, inspect
+  the target schema and approve any required migrations separately. Local Docker
+  Compose is not provisioned automatically by deploying the backend. No live DB
+  connection or migration is performed by this preparation.
+
+References: [SPA rewrites](https://render.com/docs/redirects-rewrites),
+[filesystem and SMTP limits](https://render.com/docs/free).

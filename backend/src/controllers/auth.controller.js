@@ -1,3 +1,4 @@
+import { getFrontendUrl } from "../config/frontend.js";
 import db, { getDB } from "../config/db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -104,7 +105,7 @@ export const forgotPassword = async (req, res) => {
     // Mail atmak yerine linki dönüyoruz (ders için yeterli)
     res.json({
       message: "Password reset link generated",
-      resetLink: `http://localhost:5173/reset-password/${token}`
+      resetLink: new URL(`/reset-password/${token}`, getFrontendUrl()).toString()
     });
   } catch (err) {
     console.error(err);

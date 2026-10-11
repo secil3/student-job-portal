@@ -10,7 +10,13 @@ export async function getDB() {
       port: Number(process.env.DB_PORT || 3307),
       user: process.env.DB_USER || "root",
       password: process.env.DB_PASSWORD || "",
-      database: process.env.DB_NAME || "student_job_portal"
+      database: process.env.DB_NAME || "student_job_portal",
+      ...(process.env.DB_SSL === "true" ? {
+        ssl: {
+          rejectUnauthorized: true,
+          ...(process.env.DB_SSL_CA ? { ca: process.env.DB_SSL_CA.replace(/\\n/g, "\n") } : {}),
+        },
+      } : {})
     });
   }
   return connection;
