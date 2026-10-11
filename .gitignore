@@ -16,3 +16,7 @@ build
 
 backend/uploads/
 
+
+# Local database CA certificates
+backend/certs/*.pem
+backend/certs/*.crt
